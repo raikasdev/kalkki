@@ -27,5 +27,6 @@ export function parseError(error: MathError) {
       return 'odottamaton symboli';
   }
 
+  console.error('Unhandled error!', error);
   return 'käsittelyvirhe';
 }

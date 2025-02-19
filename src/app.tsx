@@ -114,6 +114,7 @@ export function App() {
           <p class="answer" onClick={(event) => {
             if (event.detail !== 2) return;
             if (!inputRef.current) return;
+            event.preventDefault();
             inputRef.current.value += answer.toDecimalPlaces(8).toString().replace('.', ',');
             inputRef.current.focus();
           }}>
