@@ -3,14 +3,66 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/abikalkki.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Abikalkki</title>
+  <meta name="description" content="Selainpohjainen tieteislaskin">
+  <meta name="theme-color" content="#B2DC5B">
+  <link rel="icon" type="image/svg+xml" href="/abikalkki.svg" />
+  <link rel="mask-icon" href="/abikalkki.svg" color="#B2DC5B">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
 </head>
 
 <body>
   <div id="app"></div>
   <script type="module" src="/src/main.tsx"></script>
+  <script>
+    // PWA window management
+    document.addEventListener("DOMContentLoaded", event => {
+      // Only manage window if we're in PWA mode
+      const isBrowser = matchMedia("(display-mode: browser)").matches;
+      if (isBrowser) return;
+
+      // Default window settings
+      const defaultSettings = {
+        width: 600,
+        height: 800,
+        x: Math.round((screen.width - 600) / 2),
+        y: Math.round((screen.height - 800) / 2)
+      };
+
+      // Try to get stored window settings
+      let settings;
+      try {
+        const stored = localStorage.getItem('window-settings');
+        settings = stored ? JSON.parse(stored) : defaultSettings;
+      } catch (e) {
+        settings = defaultSettings;
+      }
+
+      // Apply window settings
+      window.moveTo(settings.x, settings.y);
+      window.resizeTo(settings.width, settings.height);
+
+      // Store window settings on resize and move
+      let timeoutId;
+      const saveSettings = () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          const newSettings = {
+            width: window.outerWidth,
+            height: window.outerHeight,
+            x: window.screenX,
+            y: window.screenY
+          };
+          localStorage.setItem('window-settings', JSON.stringify(newSettings));
+        }, 500); // Debounce to avoid too frequent saves
+      };
+
+      window.addEventListener('resize', saveSettings);
+      window.addEventListener('move', saveSettings);
+    });
+  </script>
 </body>
 
 </html>

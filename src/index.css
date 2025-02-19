@@ -36,20 +36,22 @@ body {
   align-items: center;
 }
 
-#app {
-  width: 500px;
-  max-height: 720px;
-}
-
-@media screen and (min-height: 704px) {
+@media (display-mode: browser) {
   #app {
-    padding: 2rem 0;
+    width: 500px;
+    max-height: 720px;
   }
-}
-
-@media screen and (max-width: 501px) {
-  #app {
-    max-height: unset;
-    padding: 0;
+  
+  @media screen and (min-height: 704px) {
+    #app {
+      padding: 2rem 0;
+    }
+  }
+  
+  @media screen and (max-width: 501px) {
+    #app {
+      max-height: unset;
+      padding: 0;
+    }
   }
 }
