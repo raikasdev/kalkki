@@ -19,6 +19,10 @@
   <script>
     document.addEventListener("appinstalled", () => {
       window.resizeTo(500, 640);
+      window.moveTo(
+        Math.round((screen.width - 500) / 2),
+        Math.round((screen.height - 640) / 2)
+      )
     });
   </script>
 </body>
