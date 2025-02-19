@@ -131,39 +131,62 @@ export default function evaluate(tokens: Token[], ans: Decimal, ind: Decimal, an
 					.with(["lg", 1], () => ok(func(args[0])))
 					.otherwise(() => err("INVALID_ARG_COUNT" as const));
 			})
-			.with({ type: "func", name: P.union("sqrt", "ln", "sin", "cos", "tan", "asin", "acos", "atan", "sqrt", "asin", "acos", "atan") }, token => {
+			.with({ type: "func", name: P.union("sqrt", "ln", "sin", "cos", "tan", "asin", "acos", "atan") }, token => {
 				// Decimal.js methods
 				const funcName = token.name;
 				const func = Decimal[funcName].bind(Decimal);
 
-				return expect({ type: "lbrk" }, false).andThen(() => {
-					const result = evalExpr(Infinity);
+				// First check if we have an opening bracket
+				if (expect({ type: "lbrk" }, true).isErr()) return err("UNEXPECTED_TOKEN" as const);
+
+				// Parse arguments until we hit the closing bracket
+				const args: Decimal[] = [];
+				
+				while (true) {
+					const result = evalExpr(0);
 					if (result.isErr()) return result;
-					const argument = result.value;
+					args.push(result.value);
 
-					const { any, union } = P;
+					const nextToken = peek();
+					if (!nextToken) return err("UNEXPECTED_EOF" as const);
+					
+					if (nextToken.type === "rbrk") {
+						// Consume the closing bracket and break
+						next();
+						break;
+					} else if (nextToken.type === "nextparam") {
+						// Consume the semicolon and continue to next parameter
+						next();
+						continue;
+					} else {
+						return err("UNEXPECTED_TOKEN" as const);
+					}
+				}
 
-					return match([angleUnit, funcName])
-						.with(["deg", union("sin", "cos")], () => ok(func(degToRad(argument))))
-						.with(["deg", union("asin", "acos", "atan")], () => ok(radToDeg(func(argument))))
-						.with([any, "tan"], () => {
-							const argInRads = angleUnit === "deg" ? degToRad(argument) : argument;
+				const { union, any } = P;
+				const argument = args[0]; // These only have one argument
 
-							// Tangent is undefined when the tangent line is parallel to the x-axis,
-							// since parallel lines, by definition, don't cross.
-							// The tangent is parallel when the argument is $ pi/2 + n × pi $ where
-							// $ n $ is an integer. Since we use an approximation for pi, we can only
-							// check if the argument is "close enough" to being an integer.
-							const coefficient = argInRads.sub(PI.div(2)).div(PI);
-							const distFromCriticalPoint = coefficient.sub(coefficient.round()).abs();
-							const isArgCritical = distFromCriticalPoint.lt(TAN_PRECISION);
+				return match([angleUnit, funcName, args.length])
+					.with(["deg", union("sin", "cos"), 1], () => ok(func(degToRad(argument))))
+					.with(["deg", union("asin", "acos", "atan"), 1], () => ok(radToDeg(func(argument))))
+					.with([any, "tan", 1], () => {
+						const argInRads = angleUnit === "deg" ? degToRad(argument) : argument;
 
-							if (isArgCritical) return err("TRIG_PRECISION" as const);
+						// Tangent is undefined when the tangent line is parallel to the x-axis,
+						// since parallel lines, by definition, don't cross.
+						// The tangent is parallel when the argument is $ pi/2 + n × pi $ where
+						// $ n $ is an integer. Since we use an approximation for pi, we can only
+						// check if the argument is "close enough" to being an integer.
+						const coefficient = argInRads.sub(PI.div(2)).div(PI);
+						const distFromCriticalPoint = coefficient.sub(coefficient.round()).abs();
+						const isArgCritical = distFromCriticalPoint.lt(TAN_PRECISION);
 
-							return ok(func(argInRads));
-						})
-						.otherwise(() => ok(func(argument)));
-				});
+						if (isArgCritical) return err("TRIG_PRECISION" as const);
+
+						return ok(func(argInRads));
+					})
+					.with([any, any, 1], () => ok(func(argument)))
+					.otherwise(() => err("INVALID_ARG_COUNT" as const));
 			})
 			.otherwise(() => err("UNEXPECTED_TOKEN"));
 	}

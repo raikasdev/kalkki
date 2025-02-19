@@ -30,3 +30,24 @@ export function parseError(error: MathError) {
   console.error('Unhandled error!', error);
   return 'käsittelyvirhe';
 }
+
+/**
+ * Tries to get the function user is currently typing
+ * @returns {string | null} Function name or null 
+ */
+export function getOpenFunction(expression: string): string | null {
+  if (expression[expression.length - 1] !== '(') return null;
+
+  const funcName = [];
+  for (let i = expression.length - 2; i >= 0; i--) {
+    const char = expression[i];
+    if (!/[a-z]/.test(char)) {
+      if (funcName.length === 0) return null;
+      else return funcName.reverse().join("");
+    }
+
+    funcName.push(char);
+  }
+
+  return funcName.length === 0 ? null : funcName.reverse().join("");
+}

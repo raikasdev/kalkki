@@ -5,8 +5,9 @@ import prettify from './math/prettify';
 import { latexToMath } from './math/latex-to-math';
 import Logo from './components/Logo';
 import HistoryLine, { HistoryLineData } from './components/HistoryLine';
-import { MathError, parseError } from './util';
+import { getOpenFunction, MathError, parseError } from './util';
 import './app.scss'
+import { getDocumentation } from './functions';
 
 export function App() {
   const [answer, setAnswer] = useState<Decimal>(new Decimal(0));
@@ -43,9 +44,9 @@ export function App() {
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (!inputRef.current) return;
     const input = inputRef.current.value;
-    const res = calculate(input, answer, ind, "deg");
 
     if (event.key === 'Enter') {
+      const res = calculate(input, answer, ind, "deg");
       if (res.isErr()) {
         return;
       }
@@ -63,7 +64,20 @@ export function App() {
     } else {
       if (input === '') {
         setExtraInfo('');
-      } else if (res.isErr()) {
+        return;
+      }
+
+      const openFunction = getOpenFunction(input);
+      if (openFunction !== null) {
+        const doc = getDocumentation(openFunction);
+        if (doc) {
+          setExtraInfo(doc.usage);
+          return;
+        }
+      }
+
+      const res = calculate(input, answer, ind, "deg");
+      if (res.isErr()) {
         setExtraInfo(parseError(res.error as unknown as MathError));
       } else {
         setExtraInfo(res.value.toDecimalPlaces(8).toString().replace('.', ','))
