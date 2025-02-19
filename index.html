@@ -17,50 +17,9 @@
   <div id="app"></div>
   <script type="module" src="/src/main.tsx"></script>
   <script>
-    // PWA window management
-    let pwaInited = false;
-    function pwaInit() {
-      if (pwaInited) return;
-      pwaInited = true;
-      // Only manage window if we're in PWA mode
-      const isBrowser = matchMedia("(display-mode: browser)").matches;
-      if (isBrowser) return;
-
-      // Default window settings
-      const defaultSettings = {
-        width: 500,
-        height: 640
-      };
-
-      // Try to get stored window settings
-      let settings;
-      try {
-        const stored = localStorage.getItem('window-settings');
-        settings = stored ? JSON.parse(stored) : defaultSettings;
-      } catch (e) {
-        settings = defaultSettings;
-      }
-
-      // Apply window settings
-      window.resizeTo(settings.width, settings.height);
-
-      // Store window settings on resize and move
-      let timeoutId;
-      const saveSettings = () => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          const newSettings = {
-            width: window.outerWidth,
-            height: window.outerHeight,
-          };
-          localStorage.setItem('window-settings', JSON.stringify(newSettings));
-        }, 500); // Debounce to avoid too frequent saves
-      };
-
-      window.addEventListener('resize', saveSettings);
-    }
-    document.addEventListener("DOMContentLoaded", () => pwaInit());
-    window.matchMedia('(display-mode: standalone)').addEventListener('change', (e) => e.matches ? pwaInit() : null);
+    document.addEventListener("appinstalled", () => {
+      window.resizeTo(500, 640);
+    });
   </script>
 </body>
 
