@@ -3,7 +3,7 @@ import { err, ok, Ok, Result } from "neverthrow";
 import { isMatching, match, P, Pattern } from "ts-pattern";
 
 import { AngleUnit } from "..";
-import { DecimalFunctions, Token } from "./tokeniser";
+import { Token } from "./tokeniser";
 import { factorial, functions } from "./functions";
 
 const PI = Decimal.acos(-1);
