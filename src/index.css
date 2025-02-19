@@ -36,22 +36,20 @@ body {
   align-items: center;
 }
 
-@media (display-mode: browser) {
-  #app {
-    max-width: 500px;
-    max-height: 720px;
+@media (display-mode: standalone) {
+  .hide-pwa-prompt {
+    display: none;
   }
-  
-  @media screen and (min-height: 704px) {
-    #app {
-      padding: 2rem 0;
-    }
+}
+
+@media (max-width: 500px) {
+  .hide-pwa-prompt {
+    display: none;
   }
-  
-  @media screen and (max-width: 501px) {
-    #app {
-      max-height: unset;
-      padding: 0;
-    }
+}
+
+@media (max-height: 640px) {
+  .hide-pwa-prompt {
+    display: none;
   }
 }
