@@ -9,7 +9,7 @@ import { MathError, parseError } from './util';
 
 export function App() {
   const [answer, setAnswer] = useState<Decimal>(new Decimal(0));
-  const [ind, setInd] = useState<Decimal>(new Decimal(0));
+  const [ind, _setInd] = useState<Decimal>(new Decimal(0));
   const [answers, setAnswers] = useState<[string, Decimal][]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [extraInfo, setExtraInfo] = useState<string | null>(null);
