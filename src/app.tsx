@@ -71,7 +71,7 @@ export function App() {
 
     // Get the target input element
     const input = event.target as HTMLInputElement;
-    console.log(pastedContent);
+
     // Check if paste replaces entire content or input is empty
     if (!input.value || input.selectionStart === 0 && input.selectionEnd === input.value.length) {
       // Check if pasted content contains backslashes
