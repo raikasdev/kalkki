@@ -5,7 +5,7 @@ export type MathError = EvalErrorId | { error: LexicalError };
 export function parseError(error: MathError) {
   if (typeof error === 'object' && error.error.type === 'UNKNOWN_TOKEN') {
     // LexicalError
-    return 'tuntematon symboli';
+    return `tuntematon symboli kohdassa ${error.error.idx}`;
   }
 
   switch (error) {
