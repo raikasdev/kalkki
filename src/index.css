@@ -38,7 +38,7 @@ body {
 
 @media (display-mode: browser) {
   #app {
-    width: 500px;
+    max-width: 500px;
     max-height: 720px;
   }
   
