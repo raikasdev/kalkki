@@ -94,7 +94,7 @@ export default function evaluate(tokens: Token[], ans: Decimal, ind: Decimal, an
 						.mapErr(() => "NO_RHS_BRACKET" as const)
 				)
 			)
-			.with({ type: "func", name: P.union("lg", "log")}, token => {
+			.with({ type: "func", name: P.union("lg", "log", "ncr", "npr")}, token => {
 				// Custom methods
 				const funcName = token.name;
 				const func = functions[funcName].bind(Decimal);
@@ -126,8 +126,10 @@ export default function evaluate(tokens: Token[], ans: Decimal, ind: Decimal, an
 					}
 				}
 
+				const { union } = P;
+
 				return match([funcName, args.length])
-					.with(["log", 2], () => ok(func(args[0], args[1])))
+					.with([union("log", "ncr", "npr"), 2], () => ok(func(args[0], args[1])))
 					.with(["lg", 1], () => ok(func(args[0])))
 					.otherwise(() => err("INVALID_ARG_COUNT" as const));
 			})
@@ -206,7 +208,7 @@ export default function evaluate(tokens: Token[], ans: Decimal, ind: Decimal, an
 				.with({ type: "oper", name: "*" }, () => evalExpr(3).map(right => left.value.mul(right)))
 				.with({ type: "oper", name: "/" }, () => evalExpr(3).map(right => left.value.div(right)))
 				.with({ type: "oper", name: "^" }, () => evalExpr(3).map(right => left.value.pow(right)))
-				.with({ type: "oper", name: "!" }, () => factorial(left.value))
+				.with({ type: "oper", name: "!" }, () => ok(factorial(left.value)))
 				// Right bracket should never get parsed by anything else than the left bracket parselet
 				.with({ type: "rbrk" }, () => err("NO_LHS_BRACKET" as const))
 				.otherwise(() => err("UNEXPECTED_TOKEN"))

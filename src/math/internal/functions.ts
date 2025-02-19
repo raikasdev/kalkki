@@ -1,14 +1,12 @@
 import Decimal from "decimal.js";
-import { ok, type Result } from "neverthrow";
-import type { EvalErrorId } from "./evaluator";
 
 /**
  * Calculates the factorial of a non-negative integer.
  * Returns an error if the input is negative or not an integer.
  */
-export function factorial(n: Decimal): Result<Decimal, EvalErrorId> {
-	if (n.isNegative()) return ok(new Decimal(NaN));
-	if (!n.isInteger()) return ok(new Decimal(NaN));
+export function factorial(n: Decimal): Decimal {
+	if (n.isNegative()) return new Decimal(NaN);
+	if (!n.isInteger()) return new Decimal(NaN);
 
 	let result = new Decimal(1);
 	let current = new Decimal(1);
@@ -18,7 +16,7 @@ export function factorial(n: Decimal): Result<Decimal, EvalErrorId> {
 		current = current.add(1);
 	}
 
-	return ok(result);
+	return result;
 }
 
 /**
@@ -35,7 +33,21 @@ function lg(x: Decimal) {
 	return log(new Decimal(10), x);
 }
 
+function ncr(n: Decimal, r: Decimal | undefined = undefined) {
+	if (!r) return new Decimal(NaN);
+	if (r.gt(n)) return new Decimal(0);
+	return factorial(n).div(factorial(r).times(factorial(n.sub(r))));
+}
+
+function npr(n: Decimal, r: Decimal | undefined = undefined) {
+	if (!r) return new Decimal(NaN);
+	if (r.gt(n)) return new Decimal(0);
+	return factorial(n).div(factorial(n.sub(r)));
+}
+
 export const functions = {
 	log,
 	lg,
+	ncr,
+	npr,
 } as const;
