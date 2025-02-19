@@ -21,6 +21,7 @@ Tada! You have a dev server running on :5173. Consult package.json 'scripts' for
 - Languages
 - History (up down arrow)
 - Changing degree unit
+- Unit conversion
 
 ## License
 

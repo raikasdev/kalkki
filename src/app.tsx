@@ -4,15 +4,17 @@ import Decimal from 'decimal.js';
 import prettify from './math/prettify';
 import { latexToMath } from './math/latex-to-math';
 import Logo from './components/Logo';
+import HistoryLine, { HistoryLineData } from './components/HistoryLine';
 import { MathError, parseError } from './util';
 import './app.scss'
 
 export function App() {
   const [answer, setAnswer] = useState<Decimal>(new Decimal(0));
   const [ind, _setInd] = useState<Decimal>(new Decimal(0));
-  const [answers, setAnswers] = useState<[string, Decimal][]>([]);
+  const [answers, setAnswers] = useState<HistoryLineData[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [extraInfo, setExtraInfo] = useState<string | null>(null);
+  const [latex, setLatex] = useState(false);
 
   useEffect(() => {
     // Focus on any keyboard activity
@@ -52,7 +54,12 @@ export function App() {
       setExtraInfo('');
       inputRef.current.value = "";
 
-      setAnswers((answers) => [[prettify(input), value], ...answers]);
+      setAnswers((answers) => [{
+        expression: prettify(input),
+        answer: value,
+        latex,
+      }, ...answers]);
+      setLatex(false);
     } else {
       if (input === '') {
         setExtraInfo('');
@@ -62,7 +69,7 @@ export function App() {
         setExtraInfo(res.value.toDecimalPlaces(8).toString().replace('.', ','))
       }
     }
-  }, [inputRef, answer, ind]);
+  }, [inputRef, answer, ind, latex]);
 
   const pasteLatex = useCallback((event: ClipboardEvent) => {
     if (!event.clipboardData) return;
@@ -81,6 +88,8 @@ export function App() {
 
         // Prevent default paste behavior
         event.preventDefault();
+
+        setLatex(true);
       }
     }
   }, [inputRef, answer, ind]);
@@ -109,19 +118,7 @@ export function App() {
           <p>Aloita kirjoittamalla lauseke alla olevaan kenttään.</p>
           <p class="hide-pwa-prompt">Tietokoneella parhaan kokemuksen saat <span id="pwa-install-prompt" hidden><a href="#" onClick={() => (window as any).installPWA()}>asentamalla sen PWA-sovelluksena</a> tai </span><a href="/app">iframe-tilassa</a>.</p>
         </div>
-        {answers.map(([expression, answer], index) => <div class="history-line" key={`line-${index}`}>
-          <p class="expression">{expression}</p>
-          <p class="answer" onClick={(event) => {
-            if (event.detail !== 2) return;
-            if (!inputRef.current) return;
-            event.preventDefault();
-            inputRef.current.value += answer.toDecimalPlaces(8).toString().replace('.', ',');
-            inputRef.current.focus();
-          }}>
-            <span class="equals">= </span>
-            {answer.toDecimalPlaces(8).toString().replace('.', ',')}
-          </p>
-        </div>)}
+        {answers.map((line, index) => <HistoryLine key={`line-${index}`} inputRef={inputRef} {...line} />)}
       </div>
       <div class="input">
         {extraInfo && <div class="extra-info">

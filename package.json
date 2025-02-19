@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "decimal.js": "^10.5.0",
+    "lucide-react": "^0.475.0",
     "neverthrow": "^8.1.1",
     "preact": "^10.25.4",
     "ts-pattern": "5.2.0"

@@ -65,7 +65,8 @@
   display: flex;
   flex-direction: column;
 
-  .expression {
+  .expression,
+  .latex-warning {
     color: rgba(255, 255, 255, 0.8);
     font-size: 14px;
     line-height: 1.2;
@@ -81,6 +82,17 @@
 
   .equals {
     user-select: none;
+  }
+
+  .latex-warning {
+    color: oklch(.666 .179 58.318);
+    display: flex;
+    align-items: flex-end;
+    gap: 0.25rem;
+    height: 21px;
+    margin-right: 0.25rem;
+    user-select: none;
+    margin-bottom: 0.5rem;
   }
 }
 
