@@ -27,16 +27,16 @@
 
     let install = null;
     window.addEventListener('beforeinstallprompt', (ev) => {
-      install = ev.prompt;
+      install = ev;
       const prompt = document.querySelector('#pwa-install-prompt');
       if (prompt) {
         prompt.hidden = false;
       }
     });
 
-    function installPWA() {
+    async function installPWA() {
       if (install !== null) {
-        install();
+        const res = await install.prompt();
       }
     }
   </script>
