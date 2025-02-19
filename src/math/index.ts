@@ -1,23 +1,27 @@
-import { create, all } from 'mathjs';
+import Decimal from "decimal.js";
+import { err, ok } from "neverthrow";
 
-// BigNumber / decimal.js
-const math = create(all, {
-  number: 'BigNumber',
-  precision: 64,
-  relTol: 1e-60,
-  absTol: 1e-63
-});
+import evaluate from "./internal/evaluator";
+import tokenise from "./internal/tokeniser";
 
-export function replaceDecimalComma(expression: string) {
-  return expression.replace(/(?<![\d,])(\d+),(\d+)(?![\d,])/g, '$1.$2');;
-}
+export type { Token, TokenId } from "./internal/tokeniser";
+export { tokenise, evaluate };
 
-export default function evaluate(expression: string) {
-  // Replace decimal separator commas. Checks before and after to avoid interfering with lists/arguments
-  expression = replaceDecimalComma(expression);
-  // Clean/trim it up
-  expression = expression.trim();
+export type AngleUnit = "deg" | "rad";
 
-  const res = math.evaluate(expression);
-  return math.format(res, { precision: 8 });
+Decimal.set({ precision: 16 });
+
+export function calculate(expression: string, ans: Decimal, ind: Decimal, angleUnit: AngleUnit) {
+	// This could be a one-liner with neverthrow's `andThen` but we want to
+	// jump out of neverthrow-land for React anyhow soon
+
+	const tokens = tokenise(expression);
+	if (tokens.isErr()) return err(tokens);
+
+	const result = evaluate(tokens.value, ans, ind, angleUnit);
+	if (result.isErr()) {
+		return err(result.error);
+	}
+
+	return ok(result.value);
 }

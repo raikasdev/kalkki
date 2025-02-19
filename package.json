@@ -9,12 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "mathjs": "^14.2.1",
-    "preact": "^10.25.4"
+    "decimal.js": "^10.5.0",
+    "neverthrow": "^8.1.1",
+    "preact": "^10.25.4",
+    "ts-pattern": "5.2.0"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.1",
     "@types/bun": "^1.2.2",
+    "sass-embedded": "^1.85.0",
     "typescript": "~5.7.2",
     "vite": "^6.1.0"
   }

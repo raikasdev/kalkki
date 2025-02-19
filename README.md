@@ -13,6 +13,15 @@ You can do these with your *favorite package manager*. I like [Bun](https://bun.
 
 Tada! You have a dev server running on :5173. Consult package.json 'scripts' for more information.
 
+## TODO
+
+- Variable support
+- Autocorrect / suggestions
+- Options / top bar
+- Languages
+- History (up down arrow)
+- Changing degree unit
+
 ## License
 
 Licensed under the MIT license, consult LICENSE for more information.
@@ -20,4 +29,4 @@ Licensed under the MIT license, consult LICENSE for more information.
 ### Credits
 
 - Logo icon: Tabler Icons math-function-x, licensed under MIT, see [license](https://tabler.io/license).
-- `mathjs` library, for basically handling all the math
+- [Abicus](https://github.com/digabi/abicus) for the math engine, licensed under MIT, see [license](https://github.com/digabi/abicus/blob/master/LICENCE.md)
