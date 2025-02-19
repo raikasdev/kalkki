@@ -9,7 +9,7 @@ export { tokenise, evaluate };
 
 export type AngleUnit = "deg" | "rad";
 
-Decimal.set({ precision: 16 });
+Decimal.set({ precision: 50 });
 
 export function calculate(expression: string, ans: Decimal, ind: Decimal, angleUnit: AngleUnit) {
 	// This could be a one-liner with neverthrow's `andThen` but we want to
