@@ -1,8 +1,8 @@
 # abikalkki
 
-Abikalkki is a scientific calculator inspired by [Speedcrunch](https://speedcrunch.org) designed to work fully in the browser. The project is currently maintained for fun and no support is guaranteed.
+Abikalkki is a scientific calculator inspired by [SpeedCrunch](https://speedcrunch.org) designed to work fully in the browser. The project is currently maintained for fun and no support is guaranteed.
 
-I started this project to try the [Abitti 2](https://abitti.net/abitti-2-apps.html) application protocol, with the possibility this might get used later if Digabi/YTL finds no suitable replacement for Speedcrunch.
+I started this project to try the [Abitti 2](https://abitti.net/abitti-2-apps.html) application protocol. I might submit it to YTL/Digabi if they can't find a suitable replacement for SpeedCrunch.
 
 ## Usage
 
