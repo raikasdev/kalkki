@@ -18,7 +18,10 @@
   <script type="module" src="/src/main.tsx"></script>
   <script>
     // PWA window management
-    document.addEventListener("DOMContentLoaded", event => {
+    let pwaInited = false;
+    function pwaInit() {
+      if (pwaInited) return;
+      pwaInited = true;
       // Only manage window if we're in PWA mode
       const isBrowser = matchMedia("(display-mode: browser)").matches;
       if (isBrowser) return;
@@ -26,9 +29,7 @@
       // Default window settings
       const defaultSettings = {
         width: 500,
-        height: 640,
-        x: Math.round((screen.width - 500) / 2),
-        y: Math.round((screen.height - 640) / 2)
+        height: 640
       };
 
       // Try to get stored window settings
@@ -41,8 +42,8 @@
       }
 
       // Apply window settings
-      window.moveTo(settings.x, settings.y);
       window.resizeTo(settings.width, settings.height);
+      window.moveTo(Math.round((screen.width - settings.width) / 2), Math.round((screen.height - settings.height) / 2));
 
       // Store window settings on resize and move
       let timeoutId;
@@ -52,16 +53,15 @@
           const newSettings = {
             width: window.outerWidth,
             height: window.outerHeight,
-            x: window.screenX,
-            y: window.screenY
           };
           localStorage.setItem('window-settings', JSON.stringify(newSettings));
         }, 500); // Debounce to avoid too frequent saves
       };
 
       window.addEventListener('resize', saveSettings);
-      window.addEventListener('move', saveSettings);
-    });
+    }
+    document.addEventListener("DOMContentLoaded", () => pwaInit());
+    window.matchMedia('(display-mode: standalone)').addEventListener('change', (e) => e.matches ? pwaInit() : null);
   </script>
 </body>
 

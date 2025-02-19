@@ -3,9 +3,9 @@ import { calculate } from './math';
 import Decimal from 'decimal.js';
 import prettify from './math/prettify';
 import { latexToMath } from './math/latex-to-math';
-import './app.scss'
 import Logo from './components/Logo';
 import { MathError, parseError } from './util';
+import './app.scss'
 
 export function App() {
   const [answer, setAnswer] = useState<Decimal>(new Decimal(0));
@@ -31,8 +31,6 @@ export function App() {
 
     window.addEventListener('keydown', handleKeyPress);
     window.addEventListener('focus', handleFocus);
-    // Focus on initial load
-    handleFocus();
 
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
@@ -56,7 +54,6 @@ export function App() {
 
       setAnswers((answers) => [[prettify(input), value], ...answers]);
     } else {
-      console.log(input);
       if (input === '') {
         setExtraInfo('');
       } else if (res.isErr()) {
@@ -64,7 +61,6 @@ export function App() {
       } else {
         setExtraInfo(res.value.toDecimalPlaces(8).toString().replace('.', ','))
       }
-
     }
   }, [inputRef, answer, ind]);
 
