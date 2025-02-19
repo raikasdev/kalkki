@@ -27,6 +27,7 @@
 
     let install = null;
     window.addEventListener('beforeinstallprompt', (ev) => {
+      ev.preventDefault();
       install = ev;
       const prompt = document.querySelector('#pwa-install-prompt');
       if (prompt) {

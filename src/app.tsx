@@ -107,7 +107,7 @@ export function App() {
           <h1>Abikalkki</h1>
           <p>Tervetuloa käyttämään Abikalkkia!</p>
           <p>Aloita kirjoittamalla lauseke alla olevaan kenttään.</p>
-          <p class="hide-pwa-prompt">Tietokoneella parhaan kokemuksen saat <span id="pwa-install-prompt" hidden><a href="#" onClick={() => (window as any).installPWA()}>asentamalla PWA:n</a> tai </span><a href="/app">iframe-tilassa</a>.</p>
+          <p class="hide-pwa-prompt">Tietokoneella parhaan kokemuksen saat <span id="pwa-install-prompt" hidden><a href="#" onClick={() => (window as any).installPWA()}>asentamalla sen PWA-sovellukseksi</a> tai </span><a href="/app">iframe-tilassa</a>.</p>
         </div>
         {answers.map(([expression, answer], index) => <div class="history-line" key={`line-${index}`}>
           <p class="expression">{expression}</p>
