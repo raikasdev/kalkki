@@ -16,7 +16,30 @@
 <body>
   <div id="app"></div>
   <script type="module" src="/src/main.tsx"></script>
-  <script type="module" src="/src/pwa.ts"></script>
+  <script>
+    window.addEventListener("appinstalled", () => {
+      window.resizeTo(500, 640);
+      window.moveTo(
+        Math.round((screen.width - 500) / 2),
+        Math.round((screen.height - 640) / 2)
+      )
+    });
+
+    let install = null;
+    window.addEventListener('beforeinstallprompt', (ev) => {
+      install = ev.prompt;
+      const prompt = document.querySelector('#pwa-install-prompt');
+      if (prompt) {
+        prompt.hidden = false;
+      }
+    });
+
+    function installPWA() {
+      if (install !== null) {
+        install();
+      }
+    }
+  </script>
 </body>
 
 </html>
