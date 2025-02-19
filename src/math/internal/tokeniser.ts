@@ -126,7 +126,7 @@ const tokenMatchers = [
 				/^((a(rc)?)?(sin|cos|tan))/,
 				/^(log|lg|ln)/,
 				/^(sqrt|√)/,
-				/^(ncr|npr)/
+				/^(ncr|npr|average)/,
 			]
 				.map(subRegex => subRegex.source)
 				.join("|"),
@@ -135,7 +135,7 @@ const tokenMatchers = [
 		str => ({
 			type: "func" as const,
 			name: match(str.toLowerCase())
-				.with("sqrt", "ln", "lg", "sin", "cos", "tan", "asin", "acos", "atan", "ncr", "npr", name => name)
+				.with("sqrt", "ln", "lg", "sin", "cos", "tan", "asin", "acos", "atan", "ncr", "npr", "average", name => name)
 				.with("log", "log10", () => "log" as const)
 				.with("√", () => "sqrt" as const)
 				.with("arcsin", () => "asin" as const)

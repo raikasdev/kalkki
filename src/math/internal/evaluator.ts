@@ -73,6 +73,40 @@ export default function evaluate(tokens: Token[], ans: Decimal, ind: Decimal, an
 	}
 
 	/**
+	 * Parses function parameters
+	 */
+	function parseFunction() {
+		// First check if we have an opening bracket
+		if (expect({ type: "lbrk" }, true).isErr()) return err("UNEXPECTED_TOKEN" as const);
+
+		// Parse arguments until we hit the closing bracket
+		const args: Decimal[] = [];
+
+		while (true) {
+			const result = evalExpr(0);
+			if (result.isErr()) return result;
+			args.push(result.value);
+
+			const nextToken = peek();
+			if (!nextToken) return err("UNEXPECTED_EOF" as const);
+			
+			if (nextToken.type === "rbrk") {
+				// Consume the closing bracket and break
+				next();
+				break;
+			} else if (nextToken.type === "nextparam") {
+				// Consume the semicolon and continue to next parameter
+				next();
+				continue;
+			} else {
+				return err("UNEXPECTED_TOKEN" as const);
+			}
+		}
+
+		return ok(args);
+	}
+
+	/**
 	 * The null denotation of a token.
 	 * Also known as the "prefix" or "head" handler.
 	 *
@@ -94,76 +128,51 @@ export default function evaluate(tokens: Token[], ans: Decimal, ind: Decimal, an
 						.mapErr(() => "NO_RHS_BRACKET" as const)
 				)
 			)
-			.with({ type: "func", name: P.union("lg", "log", "ncr", "npr")}, token => {
-				// Custom methods
+			.with({ type: "func", name: P.union("lg")}, token => {
+				// Custom methods with one argument
 				const funcName = token.name;
-				const func = functions[funcName].bind(Decimal);
+				const func = functions[funcName];
 
-				// First check if we have an opening bracket
-				if (expect({ type: "lbrk" }, true).isErr()) return err("UNEXPECTED_TOKEN" as const);
+				const res = parseFunction();
+				if (res.isErr()) return err(res.error);
+				const args = res.value;
 
-				// Parse arguments until we hit the closing bracket
-				const args: Decimal[] = [];
-				
-				while (true) {
-					const result = evalExpr(0);
-					if (result.isErr()) return result;
-					args.push(result.value);
-
-					const nextToken = peek();
-					if (!nextToken) return err("UNEXPECTED_EOF" as const);
-					
-					if (nextToken.type === "rbrk") {
-						// Consume the closing bracket and break
-						next();
-						break;
-					} else if (nextToken.type === "nextparam") {
-						// Consume the semicolon and continue to next parameter
-						next();
-						continue;
-					} else {
-						return err("UNEXPECTED_TOKEN" as const);
-					}
-				}
-
-				const { union } = P;
-
-				return match([funcName, args.length])
-					.with([union("log", "ncr", "npr"), 2], () => ok(func(args[0], args[1])))
-					.with(["lg", 1], () => ok(func(args[0])))
+				return match([args.length])
+					.with([1], () => ok(func(args[0])))
 					.otherwise(() => err("INVALID_ARG_COUNT" as const));
+			})
+			.with({ type: "func", name: P.union("log", "ncr", "npr")}, token => {
+				// Custom methods with one argument
+				const funcName = token.name;
+				const func = functions[funcName];
+
+				const res = parseFunction();
+				if (res.isErr()) return err(res.error);
+				const args = res.value;
+
+				return match([args.length])
+					.with([2], () => ok(func(args[0], args[1])))
+					.otherwise(() => err("INVALID_ARG_COUNT" as const));
+			})
+			.with({ type: "func", name: P.union("average")}, token => {
+				// Custom methods with unlimited params
+				const funcName = token.name;
+				const func = functions[funcName];
+
+				const res = parseFunction();
+				if (res.isErr()) return err(res.error);
+				const args = res.value;
+
+				return ok(func(...args));
 			})
 			.with({ type: "func", name: P.union("sqrt", "ln", "sin", "cos", "tan", "asin", "acos", "atan") }, token => {
 				// Decimal.js methods
 				const funcName = token.name;
 				const func = Decimal[funcName].bind(Decimal);
 
-				// First check if we have an opening bracket
-				if (expect({ type: "lbrk" }, true).isErr()) return err("UNEXPECTED_TOKEN" as const);
-
-				// Parse arguments until we hit the closing bracket
-				const args: Decimal[] = [];
-				
-				while (true) {
-					const result = evalExpr(0);
-					if (result.isErr()) return result;
-					args.push(result.value);
-
-					const nextToken = peek();
-					if (!nextToken) return err("UNEXPECTED_EOF" as const);
-					
-					if (nextToken.type === "rbrk") {
-						// Consume the closing bracket and break
-						next();
-						break;
-					} else if (nextToken.type === "nextparam") {
-						// Consume the semicolon and continue to next parameter
-						next();
-						continue;
-					} else {
-						return err("UNEXPECTED_TOKEN" as const);
-					}
-				}
+				const res = parseFunction();
+				if (res.isErr()) return err(res.error);
+				const args = res.value;
 
 				const { union, any } = P;
 				const argument = args[0]; // These only have one argument

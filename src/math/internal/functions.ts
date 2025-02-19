@@ -45,9 +45,17 @@ function npr(n: Decimal, r: Decimal | undefined = undefined) {
 	return factorial(n).div(factorial(n.sub(r)));
 }
 
+function average(...nums: Decimal[]) {
+	if (nums.length === 0) return new Decimal(0);
+	if (nums.length === 1) return nums[0];
+	const total = nums.reduce((a, b) => a.add(b), new Decimal(0));
+	return total.div(nums.length);
+}
+
 export const functions = {
 	log,
 	lg,
 	ncr,
 	npr,
+	average,
 } as const;
