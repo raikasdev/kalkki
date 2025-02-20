@@ -1,8 +1,15 @@
-# abikalkki
+<h1 align="center">
+  <img src="/public/abikalkki.svg" height="96" width="96">
+  <div>abikalkki</div>
+</h1>
 
-Abikalkki is a scientific calculator inspired by [SpeedCrunch](https://speedcrunch.org) designed to work fully in the browser. The project is currently maintained for fun and no support is guaranteed.
+<div align="center">
+  <p>Modern scientific calculator inspired by <a href="https://speedcrunch.org">SpeedCrunch</a> working in the browser</p>
+  <p><a href="https://kalkki.raikas.dev">Demo</a></p>
+</div>
 
-I started this project to try the [Abitti 2](https://abitti.net/abitti-2-apps.html) application protocol. I might submit it to YTL/Digabi if they can't find a suitable replacement for SpeedCrunch.
+---
+Little backstory: I like SpeedCrunch a lot! But with the Finnish matriculation exams moving to a browser-based environment, it will no longer be available! I started this project for fun to try creating a replacement for SpeedCrunch suitable for use in [Abitti 2](https://abitti.net/abitti-2-apps.html). I might submit it to YTL/Digabi if they can't find a suitable replacement for SpeedCrunch, as I don't like the calculator selection it currently has.
 
 ## Features
 
@@ -10,6 +17,7 @@ I started this project to try the [Abitti 2](https://abitti.net/abitti-2-apps.ht
 - Experimental LaTeX pasting support
 - Tokenizer based math engine (forked from Abicus)
 - History (up and down arrow)
+- Progressive Web App for offline usage
 
 ## Usage
 
