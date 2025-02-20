@@ -9,6 +9,7 @@ I started this project to try the [Abitti 2](https://abitti.net/abitti-2-apps.ht
 - Familiar terminal style
 - Experimental LaTeX pasting support
 - Tokenizer based math engine (forked from Abicus)
+- History (up and down arrow)
 
 ## Usage
 
@@ -36,4 +37,4 @@ Licensed under the MIT license, consult LICENSE for more information.
 ### Credits
 
 - Logo icon: Tabler Icons math-function-x, licensed under MIT, see [license](https://tabler.io/license).
-- [Abicus](https://github.com/digabi/abicus) for the math engine, licensed under MIT, see [license](https://github.com/digabi/abicus/blob/master/LICENCE.md)
+- [Abicus](https://github.com/digabi/abicus) for the math engine, licensed under MIT, see [license](https://github.com/digabi/abicus/blob/master/LICENCE.md) or src/math/LICENSE
