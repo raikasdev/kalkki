@@ -4,6 +4,12 @@ Abikalkki is a scientific calculator inspired by [SpeedCrunch](https://speedcrun
 
 I started this project to try the [Abitti 2](https://abitti.net/abitti-2-apps.html) application protocol. I might submit it to YTL/Digabi if they can't find a suitable replacement for SpeedCrunch.
 
+## Features
+
+- Familiar terminal style
+- Experimental LaTeX pasting support
+- Tokenizer based math engine (forked from Abicus)
+
 ## Usage
 
 You can do these with your *favorite package manager*. I like [Bun](https://bun.sh), but it isn't required to run this.
@@ -15,12 +21,12 @@ Tada! You have a dev server running on :5173. Consult package.json 'scripts' for
 
 ## TODO
 
+- WASM
 - Variable support
 - Autocorrect / suggestions
 - Options / top bar
 - Languages
 - History (up down arrow)
-- Changing degree unit
 - Unit conversion
 
 ## License

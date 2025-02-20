@@ -46,14 +46,14 @@ export function TopBar({ options, setOptions }: {
                 </OptionButton>
               </ul>
             </li>
-            <li className="has-submenu">
+            {/*<li className="has-submenu">
               <span>Kieli</span>
               <ul className="submenu">
                 <li><button>suomi</button></li>
                 <li><button>svenska</button></li>
                 <li><button>English</button></li>
               </ul>
-            </li>
+            </li>*/}
             <li className="has-submenu">
               <span>Tuloksen tarkkuus</span>
               <ul className="submenu">
@@ -89,13 +89,13 @@ export function TopBar({ options, setOptions }: {
                 </OptionButton>
               </ul>
             </li>
-            <li className="has-submenu">
+            {/*<li className="has-submenu">
               <span>Toiminta</span>
               <ul className="submenu">
                 <li><button>Tallenna historia</button></li>
                 <li><button>Kopioi vastaus automaattisesti</button></li>
               </ul>
-            </li>
+            </li>*/}
           </ul>
         </li>
         {/*<li className="menu-item">
