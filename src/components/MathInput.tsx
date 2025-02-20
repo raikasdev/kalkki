@@ -43,7 +43,7 @@ export default function MathInput({
     };
   }, []);
 
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+  const processInput = useCallback((event: KeyboardEvent) => {
     if (!inputRef.current) return;
     const input = inputRef.current.value;
 
@@ -68,42 +68,7 @@ export default function MathInput({
         historyIndex: -1,
       });
       inputRef.current.value = "";
-    } else if (event.key === 'ArrowUp') {
-      /**
-       * The history quickly (works like bash etc):
-       * You can use up down arrow to go to old entries
-       * You can edit them, go to other old ones, and the changes stay (workHistory)
-       * But only the line you edit and submit will be persist so all other changes disappear (history)
-       */
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      event.stopPropagation();
-      if (historyIndex === -1) {
-        workHistory = Array.from(new Set([inputRef.current.value, ...history])); // Use a set to remove duplicates
-        historyIndex = 0;
-      } else {
-        workHistory[historyIndex] = inputRef.current.value;
-      }
-
-      const index = historyIndex + 1;
-      if (index >= workHistory.length) return;
-      inputRef.current.value = workHistory[index];
-      setState({
-        historyIndex: index,
-        workHistory,
-      });
-    } else if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      let index = historyIndex - 1;
-      if (index < 0) return;
-      workHistory[historyIndex] = inputRef.current.value;
-      inputRef.current.value = workHistory[index];
-
-      setState({
-        historyIndex: index,
-        workHistory,
-      });
-    } else {
+    } else if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
       if (input === '') {
         setState({
           extraInfo: null,
@@ -133,7 +98,45 @@ export default function MathInput({
         })
       }
     }
-  }, [inputRef, answer, ind, latex, options, historyIndex, history]);
+  }, [inputRef, answer, ind, latex, options]);
+
+  const processKeyDown = useCallback((event: KeyboardEvent) => {
+    if (!inputRef.current) return;
+    if (event.key === 'ArrowUp') {
+      /**
+       * The history quickly (works like bash etc):
+       * You can use up down arrow to go to old entries
+       * You can edit them, go to other old ones, and the changes stay (workHistory)
+       * But only the line you edit and submit will be persist so all other changes disappear (history)
+       */
+      event.preventDefault();
+      if (historyIndex === -1) {
+        workHistory = Array.from(new Set([inputRef.current.value, ...history])); // Use a set to remove duplicates
+        historyIndex = 0;
+      } else {
+        workHistory[historyIndex] = inputRef.current.value;
+      }
+
+      const index = historyIndex + 1;
+      if (index >= workHistory.length) return;
+      inputRef.current.value = workHistory[index];
+      setState({
+        historyIndex: index,
+        workHistory,
+      });
+    } else if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      let index = historyIndex - 1;
+      if (index < 0) return;
+      workHistory[historyIndex] = inputRef.current.value;
+      inputRef.current.value = workHistory[index];
+
+      setState({
+        historyIndex: index,
+        workHistory,
+      });
+    }
+  }, [historyIndex, history, inputRef])
 
   const pasteLatex = useCallback((event: ClipboardEvent) => {
     if (!event.clipboardData) return;
@@ -182,7 +185,8 @@ export default function MathInput({
       <input
         ref={inputRef}
         name="math-line"
-        onKeyUp={handleKeyDown}
+        onKeyUp={processInput}
+        onKeyDown={processKeyDown}
         onPaste={pasteLatex}
         autoFocus
         spellcheck={false}
