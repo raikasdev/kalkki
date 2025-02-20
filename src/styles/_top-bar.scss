@@ -42,7 +42,7 @@
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   opacity: 0;
-  visibility: hidden;
+  display: none;
   transform: translateY(-4px);
   transition: all 0.2s ease;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -51,7 +51,7 @@
 .menu-item:hover > .dropdown,
 .has-submenu:hover > .submenu {
   opacity: 1;
-  visibility: visible;
+  display: block;
   transform: translateY(0);
 }
 .submenu {
