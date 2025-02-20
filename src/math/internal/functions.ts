@@ -6,14 +6,14 @@ import Decimal from "decimal.js";
  */
 export function factorial(n: Decimal): Decimal {
 	if (n.isNegative()) return new Decimal(NaN);
-	if (!n.isInteger()) return new Decimal(NaN);
+	if (!n.isInteger()) {return new Decimal(NaN);}
 
 	let result = new Decimal(1);
-	let current = new Decimal(1);
+	let current = 1; // Plain numbers are much faster
 
-	while (current.lte(n)) {
+	while (n.gte(current)) {
 		result = result.mul(current);
-		current = current.add(1);
+		current++;
 	}
 
 	return result;

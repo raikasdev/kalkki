@@ -1,10 +1,11 @@
-import { useState, useRef } from 'preact/hooks'
+import { useRef } from 'preact/hooks'
 import Decimal from 'decimal.js';
 import Logo from './components/Logo';
 import HistoryLine, { HistoryLineData } from './components/HistoryLine';
-import './app.scss'
 import { useObjectState } from './use-object-state';
 import MathInput from './components/MathInput';
+import { Options, TopBar } from './components/TopBar';
+import './styles/app.scss'
 
 export type AppState = {
   answer: Decimal;
@@ -15,6 +16,10 @@ export type AppState = {
 }
 
 export function App() {
+  const [options, setOptions] = useObjectState<Options>({
+    degreeUnit: 'deg',
+    resultAccuracy: 8
+  });
   const [appState, setAppState] = useObjectState<AppState>({
     answer: new Decimal(0),
     ind: new Decimal(0),
@@ -26,6 +31,7 @@ export function App() {
 
   return (
     <>
+      <TopBar options={options} setOptions={setOptions} />
       <div class="history">
         <div className={`welcome-message${appState.answers.length > 0 ? ' hidden' : ''}`}>
           <Logo height="128" width="128" />
@@ -34,9 +40,9 @@ export function App() {
           <p>Aloita kirjoittamalla lauseke alla olevaan kenttään.</p>
           <p class="hide-pwa-prompt">Tietokoneella parhaan kokemuksen saat <span id="pwa-install-prompt" hidden><a href="#" onClick={() => (window as any).installPWA()}>asentamalla sen PWA-sovelluksena</a> tai </span><a href="/app">iframe-tilassa</a>.</p>
         </div>
-        {appState.answers.map((line, index) => <HistoryLine key={`line-${index}`} inputRef={inputRef} {...line} />)}
+        {appState.answers.map((line, index) => <HistoryLine key={`line-${index}`} inputRef={inputRef} {...line} accuracy={options.resultAccuracy} />)}
       </div>
-      <MathInput inputRef={inputRef} state={appState} setState={setAppState} />
+      <MathInput inputRef={inputRef} state={appState} setState={setAppState} options={options} />
     </>
   )
 }

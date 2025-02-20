@@ -6,15 +6,18 @@ import prettify from "../math/prettify";
 import { getOpenFunction, MathError, parseError } from "../util";
 import { getDocumentation } from "../functions";
 import { latexToMath } from "../math/latex-to-math";
+import { Options } from "./TopBar";
 
 export default function MathInput({
   state: { answer, answers, extraInfo, ind, latex },
   setState,
-  inputRef
+  inputRef,
+  options
 }: {
-  state: AppState,
-  setState: (val: Partial<AppState>) => void,
-  inputRef: RefObject<HTMLInputElement>
+  state: AppState;
+  setState: (val: Partial<AppState>) => void;
+  inputRef: RefObject<HTMLInputElement>;
+  options: Options;
 }) {
   useEffect(() => {
     // Focus on any keyboard activity
@@ -45,7 +48,7 @@ export default function MathInput({
     const input = inputRef.current.value;
 
     if (event.key === 'Enter') {
-      const res = calculate(input, answer, ind, "deg");
+      const res = calculate(input, answer, ind, options.degreeUnit);
       if (res.isErr()) {
         return;
       }
@@ -87,11 +90,11 @@ export default function MathInput({
         });
       } else {
         setState({
-          extraInfo: res.value.toDecimalPlaces(8).toString().replace('.', ','),
+          extraInfo: res.value.toSignificantDigits(options.resultAccuracy).toString().replace('.', ','),
         })
       }
     }
-  }, [inputRef, answer, ind, latex]);
+  }, [inputRef, answer, ind, latex, options]);
 
   const pasteLatex = useCallback((event: ClipboardEvent) => {
     if (!event.clipboardData) return;

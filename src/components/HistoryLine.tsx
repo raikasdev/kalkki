@@ -8,7 +8,7 @@ export type HistoryLineData = {
   latex: boolean;
 }
 
-export default function HistoryLine({ expression, answer, latex, inputRef }: HistoryLineData & { inputRef?: RefObject<HTMLInputElement>; }) {
+export default function HistoryLine({ expression, answer, latex, inputRef, accuracy }: HistoryLineData & { inputRef?: RefObject<HTMLInputElement>; accuracy: number; }) {
   return (
     <div class="history-line">
       {latex && (<p class="latex-warning"><CircleAlert size={18} /> Luotu LaTeXin pohjalta, voi sisältää virheitä</p>)}
@@ -19,11 +19,11 @@ export default function HistoryLine({ expression, answer, latex, inputRef }: His
         if (event.detail !== 2) return;
         if (!inputRef?.current) return;
         event.preventDefault();
-        inputRef.current.value += answer.toDecimalPlaces(8).toString().replace('.', ',');
+        inputRef.current.value += answer.toSignificantDigits(accuracy).toString().replace('.', ',');
         inputRef.current.focus();
       }}>
         <span class="equals">= </span>
-        {answer.toDecimalPlaces(8).toString().replace('.', ',')}
+        {answer.toSignificantDigits(accuracy).toString().replace('.', ',')}
       </p>
     </div>
   )
