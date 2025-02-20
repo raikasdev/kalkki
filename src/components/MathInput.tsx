@@ -9,7 +9,7 @@ import { latexToMath } from "../math/latex-to-math";
 import { Options } from "./TopBar";
 
 export default function MathInput({
-  state: { answer, answers, extraInfo, ind, latex },
+  state: { answer, answers, extraInfo, ind, latex, history, workHistory, historyIndex },
   setState,
   inputRef,
   options
@@ -48,6 +48,7 @@ export default function MathInput({
     const input = inputRef.current.value;
 
     if (event.key === 'Enter') {
+      event.preventDefault();
       const res = calculate(input, answer, ind, options.degreeUnit);
       if (res.isErr()) {
         return;
@@ -62,8 +63,46 @@ export default function MathInput({
           latex,
         }, ...answers],
         latex: false,
+        history: [input, ...history],
+        workHistory: [input, ...history],
+        historyIndex: -1,
       });
       inputRef.current.value = "";
+    } else if (event.key === 'ArrowUp') {
+      /**
+       * The history quickly (works like bash etc):
+       * You can use up down arrow to go to old entries
+       * You can edit them, go to other old ones, and the changes stay (workHistory)
+       * But only the line you edit and submit will be persist so all other changes disappear (history)
+       */
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      event.stopPropagation();
+      if (historyIndex === -1) {
+        workHistory = Array.from(new Set([inputRef.current.value, ...history])); // Use a set to remove duplicates
+        historyIndex = 0;
+      } else {
+        workHistory[historyIndex] = inputRef.current.value;
+      }
+
+      const index = historyIndex + 1;
+      if (index >= workHistory.length) return;
+      inputRef.current.value = workHistory[index];
+      setState({
+        historyIndex: index,
+        workHistory,
+      });
+    } else if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      let index = historyIndex - 1;
+      if (index < 0) return;
+      workHistory[historyIndex] = inputRef.current.value;
+      inputRef.current.value = workHistory[index];
+
+      setState({
+        historyIndex: index,
+        workHistory,
+      });
     } else {
       if (input === '') {
         setState({
@@ -94,7 +133,7 @@ export default function MathInput({
         })
       }
     }
-  }, [inputRef, answer, ind, latex, options]);
+  }, [inputRef, answer, ind, latex, options, historyIndex, history]);
 
   const pasteLatex = useCallback((event: ClipboardEvent) => {
     if (!event.clipboardData) return;

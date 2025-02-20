@@ -13,6 +13,9 @@ export type AppState = {
   answers: HistoryLineData[];
   extraInfo: string | null;
   latex: boolean;
+  history: string[];
+  workHistory: string[];
+  historyIndex: number;
 }
 
 export function App() {
@@ -26,6 +29,9 @@ export function App() {
     answers: [],
     extraInfo: null,
     latex: false,
+    history: [], // Only past commands
+    workHistory: [], // User may edit these
+    historyIndex: -1,
   });
   const inputRef = useRef<HTMLInputElement>(null);
 
