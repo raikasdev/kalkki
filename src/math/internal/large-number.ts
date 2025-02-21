@@ -1,3 +1,4 @@
+import Decimal from 'decimal.js';
 import { init, type GMPLib } from 'gmp-wasm';
 
 // Allows us to chain operations and run them in one go
@@ -219,62 +220,8 @@ export class LargeNumber {
         return this.value;
     }
 
-    toSignificantDigits(digits: number) {
-        // Split number into integer and decimal parts
-        let [intPart, decPart = ''] = this.value.split('.');
-
-        // Remove leading zeros from integer part
-        const cleanIntPart = intPart.replace(/^0+/, '') || '0';
-        
-        // Count significant digits in integer part (excluding leading zeros)
-        let significantDigits = cleanIntPart.length;
-        
-        // Initialize result parts
-        let resultInt = cleanIntPart;
-        let resultDec = '';
-        
-        // Handle decimal part if exists
-        if (decPart) {
-            resultDec = decPart;
-            // Count leading zeros in decimal part
-            const leadingZeros = decPart.match(/^0*/)![0].length;
-            // Add significant digits from decimal part
-            significantDigits += decPart.length - leadingZeros;
-        }
-        
-        // If we need to reduce significant digits
-        if (significantDigits > digits) {
-            if (cleanIntPart.length >= digits) {
-            // Round the integer part
-            resultInt = cleanIntPart.substring(0, digits) +
-                '0'.repeat(cleanIntPart.length - digits);
-            resultDec = '';
-            } else {
-            // We need to keep some decimal places
-            const neededFromDec = digits - cleanIntPart.length;
-            resultDec = decPart.substring(0, neededFromDec);
-            }
-        }
-        
-        // Count trailing zeros
-        const trailingZeros = (resultInt.match(/0*$/)![0] || '').length;
-        
-        // Check if scientific notation is needed (15 or more trailing zeros)
-        if (trailingZeros >= 15) {
-            const firstNonZero = resultInt.search(/[1-9]/);
-            const exponent = resultInt.length - firstNonZero - 1;
-            let mantissa = resultInt[firstNonZero];
-            
-            // Add decimal places to mantissa if needed
-            if (digits > 1) {
-            mantissa += '.' + resultInt.substring(firstNonZero + 1, firstNonZero + digits);
-            }
-            
-            return `${mantissa}e${exponent}`;
-        }
-        
-        // Combine results
-        return resultDec ? `${resultInt}.${resultDec}` : resultInt;
+    toSignificantDigits(significantNumbers: number) {
+        return new Decimal(this.value).toSignificantDigits(significantNumbers); // This is hard, you know?
     }
 
     // Checks
