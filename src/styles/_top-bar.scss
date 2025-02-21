@@ -39,14 +39,12 @@
   left: 0;
   min-width: 200px;
   background: rgb(255, 255, 255);
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   opacity: 0;
   display: none;
   transform: translateY(-4px);
   transition: all 0.2s ease;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 4px;
+  padding: 0px;
 }
 .menu-item:hover > .dropdown,
 .has-submenu:hover > .submenu {
@@ -55,8 +53,8 @@
   transform: translateY(0);
 }
 .submenu {
-  left: calc(100% + 4px);
-  top: -5px;
+  left: 100%;
+  top: -1px; // Border
   z-index: 10; // Avoid overlap with the other buttons on the edge
 }
 .dropdown button,
@@ -70,8 +68,8 @@
   color: rgb(50, 50, 50);
   cursor: default;
   display: block;
-  border-radius: 3px;
   font-family: inherit;
+  line-height: 1.5;
 }
 .has-submenu {
   position: relative;
