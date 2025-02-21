@@ -15,7 +15,8 @@ Little backstory: I like SpeedCrunch a lot! But with the Finnish matriculation e
 
 - Familiar terminal style
 - Experimental LaTeX pasting support
-- Tokenizer based math engine (forked from Abicus)
+- Tokenizer based math parser (forked from Abicus)
+- Super fast math evaluation powered by [GMP and WASM](https://github.com/Daninet/gmp-wasm)
 - History (up and down arrow)
 - Progressive Web App for offline usage
 
@@ -30,7 +31,6 @@ Tada! You have a dev server running on :5173. Consult package.json 'scripts' for
 
 ## TODO
 
-- WASM
 - Variable support
 - Autocorrect / suggestions
 - Languages

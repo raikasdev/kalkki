@@ -1,7 +1,7 @@
 import { RefObject } from "preact";
 import { useCallback, useEffect } from "preact/hooks";
 import type { AppState } from '../app';
-import { calculate, calculateAsync } from "../math";
+import { calculateAsync } from "../math";
 import prettify from "../math/prettify";
 import { getOpenFunction, MathError, parseError } from "../util";
 import { getDocumentation } from "../functions";
