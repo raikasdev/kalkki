@@ -14,7 +14,7 @@ export default defineConfig({
         name: 'Abikalkki',
         short_name: 'Abikalkki',
         description: 'Selainpohjainen tieteislaskin',
-        theme_color: '#B2DC5B',
+        theme_color: '#1D2D35',
         icons: [
           {
             src: 'pwa-192x192.png',
