@@ -33,9 +33,7 @@ Tada! You have a dev server running on :5173. Consult package.json 'scripts' for
 - WASM
 - Variable support
 - Autocorrect / suggestions
-- Options / top bar
 - Languages
-- History (up down arrow)
 - Unit conversion
 
 ## License
