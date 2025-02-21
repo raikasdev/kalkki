@@ -46,7 +46,7 @@ export function App() {
         <div className={`welcome-message${appState.answers.length > 0 ? ' hidden' : ''}`}>
           <Logo height="128" width="128" />
           <h1>Kalkki</h1>
-          <p>Tervetuloa käyttämään Kalkkia!</p>
+          <p>Tervetuloa! Kalkki on <a href="https://github.com/raikasdev/kalkki">avointa lähdekoodia.</a></p>
           <p>Aloita kirjoittamalla lauseke alla olevaan kenttään.</p>
           {import.meta.env.VITE_HIDE_PWA_PROMPT !== 'true' && <p class="hide-pwa-prompt">Tietokoneella parhaan kokemuksen saat <span id="pwa-install-prompt" hidden><a href="#" onClick={() => (window as any).installPWA()}>asentamalla sen PWA-sovelluksena</a> tai </span><a href="/app">iframe-tilassa</a>.</p>}
         </div>

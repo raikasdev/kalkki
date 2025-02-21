@@ -9,7 +9,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV VITE_HIDE_PWA_PROMPT=true
-RUN bun run build
+RUN apk add git && bun run build
 
 
 FROM nginx:1.26.1
