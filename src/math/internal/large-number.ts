@@ -1,4 +1,4 @@
-import gmp from 'gmp-wasm';
+import { init, type GMPLib } from 'gmp-wasm';
 
 // Allows us to chain operations and run them in one go
 type Operation = 'abs' | 'acos' | 'acosh' | 'add' | 'agm' | 'ai' | 'asin' | 'asinh' | 'atan' | 'atanh' | 'beta' | 'cbrt' | 'ceil' | 'cos' | 'cosh' | 'cot' | 'coth' | 'csc' | 'csch' | 'digamma' | 'div' | 'eint' | 'erf' | 'erfc' | 'exp' | 'exp10' | 'exp2' | 'factorial' | 'floor' | 'fmod' | 'frac' | 'gamma' | 'invSqrt' | 'j0' | 'j1' | 'li2' | 'ln' | 'lngamma' | 'log10' | 'log2' | 'mul' | 'neg' | 'nextAbove' | 'nextBelow' | 'pow' | 'remainder' | 'round' | 'roundEven' | 'sec' | 'sech' | 'sin' | 'sinh' | 'sqrt' | 'sub' | 'tan' | 'tanh' | 'trunc' | 'y0' | 'y1' | 'zeta';
@@ -12,15 +12,7 @@ type NumberOperation = {
 /**
  * Wrapper for math operations
  */
-class LargeNumberOperation {
-    public static calculate: gmp.GMPLib['calculate'] | null = null;
-
-    public static async init() {
-        if (LargeNumberOperation.calculate != null) return;
-        const module = await gmp.init();
-        LargeNumberOperation.calculate = module.calculate;
-    }
-
+export class LargeNumberOperation {
     private operations: NumberOperation[] = [];
     private value: LargeNumber;
 
@@ -98,8 +90,8 @@ class LargeNumberOperation {
     zeta(): LargeNumberOperation { return this.op("zeta"); }
 
     run(): LargeNumber {
-        if (LargeNumberOperation.calculate == null) throw new Error('WASM not loaded');
-        const result = LargeNumberOperation.calculate((g) => {
+        if (LargeNumber.calculate == null) throw new Error('WASM not loaded');
+        const result = LargeNumber.calculate((g) => {
             let val = g.Float(this.value.toString());
             type Float = typeof val;
             function parseValue(val: OperationNum) {
@@ -120,6 +112,7 @@ class LargeNumberOperation {
                     case 'mul':
                     case 'remainder':
                     case 'sub':
+                    case 'pow':
                         if (!operation.value) throw new Error('Invalid operation');
                         val = val[operation.type](parseValue(operation.value)) as Float;
                         break;
@@ -178,6 +171,8 @@ class LargeNumberOperation {
                         if (operation.value) throw new Error('Invalid operation');;
                         val = val[operation.type]() as Float;
                         break;
+                    default:
+                        throw new Error('Unsupported operation');
                 }                
             }    
             return val;
@@ -190,18 +185,156 @@ class LargeNumberOperation {
  * Wrapper for massive nums
  */
 export class LargeNumber {
-    public static PI = new LargeNumber(-1).acos();
-    
-    private value: gmp.FloatType;
+    public static PI: LargeNumber | LargeNumberOperation = new LargeNumber(-1).acos();
+    public static E: LargeNumber | LargeNumberOperation = new LargeNumber(1).exp();
+    public static RAD_DEG_RATIO: LargeNumber | LargeNumberOperation = new LargeNumber(180).div(LargeNumber.PI);
+    public static TAN_PRECISION: LargeNumber | LargeNumberOperation = new LargeNumber(1).div(new LargeNumber("1000000000"));
+    public static calculate: GMPLib['calculate'] | null = null;
+    public static inited: boolean | Promise<void> = false;
+    public static async init() {
+        if (LargeNumber.inited instanceof Promise) {
+            await LargeNumber.inited;
+            return;
+        }
+        if (LargeNumber.calculate !== null) return;
+        LargeNumber.inited = new Promise(async (resolve) => {
+            const module = await init();
+            LargeNumber.calculate = module.calculate;
+            LargeNumber.PI = (LargeNumber.PI as LargeNumberOperation).run();
+            LargeNumber.E = (LargeNumber.E as LargeNumberOperation).run();
+            LargeNumber.RAD_DEG_RATIO = (LargeNumber.RAD_DEG_RATIO as LargeNumberOperation).run();
+            LargeNumber.TAN_PRECISION = (LargeNumber.TAN_PRECISION as LargeNumberOperation).run();
+            LargeNumber.inited = true;
+            resolve();
+        });
+        return LargeNumber.inited;
+    }
+
+    private value: string;
     constructor(number: number | string = 0) {
-        this.value = `${number}`; // Number is stored as string to not lose precision
+        this.value = `${number}`; // Number is stored as string to not lose precision, and because WASM gives it as such
     }
 
     toString() {
         return this.value;
     }
 
-    private op(): LargeNumberOperation {
+    toSignificantDigits(digits: number) {
+        // Split number into integer and decimal parts
+        let [intPart, decPart = ''] = this.value.split('.');
+
+        // Remove leading zeros from integer part
+        const cleanIntPart = intPart.replace(/^0+/, '') || '0';
+        
+        // Count significant digits in integer part (excluding leading zeros)
+        let significantDigits = cleanIntPart.length;
+        
+        // Initialize result parts
+        let resultInt = cleanIntPart;
+        let resultDec = '';
+        
+        // Handle decimal part if exists
+        if (decPart) {
+            resultDec = decPart;
+            // Count leading zeros in decimal part
+            const leadingZeros = decPart.match(/^0*/)![0].length;
+            // Add significant digits from decimal part
+            significantDigits += decPart.length - leadingZeros;
+        }
+        
+        // If we need to reduce significant digits
+        if (significantDigits > digits) {
+            if (cleanIntPart.length >= digits) {
+            // Round the integer part
+            resultInt = cleanIntPart.substring(0, digits) +
+                '0'.repeat(cleanIntPart.length - digits);
+            resultDec = '';
+            } else {
+            // We need to keep some decimal places
+            const neededFromDec = digits - cleanIntPart.length;
+            resultDec = decPart.substring(0, neededFromDec);
+            }
+        }
+        
+        // Count trailing zeros
+        const trailingZeros = (resultInt.match(/0*$/)![0] || '').length;
+        
+        // Check if scientific notation is needed (15 or more trailing zeros)
+        if (trailingZeros >= 15) {
+            const firstNonZero = resultInt.search(/[1-9]/);
+            const exponent = resultInt.length - firstNonZero - 1;
+            let mantissa = resultInt[firstNonZero];
+            
+            // Add decimal places to mantissa if needed
+            if (digits > 1) {
+            mantissa += '.' + resultInt.substring(firstNonZero + 1, firstNonZero + digits);
+            }
+            
+            return `${mantissa}e${exponent}`;
+        }
+        
+        // Combine results
+        return resultDec ? `${resultInt}.${resultDec}` : resultInt;
+    }
+
+    // Checks
+    isNaN() {
+        return this.value === 'NaN';
+    }
+
+    isFinite() {
+        return this.value !== 'Infinity' && this.value !== '-Infinity';
+    }
+
+    isNegative() {
+        return this.value.startsWith('-');
+    }
+
+    isInteger(): boolean {
+        if (LargeNumber.calculate == null) throw new Error('WASM not loaded');
+        return LargeNumber.calculate((g) => g.Float(this.value.toString()).isInteger(), { precisionBits: 170 }) as any === 'true';
+    }
+
+    // Comparations
+    lt(num: LargeNumber): boolean {
+        if (LargeNumber.calculate == null) throw new Error('WASM not loaded');
+        return LargeNumber.calculate((g) => {
+            let val = g.Float(this.value.toString());
+            return val.lessThan(num.toString());
+        }, { precisionBits: 170 }) as any === 'true';
+    }
+
+    gt(num: LargeNumber): boolean {
+        if (LargeNumber.calculate == null) throw new Error('WASM not loaded');
+        return LargeNumber.calculate((g) => {
+            let val = g.Float(this.value.toString());
+            return val.greaterThan(num.toString());
+        }, { precisionBits: 170 }) as any === 'true';
+    }
+
+    lte(num: LargeNumber): boolean {
+        if (LargeNumber.calculate == null) throw new Error('WASM not loaded');
+        return LargeNumber.calculate((g) => {
+            let val = g.Float(this.value.toString());
+            return val.lessOrEqual(num.toString());
+        }, { precisionBits: 170 }) as any === 'true';
+    }
+
+    gte(num: LargeNumber): boolean {
+        if (LargeNumber.calculate == null) throw new Error('WASM not loaded');
+        return LargeNumber.calculate((g) => {
+            let val = g.Float(this.value.toString());
+            return val.greaterOrEqual(num.toString());
+        }, { precisionBits: 170 }) as any === 'true';
+    }
+
+    // Arbitrary logarithm
+    log(base: LargeNumber) {
+        return this.op().ln().div(base.ln());
+    }
+
+    // Operations: modify value
+    op(): LargeNumberOperation {
         return new LargeNumberOperation(this);
     }
 
@@ -267,14 +400,4 @@ export class LargeNumber {
     zeta() { return this.op().zeta(); }
 }
 
-await LargeNumberOperation.init();
-console.log(
-    new LargeNumber(1)
-    .asin()
-    .mul(
-        new LargeNumber(180)
-        .div()
-    )
-    .run().toString()
-)
-
+(globalThis as any).LargeNumber = LargeNumber;

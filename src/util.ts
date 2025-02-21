@@ -25,6 +25,8 @@ export function parseError(error: MathError) {
       return 'odottamaton lausekkeen loppu';
     case "UNEXPECTED_TOKEN":
       return 'odottamaton symboli';
+    case "PRECISION_OVERFLOW":
+      return 'liian suuri numero laskettavaksi';
   }
 
   console.error('Unhandled error!', error);

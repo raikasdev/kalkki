@@ -1,4 +1,4 @@
-import Decimal from "decimal.js";
+import { LargeNumber, LargeNumberOperation } from "@/math/internal/large-number";
 import { err, ok, Ok, Result } from "neverthrow";
 import { isMatching, match, P, Pattern } from "ts-pattern";
 
@@ -6,12 +6,12 @@ import { AngleUnit } from "..";
 import { Token } from "./tokeniser";
 import { factorial, functions } from "./functions";
 
-const PI = Decimal.acos(-1);
-const E = Decimal.exp(1);
-const RAD_DEG_RATIO = new Decimal(180).div(PI);
-const TAN_PRECISION = new Decimal(1).div("1_000_000_000");
+const PI = LargeNumber.PI;
+const E = LargeNumber.E;
+const RAD_DEG_RATIO = LargeNumber.RAD_DEG_RATIO;
+const TAN_PRECISION = LargeNumber.TAN_PRECISION;
 
-export type EvalResult = Result<Decimal, EvalErrorId>;
+export type EvalResult = Result<LargeNumber, EvalErrorId>;
 export type EvalErrorId =
 	| "UNEXPECTED_EOF"
 	| "UNEXPECTED_TOKEN"
@@ -20,17 +20,18 @@ export type EvalErrorId =
 	| "INFINITY"
 	| "NO_LHS_BRACKET"
 	| "NO_RHS_BRACKET"
-	| "TRIG_PRECISION";
+	| "TRIG_PRECISION"
+	| "PRECISION_OVERFLOW";
 
 /**
- * Parses and evaluates a mathematical expression as a list of `Token`s into a `Decimal` value.
+ * Parses and evaluates a mathematical expression as a list of `Token`s into a `LargeNumber` value.
  *
  * The returned `Result` is either
- * - The value of the given expression as a `Decimal` object, or
+ * - The value of the given expression as a `LargeNumber` object, or
  * - A string representing a syntax error in the input
  *
  */
-export default function evaluate(tokens: Token[], ans: Decimal, ind: Decimal, angleUnit: AngleUnit): EvalResult {
+export default function evaluate(tokens: Token[], ans: LargeNumber, ind: LargeNumber, angleUnit: AngleUnit): EvalResult {
 	// This function is an otherwise stock-standard Pratt parser but instead
 	// of building a full AST as the `left` value, we instead eagerly evaluate
 	// the sub-expressions in the `led` parselets.
@@ -80,7 +81,7 @@ export default function evaluate(tokens: Token[], ans: Decimal, ind: Decimal, an
 		if (expect({ type: "lbrk" }, true).isErr()) return err("UNEXPECTED_TOKEN" as const);
 
 		// Parse arguments until we hit the closing bracket
-		const args: Decimal[] = [];
+		const args: LargeNumber[] = [];
 
 		while (true) {
 			const result = evalExpr(0);
@@ -116,11 +117,11 @@ export default function evaluate(tokens: Token[], ans: Decimal, ind: Decimal, an
 		return match(token)
 			.with(undefined, () => err("UNEXPECTED_EOF" as const))
 			.with({ type: "litr" }, token => ok(token.value))
-			.with({ type: "cons", name: "pi" }, () => ok(PI))
-			.with({ type: "cons", name: "e" }, () => ok(E))
+			.with({ type: "cons", name: "pi" }, () => ok(PI as LargeNumber))
+			.with({ type: "cons", name: "e" }, () => ok(E as LargeNumber))
 			.with({ type: "memo", name: "ans" }, () => ok(ans))
 			.with({ type: "memo", name: "ind" }, () => ok(ind))
-			.with({ type: "oper", name: "-" }, () => evalExpr(3).map(right => right.neg()))
+			.with({ type: "oper", name: "-" }, () => evalExpr(3).map(right => right.neg().run()))
 			.with({ type: "lbrk" }, () =>
 				evalExpr(0).andThen(value =>
 					expect({ type: "rbrk" }, true)
@@ -166,9 +167,8 @@ export default function evaluate(tokens: Token[], ans: Decimal, ind: Decimal, an
 				return ok(func(...args));
 			})
 			.with({ type: "func", name: P.union("sqrt", "ln", "sin", "cos", "tan", "asin", "acos", "atan") }, token => {
-				// Decimal.js methods
+				// LargeNumber methods
 				const funcName = token.name;
-				const func = Decimal[funcName].bind(Decimal);
 
 				const res = parseFunction();
 				if (res.isErr()) return err(res.error);
@@ -176,27 +176,32 @@ export default function evaluate(tokens: Token[], ans: Decimal, ind: Decimal, an
 
 				const { union, any } = P;
 				const argument = args[0]; // These only have one argument
+				const func = argument[funcName].bind(argument);
 
 				return match([angleUnit, funcName, args.length])
-					.with(["deg", union("sin", "cos"), 1], () => ok(func(degToRad(argument))))
-					.with(["deg", union("asin", "acos", "atan"), 1], () => ok(radToDeg(func(argument))))
+					.with(["deg", union("sin", "cos"), 1], () => {
+						const radians = degToRad(argument);
+
+						return ok(radians[funcName].bind(radians)().run())
+					})
+					.with(["deg", union("asin", "acos", "atan"), 1], () => ok(radToDeg(func()).run()))
 					.with([any, "tan", 1], () => {
-						const argInRads = angleUnit === "deg" ? degToRad(argument) : argument;
+						const argInRads = angleUnit === "deg" ? degToRad(argument).run() : argument;
 
 						// Tangent is undefined when the tangent line is parallel to the x-axis,
 						// since parallel lines, by definition, don't cross.
 						// The tangent is parallel when the argument is $ pi/2 + n × pi $ where
 						// $ n $ is an integer. Since we use an approximation for pi, we can only
 						// check if the argument is "close enough" to being an integer.
-						const coefficient = argInRads.sub(PI.div(2)).div(PI);
-						const distFromCriticalPoint = coefficient.sub(coefficient.round()).abs();
-						const isArgCritical = distFromCriticalPoint.lt(TAN_PRECISION);
+						const coefficient = argInRads.sub(PI.div(new LargeNumber(2))).div(PI);
+						const distFromCriticalPoint = coefficient.sub(coefficient.round()).abs().run();
+						const isArgCritical = distFromCriticalPoint.lt(TAN_PRECISION as LargeNumber);
 
 						if (isArgCritical) return err("TRIG_PRECISION" as const);
 
-						return ok(func(argInRads));
+						return ok(argInRads.tan().run());
 					})
-					.with([any, any, 1], () => ok(func(argument)))
+					.with([any, any, 1], () => ok(func().run()))
 					.otherwise(() => err("INVALID_ARG_COUNT" as const));
 			})
 			.otherwise(() => err("UNEXPECTED_TOKEN"));
@@ -208,15 +213,15 @@ export default function evaluate(tokens: Token[], ans: Decimal, ind: Decimal, an
 	 *
 	 * Returns the value of a sub-expression with a preceding (i.e. left) expression (i.e. value).
 	 */
-	function led(token: Token | undefined, left: Ok<Decimal, EvalErrorId>): EvalResult {
+	function led(token: Token | undefined, left: Ok<LargeNumber, EvalErrorId>): EvalResult {
 		return (
 			match(token)
 				.with(undefined, () => err("UNEXPECTED_EOF" as const))
-				.with({ type: "oper", name: "+" }, () => evalExpr(2).map(right => left.value.add(right)))
-				.with({ type: "oper", name: "-" }, () => evalExpr(2).map(right => left.value.sub(right)))
-				.with({ type: "oper", name: "*" }, () => evalExpr(3).map(right => left.value.mul(right)))
-				.with({ type: "oper", name: "/" }, () => evalExpr(3).map(right => left.value.div(right)))
-				.with({ type: "oper", name: "^" }, () => evalExpr(3).map(right => left.value.pow(right)))
+				.with({ type: "oper", name: "+" }, () => evalExpr(2).map(right => left.value.add(right).run()))
+				.with({ type: "oper", name: "-" }, () => evalExpr(2).map(right => left.value.sub(right).run()))
+				.with({ type: "oper", name: "*" }, () => evalExpr(3).map(right => left.value.mul(right).run()))
+				.with({ type: "oper", name: "/" }, () => evalExpr(3).map(right => left.value.div(right).run()))
+				.with({ type: "oper", name: "^" }, () => evalExpr(3).map(right => left.value.pow(right).run()))
 				.with({ type: "oper", name: "!" }, () => ok(factorial(left.value)))
 				// Right bracket should never get parsed by anything else than the left bracket parselet
 				.with({ type: "rbrk" }, () => err("NO_LHS_BRACKET" as const))
@@ -241,9 +246,9 @@ export default function evaluate(tokens: Token[], ans: Decimal, ind: Decimal, an
 		return err("UNEXPECTED_TOKEN");
 	} else if (result.isErr()) {
 		return result;
-	} else if (result.value?.isNaN()) {
+	} else if (result.value.isNaN()) {
 		return err("NOT_A_NUMBER");
-	} else if (!result.value?.isFinite()) {
+	} else if (!result.value.isFinite()) {
 		return err("INFINITY");
 	} else {
 		return result;
@@ -264,11 +269,11 @@ function lbp(token: Token) {
 }
 
 /** Converts the argument from degrees to radians */
-function degToRad(deg: Decimal) {
+function degToRad(deg: LargeNumber | LargeNumberOperation) {
 	return deg.div(RAD_DEG_RATIO);
 }
 
 /** Converts the argument from radians to degrees */
-function radToDeg(rad: Decimal) {
+function radToDeg(rad: LargeNumber | LargeNumberOperation) {
 	return rad.mul(RAD_DEG_RATIO);
 }

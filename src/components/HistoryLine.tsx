@@ -1,10 +1,10 @@
-import Decimal from "decimal.js";
+import { LargeNumber } from "@/math/internal/large-number";
 import { CircleAlert } from "lucide-react";
 import { RefObject } from "preact";
 
 export type HistoryLineData = {
   expression: string;
-  answer: Decimal;
+  answer: LargeNumber;
   latex: boolean;
 }
 

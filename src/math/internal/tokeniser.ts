@@ -1,7 +1,7 @@
-import Decimal from "decimal.js";
 import { err, ok, Result } from "neverthrow";
 import { match } from "ts-pattern";
 import { functions } from "./functions";
+import { LargeNumber } from "@/math/internal/large-number";
 
 /**
  * Represents an error where the tokeniser couldn't match the input to any token.
@@ -37,7 +37,7 @@ export type TokenId = ReturnType<TokenMatcher[1]>["type"];
  */
 export type Token<T extends TokenId = TokenId> = Extract<TokenAny, { type: T }>;
 
-export type DecimalFunctions = keyof typeof Decimal;
+export type DecimalFunctions = keyof typeof LargeNumber['prototype'];
 export type Functions = DecimalFunctions | keyof typeof functions;
 
 /**
@@ -57,7 +57,7 @@ const tokenMatchers = [
 		/^((\d+[,.]\d+)|([1-9]\d*)|0)/,
 		str => ({
 			type: "litr" as const,
-			value: new Decimal(str.replace(",", ".")),
+			value: new LargeNumber(str.replace(",", ".")),
 		}),
 	],
 	[

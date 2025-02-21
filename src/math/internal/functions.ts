@@ -1,22 +1,16 @@
-import Decimal from "decimal.js";
+import { LargeNumber, LargeNumberOperation } from "@/math/internal/large-number";
 
 /**
  * Calculates the factorial of a non-negative integer.
  * Returns an error if the input is negative or not an integer.
  */
-export function factorial(n: Decimal): Decimal {
-	if (n.isNegative()) return new Decimal(NaN);
-	if (!n.isInteger()) {return new Decimal(NaN);}
-
-	let result = new Decimal(1);
-	let current = 1; // Plain numbers are much faster
-
-	while (n.gte(current)) {
-		result = result.mul(current);
-		current++;
+export function factorial(n: LargeNumber): LargeNumber {
+	if (n.isNegative()) return new LargeNumber(NaN);
+	if (!n.isInteger()) {
+		return n.add(new LargeNumber(1)).gamma().run();
 	}
 
-	return result;
+	return n.factorial().run();
 }
 
 /**
@@ -24,32 +18,32 @@ export function factorial(n: Decimal): Decimal {
  * @param base Log base
  * @param x Value to log
  */
-function log(base: Decimal, x: Decimal | undefined = undefined): Decimal {
-	if (!x) return new Decimal(NaN);
-	return x.log(base);
+function log(base: LargeNumber, x: LargeNumber | undefined = undefined): LargeNumber {
+	if (!x) return new LargeNumber(NaN);
+	return x.log(base).run();
 }
 
-function lg(x: Decimal) {
-	return log(new Decimal(10), x);
+function lg(x: LargeNumber): LargeNumber {
+	return log(new LargeNumber(10), x);
 }
 
-function ncr(n: Decimal, r: Decimal | undefined = undefined) {
-	if (!r) return new Decimal(NaN);
-	if (r.gt(n)) return new Decimal(0);
-	return factorial(n).div(factorial(r).times(factorial(n.sub(r))));
+function ncr(n: LargeNumber, r: LargeNumber | undefined = undefined): LargeNumber {
+	if (!r) return new LargeNumber(NaN);
+	if (r.gt(n)) return new LargeNumber(0);
+	return factorial(n).div(factorial(r).mul(factorial(n.sub(r).run()))).run();
 }
 
-function npr(n: Decimal, r: Decimal | undefined = undefined) {
-	if (!r) return new Decimal(NaN);
-	if (r.gt(n)) return new Decimal(0);
-	return factorial(n).div(factorial(n.sub(r)));
+function npr(n: LargeNumber, r: LargeNumber | undefined = undefined): LargeNumber {
+	if (!r) return new LargeNumber(NaN);
+	if (r.gt(n)) return new LargeNumber(0);
+	return factorial(n).div(factorial(n.sub(r).run())).run();
 }
 
-function average(...nums: Decimal[]) {
-	if (nums.length === 0) return new Decimal(0);
+function average(...nums: LargeNumber[]): LargeNumber {
+	if (nums.length === 0) return new LargeNumber(0);
 	if (nums.length === 1) return nums[0];
-	const total = nums.reduce((a, b) => a.add(b), new Decimal(0));
-	return total.div(nums.length);
+	const total = nums.reduce((a, b) => a.add(b), new LargeNumber(0).op());
+	return total.div(new LargeNumber(nums.length)).run();
 }
 
 export const functions = {

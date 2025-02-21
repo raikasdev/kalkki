@@ -1,6 +1,6 @@
 <h1 align="center">
-  <img src="/public/abikalkki.svg" height="96" width="96">
-  <div>abikalkki</div>
+  <img src="/public/kalkki.svg" height="96" width="96">
+  <div>kalkki</div>
 </h1>
 
 <div align="center">

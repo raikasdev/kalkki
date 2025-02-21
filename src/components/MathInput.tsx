@@ -1,7 +1,7 @@
 import { RefObject } from "preact";
 import { useCallback, useEffect } from "preact/hooks";
 import type { AppState } from '../app';
-import { calculate } from "../math";
+import { calculate, calculateAsync } from "../math";
 import prettify from "../math/prettify";
 import { getOpenFunction, MathError, parseError } from "../util";
 import { getDocumentation } from "../functions";
@@ -29,7 +29,7 @@ export default function MathInput({
       // Don't capture if trying to do control something
       if (e.key === 'Control' || e.key === 'Alt') return;
       if (e.ctrlKey || e.altKey) return;
-      
+
       inputRef.current?.focus();
     };
 
@@ -47,16 +47,22 @@ export default function MathInput({
     };
   }, []);
 
-  const processInput = useCallback((event: KeyboardEvent) => {
+  const processInput = useCallback(async (event: KeyboardEvent) => {
     if (!inputRef.current) return;
     const input = inputRef.current.value;
 
     if (event.key === 'Enter') {
       event.preventDefault();
-      const res = calculate(input, answer, ind, options.degreeUnit);
+
+      inputRef.current.disabled = true;
+      const res = await calculateAsync(input, answer, ind, options.degreeUnit);
+      inputRef.current.disabled = false;
+      inputRef.current.focus();
+
       if (res.isErr()) {
         return;
       }
+
       const { value } = res;
       setState({
         answer: value,
@@ -91,7 +97,7 @@ export default function MathInput({
         }
       }
 
-      const res = calculate(input, answer, ind, "deg");
+      const res = await calculateAsync(input, answer, ind, "deg");
       if (res.isErr()) {
         setState({
           extraInfo: parseError(res.error as unknown as MathError),

@@ -8,6 +8,7 @@ FROM oven/bun:1.2-alpine AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+ENV VITE_HIDE_PWA_PROMPT=true
 RUN bun run build
 
 
