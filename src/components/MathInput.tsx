@@ -26,6 +26,10 @@ export default function MathInput({
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
       }
+      // Don't capture if trying to do control something
+      if (e.key === 'Control' || e.key === 'Alt') return;
+      if (e.ctrlKey || e.altKey) return;
+      
       inputRef.current?.focus();
     };
 
