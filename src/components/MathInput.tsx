@@ -96,8 +96,7 @@ export default function MathInput({
           return;
         }
       }
-
-      const res = await calculateAsync(input, answer, ind, "deg");
+      const res = await calculateAsync(input, answer, ind, options.degreeUnit);
       if (res.isErr()) {
         setState({
           extraInfo: parseError(res.error as unknown as MathError),

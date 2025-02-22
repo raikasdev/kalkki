@@ -18,8 +18,8 @@ export function calculate(expression: string, ans: LargeNumber, ind: LargeNumber
 	const tokens = tokenise(expression);
 	if (tokens.isErr()) return err(tokens);
 	try {
-		if (resultCache.has(expression)) {
-			return resultCache.get(expression);
+		if (resultCache.has(`${angleUnit}:${ans}:${ind}:${expression}`)) {
+			return resultCache.get(`${angleUnit}:${ans}:${ind}:${expression}`);
 		}
 		const result = evaluate(tokens.value, ans, ind, angleUnit);
 		if (result.isErr()) {
@@ -27,7 +27,7 @@ export function calculate(expression: string, ans: LargeNumber, ind: LargeNumber
 		}
 
 		const res = ok(result.value);
-		resultCache.set(expression, res); // The preview has probably already calculated the value, so no need to recalc
+		resultCache.set(`${angleUnit}:${ans}:${ind}:${expression}`, res); // The preview has probably already calculated the value, so no need to recalc
 		return res;
 	} catch (err) {
 		// Usually means out-of-bits
@@ -70,8 +70,8 @@ async function getWorker(cb: (w: Worker) => Promise<void>) {
 
 export function calculateAsync(expression: string, ans: LargeNumber, ind: LargeNumber, angleUnit: AngleUnit): Promise<ReturnType<typeof calculate>> {
 	return new Promise((resolve) => {
-		if (resultCache.has(expression)) {
-			resolve(resultCache.get(expression));
+		if (resultCache.has(`${angleUnit}:${ans}:${ind}:${expression}`)) {
+			resolve(resultCache.get(`${angleUnit}:${ans}:${ind}:${expression}`));
 		}
 
 		const randomId = Math.random().toString(16).substring(2);
@@ -96,7 +96,7 @@ export function calculateAsync(expression: string, ans: LargeNumber, ind: LargeN
 				if (data.value) {
 					// Workers have individual caches, so have to do this here too
 					const value = ok(new LargeNumber(data.value.value));
-					resultCache.set(expression, value);
+					resultCache.set(`${angleUnit}:${ans}:${ind}:${expression}`, value);
 					resolve(value);
 				} else {
 					resolve(err(data.error));

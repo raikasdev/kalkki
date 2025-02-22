@@ -220,8 +220,11 @@ export class LargeNumber {
         return this.value;
     }
 
-    toSignificantDigits(significantNumbers: number) {
-        return new Decimal(this.value).toSignificantDigits(significantNumbers); // This is hard, you know?
+    toSignificantDigits(digits: number) {
+        const dec = new Decimal(this.value);
+        return dec.isInteger() // This is hard, you know?
+            ? dec.toSignificantDigits(digits)
+            : dec.toDecimalPlaces(digits);
     }
 
     // Checks
