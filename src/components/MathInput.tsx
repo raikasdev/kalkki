@@ -1,10 +1,10 @@
 import { RefObject } from "preact";
 import { useCallback, useEffect } from "preact/hooks";
-import type { AppState } from '../app';
+import type { AppState } from '../App';
 import { calculateAsync } from "../math";
 import prettify from "../math/prettify";
 import { getOpenFunction, MathError, parseError } from "../util";
-import { getDocumentation } from "../functions";
+import { getDocumentation } from "../util/documentation";
 import { latexToMath } from "../math/latex-to-math";
 import { Options } from "./TopBar";
 
@@ -55,7 +55,7 @@ export default function MathInput({
       event.preventDefault();
 
       inputRef.current.disabled = true;
-      const res = await calculateAsync(input, answer, ind, options.degreeUnit);
+      const res = await calculateAsync(input, answer, ind, options.angleUnit);
       inputRef.current.disabled = false;
       inputRef.current.focus();
 
@@ -96,7 +96,7 @@ export default function MathInput({
           return;
         }
       }
-      const res = await calculateAsync(input, answer, ind, options.degreeUnit);
+      const res = await calculateAsync(input, answer, ind, options.angleUnit);
       if (res.isErr()) {
         setState({
           extraInfo: parseError(res.error as unknown as MathError),

@@ -1,5 +1,5 @@
-import { LexicalError } from "./math/internal/tokeniser";
-import { EvalErrorId } from "./math/internal/evaluator";
+import { LexicalError } from "../math/internal/tokeniser";
+import { EvalErrorId } from "../math/internal/evaluator";
 
 export type MathError = EvalErrorId | { error: LexicalError };
 export function parseError(error: MathError) {

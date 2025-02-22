@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'preact/hooks'
 import Logo from './components/Logo';
 import HistoryLine, { HistoryLineData } from './components/HistoryLine';
-import { useObjectState } from './use-object-state';
+import { useObjectState } from './util/use-object-state';
 import MathInput from './components/MathInput';
 import { Options, TopBar } from './components/TopBar';
 import './styles/app.scss'
 import { LargeNumber } from '@/math/internal/large-number';
 import { prepareWorker } from '@/math';
+import { translate } from '@/lang';
 
 export type AppState = {
   answer: LargeNumber;
@@ -19,10 +20,16 @@ export type AppState = {
   historyIndex: number;
 }
 
+const DEFAULT_OPTIONS = {
+  angleUnit: 'deg',
+  resultAccuracy: 8,
+  language: 'fi',
+};
+
 export function App() {
   const [options, setOptions] = useObjectState<Options>({
-    degreeUnit: 'deg',
-    resultAccuracy: 8
+    ...DEFAULT_OPTIONS,
+    ...JSON.parse(localStorage.getItem('kalkki-options') ?? '{}')
   });
   const [appState, setAppState] = useObjectState<AppState>({
     answer: new LargeNumber(0),
@@ -34,9 +41,14 @@ export function App() {
     workHistory: [], // User may edit these
     historyIndex: -1,
   });
+
   useEffect(() => {
     prepareWorker();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('kalkki-options', JSON.stringify(options));
+  }, [options]);
 
   const inputRef = useRef<HTMLInputElement>(null);
   return (
@@ -46,9 +58,13 @@ export function App() {
         <div className={`welcome-message${appState.answers.length > 0 ? ' hidden' : ''}`}>
           <Logo height="128" width="128" />
           <h1>Kalkki</h1>
-          <p>Tervetuloa! Kalkki on <a href="https://github.com/raikasdev/kalkki">avointa lähdekoodia.</a></p>
-          <p>Aloita kirjoittamalla lauseke alla olevaan kenttään.</p>
-          {import.meta.env.VITE_HIDE_PWA_PROMPT !== 'true' && <p class="hide-pwa-prompt">Tietokoneella parhaan kokemuksen saat <span id="pwa-install-prompt" hidden><a href="#" onClick={() => (window as any).installPWA()}>asentamalla sen PWA-sovelluksena</a> tai </span><a href="/app">iframe-tilassa</a>.</p>}
+          <p dangerouslySetInnerHTML={{ __html: translate('welcome', options.language) }} />
+          <p>{translate('welcomeStart', options.language)}</p>
+          {
+            import.meta.env.VITE_HIDE_PWA_PROMPT !== 'true' && (
+              <p class="hide-pwa-prompt" dangerouslySetInnerHTML={{ __html: translate('welcomePwaPrompt', options.language) }} />
+            )
+          }
         </div>
         {appState.answers.map((line, index) => <HistoryLine key={`line-${index}`} inputRef={inputRef} {...line} accuracy={options.resultAccuracy} />)}
       </div>

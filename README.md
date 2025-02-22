@@ -35,6 +35,7 @@ Tada! You have a dev server running on :5173. Consult package.json 'scripts' for
 - Autocorrect / suggestions
 - Languages
 - Unit conversion
+- Make the LaTeX support more stable
 
 ## License
 
