@@ -125,7 +125,7 @@ export default function evaluate(tokens: Token[], ans: LargeNumber, ind: LargeNu
 						.mapErr(() => "NO_RHS_BRACKET" as const)
 				)
 			)
-			.with({ type: "func", name: P.union("lg")}, token => {
+			.with({ type: "func", name: P.union("lg", "degrees", "radians")}, token => {
 				// Custom methods with one argument
 				const funcName = token.name;
 				const func = functions[funcName];
@@ -139,7 +139,7 @@ export default function evaluate(tokens: Token[], ans: LargeNumber, ind: LargeNu
 					.otherwise(() => err("INVALID_ARG_COUNT" as const));
 			})
 			.with({ type: "func", name: P.union("log", "ncr", "npr")}, token => {
-				// Custom methods with one argument
+				// Custom methods with two arguments
 				const funcName = token.name;
 				const func = functions[funcName];
 
@@ -162,7 +162,12 @@ export default function evaluate(tokens: Token[], ans: LargeNumber, ind: LargeNu
 
 				return ok(func(...args));
 			})
-			.with({ type: "func", name: P.union("sqrt", "ln", "sin", "cos", "tan", "asin", "acos", "atan") }, token => {
+			.with({ type: "func", name: P.union(
+				"sqrt", "ln", "sin", "cos", "tan", "asin",
+				"acos", "atan", "exp", "floor", "ceil", "acosh",
+				"asinh", 'atanh', "gamma", "trunc", "erf",
+				"erfc", "csc", "cot", "cbrt",
+			) }, token => {
 				// LargeNumber methods
 				const funcName = token.name;
 

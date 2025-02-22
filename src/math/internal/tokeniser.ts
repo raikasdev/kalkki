@@ -92,7 +92,7 @@ const tokenMatchers = [
 	],
 	[
 		// Constants: "pi", "e", and unicode variations
-		/^(pi|π|e|ℇ|𝑒|ℯ)/i,
+		/^(pi|π|e(?![a-z]+\()|ℇ|𝑒|ℯ)/i,
 		str => ({
 			type: "cons" as const,
 			name: match(str.toLowerCase())
@@ -126,7 +126,8 @@ const tokenMatchers = [
 				/^((a(rc)?)?(sin|cos|tan))/,
 				/^(log|lg|ln)/,
 				/^(sqrt|√)/,
-				/^(ncr|npr|average)/,
+				/^(ncr|npr|average|exp|floor|ceil|gamma|trunc|erf|efrc|csc|cot|degrees|radians|cbrt)/,
+				/^(a(?:r)?(sin|cos|tan)h)/,
 			]
 				.map(subRegex => subRegex.source)
 				.join("|"),
@@ -135,12 +136,23 @@ const tokenMatchers = [
 		str => ({
 			type: "func" as const,
 			name: match(str.toLowerCase())
-				.with("sqrt", "ln", "lg", "sin", "cos", "tan", "asin", "acos", "atan", "ncr", "npr", "average", name => name)
+				.with(
+					"sqrt", "ln", "lg", "sin", "cos", "tan",
+					"asin", "acos", "atan", "ncr", "npr",
+					"average", "exp", "floor", "ceil", "acosh",
+					"asinh", 'atanh', "gamma", "trunc", "erf",
+					"erfc", "csc", "cot", "degrees", "radians",
+					"cbrt",
+					name => name
+				)
 				.with("log", "log10", () => "log" as const)
 				.with("√", () => "sqrt" as const)
 				.with("arcsin", () => "asin" as const)
 				.with("arccos", () => "acos" as const)
 				.with("arctan", () => "atan" as const)
+				.with("arsinh", () => "asinh" as const)
+				.with("arcosh", () => "acosh" as const)
+				.with("artanh", () => "atanh" as const)
 				.otherwise(name => {
 					throw Error(`Programmer error: neglected function "${name}"`);
 				}) satisfies Functions,

@@ -46,10 +46,20 @@ function average(...nums: LargeNumber[]): LargeNumber {
 	return total.div(new LargeNumber(nums.length)).run();
 }
 
+function radians(deg: LargeNumber): LargeNumber {
+	return deg.div(LargeNumber.RAD_DEG_RATIO).run();
+}
+
+function degrees(rad: LargeNumber): LargeNumber {
+	return rad.mul(LargeNumber.RAD_DEG_RATIO).run();
+}
+
 export const functions = {
 	log,
 	lg,
 	ncr,
 	npr,
 	average,
+	radians,
+	degrees,
 } as const;

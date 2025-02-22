@@ -90,7 +90,7 @@ export class LargeNumberOperation {
     y1(): LargeNumberOperation { return this.op("y1"); }
     zeta(): LargeNumberOperation { return this.op("zeta"); }
 
-    run(): LargeNumber {
+    run(precisionBits = 170): LargeNumber {
         if (LargeNumber.calculate == null) throw new Error('WASM not loaded');
         const result = LargeNumber.calculate((g) => {
             let val = g.Float(this.value.toString());
@@ -177,7 +177,7 @@ export class LargeNumberOperation {
                 }                
             }    
             return val;
-        }, { precisionBits: 170 }) as any; // ~51 numbers
+        }, { precisionBits }) as any; // 170 = ~51 digits
         return new LargeNumber(result);
     };
 }
@@ -221,10 +221,13 @@ export class LargeNumber {
     }
 
     toSignificantDigits(digits: number) {
-        const dec = new Decimal(this.value);
-        return dec.isInteger() // This is hard, you know?
-            ? dec.toSignificantDigits(digits)
-            : dec.toDecimalPlaces(digits);
+        const significant = new Decimal(this.value).toSignificantDigits(digits);
+        // If the number has a scientific notation of exactly the bit precision (170 = 51), we should count it as zero (for example sin(pi) != 0)
+        if (significant.toString().endsWith('-51')) {
+            return new Decimal(0);
+        }
+
+        return significant;
     }
 
     // Checks
@@ -349,5 +352,3 @@ export class LargeNumber {
     y1() { return this.op().y1(); }
     zeta() { return this.op().zeta(); }
 }
-
-(globalThis as any).LargeNumber = LargeNumber;
