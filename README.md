@@ -33,7 +33,6 @@ Tada! You have a dev server running on :5173. Consult package.json 'scripts' for
 
 - Variable support
 - Autocorrect / suggestions
-- Languages
 - Unit conversion
 - Make the LaTeX support more stable
 
