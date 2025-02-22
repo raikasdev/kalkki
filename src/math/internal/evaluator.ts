@@ -6,11 +6,6 @@ import { AngleUnit } from "..";
 import { Token } from "./tokeniser";
 import { factorial, functions } from "./functions";
 
-const PI = LargeNumber.PI;
-const E = LargeNumber.E;
-const RAD_DEG_RATIO = LargeNumber.RAD_DEG_RATIO;
-const TAN_PRECISION = LargeNumber.TAN_PRECISION;
-
 export type EvalResult = Result<LargeNumber, EvalErrorId>;
 export type EvalErrorId =
 	| "UNEXPECTED_EOF"
@@ -21,7 +16,8 @@ export type EvalErrorId =
 	| "NO_LHS_BRACKET"
 	| "NO_RHS_BRACKET"
 	| "TRIG_PRECISION"
-	| "PRECISION_OVERFLOW";
+	| "PRECISION_OVERFLOW"
+	| "TIMEOUT";
 
 /**
  * Parses and evaluates a mathematical expression as a list of `Token`s into a `LargeNumber` value.
@@ -117,8 +113,8 @@ export default function evaluate(tokens: Token[], ans: LargeNumber, ind: LargeNu
 		return match(token)
 			.with(undefined, () => err("UNEXPECTED_EOF" as const))
 			.with({ type: "litr" }, token => ok(token.value))
-			.with({ type: "cons", name: "pi" }, () => ok(PI as LargeNumber))
-			.with({ type: "cons", name: "e" }, () => ok(E as LargeNumber))
+			.with({ type: "cons", name: "pi" }, () => ok(LargeNumber.PI as LargeNumber))
+			.with({ type: "cons", name: "e" }, () => ok(LargeNumber.E as LargeNumber))
 			.with({ type: "memo", name: "ans" }, () => ok(ans))
 			.with({ type: "memo", name: "ind" }, () => ok(ind))
 			.with({ type: "oper", name: "-" }, () => evalExpr(3).map(right => right.neg().run()))
@@ -193,9 +189,9 @@ export default function evaluate(tokens: Token[], ans: LargeNumber, ind: LargeNu
 						// The tangent is parallel when the argument is $ pi/2 + n × pi $ where
 						// $ n $ is an integer. Since we use an approximation for pi, we can only
 						// check if the argument is "close enough" to being an integer.
-						const coefficient = argInRads.sub(PI.div(new LargeNumber(2))).div(PI);
+						const coefficient = argInRads.sub(LargeNumber.PI.div(new LargeNumber(2))).div(LargeNumber.PI);
 						const distFromCriticalPoint = coefficient.sub(coefficient.round()).abs().run();
-						const isArgCritical = distFromCriticalPoint.lt(TAN_PRECISION as LargeNumber);
+						const isArgCritical = distFromCriticalPoint.lt(LargeNumber.TAN_PRECISION as LargeNumber);
 
 						if (isArgCritical) return err("TRIG_PRECISION" as const);
 
@@ -270,10 +266,10 @@ function lbp(token: Token) {
 
 /** Converts the argument from degrees to radians */
 function degToRad(deg: LargeNumber | LargeNumberOperation) {
-	return deg.div(RAD_DEG_RATIO);
+	return deg.div(LargeNumber.RAD_DEG_RATIO);
 }
 
 /** Converts the argument from radians to degrees */
 function radToDeg(rad: LargeNumber | LargeNumberOperation) {
-	return rad.mul(RAD_DEG_RATIO);
+	return rad.mul(LargeNumber.RAD_DEG_RATIO);
 }

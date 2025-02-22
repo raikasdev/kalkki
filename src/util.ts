@@ -27,6 +27,8 @@ export function parseError(error: MathError) {
       return 'odottamaton symboli';
     case "PRECISION_OVERFLOW":
       return 'liian suuri numero laskettavaksi';
+    case "TIMEOUT":
+      return "virhe: laskuoperaatio kesti liian kauan"
   }
 
   console.error('Unhandled error!', error);

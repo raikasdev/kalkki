@@ -32,6 +32,7 @@ export function calculate(expression: string, ans: LargeNumber, ind: LargeNumber
 	} catch (err) {
 		// Usually means out-of-bits
 		// Can't err here for some reason...
+		console.error("Execution fail", err)
 	}
 	return err("PRECISION_OVERFLOW");
 }
@@ -49,13 +50,21 @@ async function getWorker(cb: (w: Worker) => Promise<void>) {
 	let worker = workers.pop();
 	if (!worker) {
 		worker = new Worker();
+		worker.postMessage(JSON.stringify({ type: 'init' }));
 	}
-	await cb(worker);
+	try {
+		await cb(worker);
 
-	if (workers.length === 0) {
-		workers.push(worker); // Return to pool
-	} else {
-		worker.terminate(); // Theres a worker available in the pool
+		if (workers.length === 0) {
+			workers.push(worker); // Return to pool
+		} else {
+			worker.terminate(); // Theres a worker available in the pool
+		}
+	} catch (e) {
+		worker.terminate();
+		if (workers.length === 0) {
+			await getWorker(async () => {}); // New one into pool
+		}
 	}
 }
 
@@ -66,18 +75,24 @@ export function calculateAsync(expression: string, ans: LargeNumber, ind: LargeN
 		}
 
 		const randomId = Math.random().toString(16).substring(2);
-		getWorker((w) => new Promise((innerResolve) => {
+		getWorker((w) => new Promise((innerResolve, innerReject) => {
 			w.postMessage(JSON.stringify({
 				type: 'calculate',
 				id: randomId,
 				data: [expression, ans.toString(), ind.toString(), angleUnit],
 			}));
 
+			const timeoutTimer = setTimeout(() => {
+				resolve(err("TIMEOUT"));
+				innerReject(new Error('Operation timeout'));
+			}, 5000);
+
 			function listener(e: MessageEvent<string>) {
 				const data: { id?: string; value?: any; error?: any; } = JSON.parse(e.data);
 				if (data.id !== randomId) return;
 				delete data.id;
 				w.removeEventListener('message', listener);
+				clearTimeout(timeoutTimer);
 				if (data.value) {
 					// Workers have individual caches, so have to do this here too
 					const value = ok(new LargeNumber(data.value.value));
