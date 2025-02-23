@@ -5,6 +5,7 @@ export type Options = {
   language: Language;
   angleUnit: 'deg' | 'rad';
   resultAccuracy: number;
+  preserveSessions: boolean;
 }
 
 function OptionButton({ currentValue, set, children, lang }: {
@@ -102,6 +103,25 @@ export function TopBar({ options, setOptions }: {
                   lang={options.language}
                 >
                   50 {translate("optionsPrecisionNumber", options.language)}
+                </OptionButton>
+              </ul>
+            </li>
+            <li className="has-submenu">
+              <span>{translate("optionsPreserveSession", options.language)}</span>
+              <ul className="submenu">
+                <OptionButton
+                  currentValue={options.preserveSessions === true}
+                  set={() => setOptions({ preserveSessions: true })}
+                  lang={options.language}
+                >
+                  {translate("optionsYes", options.language)}
+                </OptionButton>
+                <OptionButton
+                  currentValue={options.preserveSessions === false}
+                  set={() => setOptions({ preserveSessions: false })}
+                  lang={options.language}
+                >
+                  {translate("optionsNo", options.language)}
                 </OptionButton>
               </ul>
             </li>

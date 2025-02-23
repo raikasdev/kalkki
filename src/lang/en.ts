@@ -14,8 +14,13 @@ export const en: typeof fi = {
   optionsLanguage: 'Language',
   optionsPrecision: 'Result precision',
   optionsPrecisionNumber: 'digits',
+  optionsPreserveSession: 'Preserve session',
+  optionsYes: 'Yes',
+  optionsNo: 'No',
   /** Updater */
   updateAvailable: 'New version available',
   updateAvailableDescription: 'You are using an old version of Kalkki. Please update the app by pressing the button below.',
   updateAvailableButton: 'Update',
+  /** Misc / ARIA */
+  ariaMathInput: 'Input mathematical expression',
 }

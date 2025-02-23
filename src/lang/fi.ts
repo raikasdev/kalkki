@@ -12,8 +12,13 @@ export const fi = {
   optionsLanguage: 'Kieli',
   optionsPrecision: 'Tuloksen tarkkuus',
   optionsPrecisionNumber: 'numeroa',
+  optionsPreserveSession: 'Säilytä istunto',
+  optionsYes: 'Kyllä',
+  optionsNo: 'Ei',
   /** Updater */
   updateAvailable: 'Uusi versio saatavilla',
   updateAvailableDescription: 'Käytössäsi on Kalkin vanha versio. Ole hyvä ja päivitä sovellus painamalla alla olevaa nappia.',
   updateAvailableButton: 'Päivitä',
+  /** Misc / ARIA */
+  ariaMathInput: 'Syötä matemaattinen lauseke',
 }

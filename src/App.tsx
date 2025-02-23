@@ -25,6 +25,7 @@ const DEFAULT_OPTIONS = {
   angleUnit: 'deg',
   resultAccuracy: 8,
   language: getDefaultLanguage(),
+  preserveSessions: false, // Off by default, so multiple tabs don't interfere with each other
 };
 
 function getDefaultAppState(): AppState {
@@ -69,11 +70,16 @@ export function App() {
   // Save options and history to localStorage
   useEffect(() => {
     localStorage.setItem('kalkki-options', JSON.stringify(options));
+    if (!options.preserveSessions) {
+      localStorage.removeItem('kalkki-history');
+      return;
+    }
+
     localStorage.setItem('kalkki-history', JSON.stringify({
       history: appState.history,
       answers: appState.answers.map((i) => ({ ...i, answer: i.answer.toString() })), // Class value needs to be serialized
     }));
-  }, [options, appState]);
+  }, [options, appState, options]);
 
 
   const inputRef = useRef<HTMLInputElement>(null);

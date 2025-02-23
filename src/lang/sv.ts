@@ -14,8 +14,13 @@ export const sv: typeof fi = {
   optionsLanguage: 'Språk',
   optionsPrecision: 'Resultatprecision',
   optionsPrecisionNumber: 'siffror',
+  optionsPreserveSession: 'Behåll session',
+  optionsYes: 'Ja',
+  optionsNo: 'Nej',
   /** Updater */
   updateAvailable: 'Ny version tillgänglig',
   updateAvailableDescription: 'Du använder en gammal version av Kalkki. Var vänlig och uppdatera appen genom att trycka på knappen nedan.',
   updateAvailableButton: 'Uppdatera',
+  /** Misc / ARIA */
+  ariaMathInput: 'Ange matematisk uttryck',
 }

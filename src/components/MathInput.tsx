@@ -7,6 +7,7 @@ import { getOpenFunction, MathError, parseError } from "../util";
 import { getDocumentation } from "../util/documentation";
 import { latexToMath } from "../math/latex-to-math";
 import { Options } from "./TopBar";
+import { translate } from "@/lang";
 
 export default function MathInput({
   state: { answer, answers, extraInfo, ind, latex, history, workHistory, historyIndex },
@@ -200,6 +201,7 @@ export default function MathInput({
         autoFocus
         spellcheck={false}
         autocomplete="off"
+        aria-label={translate('ariaMathInput', options.language)}
       />
     </div>
   )
