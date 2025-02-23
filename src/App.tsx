@@ -7,7 +7,8 @@ import { Options, TopBar } from './components/TopBar';
 import './styles/app.scss'
 import { LargeNumber } from '@/math/internal/large-number';
 import { prepareWorker } from '@/math';
-import { translate } from '@/lang';
+import { getDefaultLanguage, translate } from '@/lang';
+import { AutoUpdate } from '@/components/AutoUpdate';
 
 export type AppState = {
   answer: LargeNumber;
@@ -23,7 +24,7 @@ export type AppState = {
 const DEFAULT_OPTIONS = {
   angleUnit: 'deg',
   resultAccuracy: 8,
-  language: 'fi',
+  language: getDefaultLanguage(),
 };
 
 export function App() {
@@ -69,6 +70,7 @@ export function App() {
         {appState.answers.map((line, index) => <HistoryLine key={`line-${index}`} inputRef={inputRef} {...line} accuracy={options.resultAccuracy} />)}
       </div>
       <MathInput inputRef={inputRef} state={appState} setState={setAppState} options={options} />
+      {import.meta.env.VITE_DISABLE_AUTO_UPDATE !== 'true' && <AutoUpdate language={options.language} />}
     </>
   )
 }
