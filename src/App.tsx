@@ -27,12 +27,8 @@ const DEFAULT_OPTIONS = {
   language: getDefaultLanguage(),
 };
 
-export function App() {
-  const [options, setOptions] = useObjectState<Options>({
-    ...DEFAULT_OPTIONS,
-    ...JSON.parse(localStorage.getItem('kalkki-options') ?? '{}')
-  });
-  const [appState, setAppState] = useObjectState<AppState>({
+function getDefaultAppState(): AppState {
+  const appState: AppState = {
     answer: new LargeNumber(0),
     ind: new LargeNumber(0),
     answers: [],
@@ -41,15 +37,44 @@ export function App() {
     history: [], // Only past commands
     workHistory: [], // User may edit these
     historyIndex: -1,
-  });
+  };
 
+  if (localStorage.getItem('kalkki-history') === null) return appState;
+  try {
+    const { history, answers } = JSON.parse(localStorage.getItem('kalkki-history') ?? '{}');
+    if (!history || !answers) throw new Error('Invalid history data');
+    appState.history = history;
+    appState.workHistory = history;
+    appState.answers = answers.map((i: Record<string, string>) => ({ ...i, answer: new LargeNumber(i.answer) }));
+  } catch (e) {
+    console.error('Loading history from local storage failed!', e);
+    localStorage.removeItem('kalkki-history');
+  }
+
+  return appState;
+}
+
+export function App() {
+  const [options, setOptions] = useObjectState<Options>({
+    ...DEFAULT_OPTIONS,
+    ...JSON.parse(localStorage.getItem('kalkki-options') ?? '{}')
+  });
+  const [appState, setAppState] = useObjectState<AppState>(getDefaultAppState());
+
+  // Prepare one math worker to be ready in the pool
   useEffect(() => {
     prepareWorker();
   }, []);
 
+  // Save options and history to localStorage
   useEffect(() => {
     localStorage.setItem('kalkki-options', JSON.stringify(options));
-  }, [options]);
+    localStorage.setItem('kalkki-history', JSON.stringify({
+      history: appState.history,
+      answers: appState.answers.map((i) => ({ ...i, answer: i.answer.toString() })), // Class value needs to be serialized
+    }));
+  }, [options, appState]);
+
 
   const inputRef = useRef<HTMLInputElement>(null);
   return (

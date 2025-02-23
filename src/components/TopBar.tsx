@@ -29,10 +29,12 @@ export function TopBar({ options, setOptions }: {
     <nav className="top-bar">
       <ul className="menu-bar">
         {/*<li className="menu-item">
-          <span>Tiedosto</span>
+          <span>Istunto</span>
           <ul className="dropdown">
+            <li><button>Avaa</button></li>
             <li><button>Tallenna</button></li>
-            <li><button>Tallenna nimellä</button></li>
+            <li><button>Vie tekstitiedostona</button></li>
+            <li><button>Tyhjennä istunto</button></li>
           </ul>
         </li>*/}
         <li className="menu-item">
