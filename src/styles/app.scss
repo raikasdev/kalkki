@@ -2,6 +2,7 @@
 @use 'history';
 @use 'input';
 @use 'top-bar';
+@use 'auto-update';
 
 #app {
   display: flex;
@@ -32,6 +33,14 @@
 
   p {
     margin: 0.25rem 0;
+  }
+
+  a {
+    color: #B2DC5B;
+
+    &:active {
+      color: #B2DC5B;
+    }
   }
 
   &.hidden {
