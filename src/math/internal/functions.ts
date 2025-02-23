@@ -1,4 +1,4 @@
-import { LargeNumber, LargeNumberOperation } from "@/math/internal/large-number";
+import { LargeNumber } from "@/math/internal/large-number";
 
 /**
  * Calculates the factorial of a non-negative integer.

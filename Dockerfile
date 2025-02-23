@@ -9,6 +9,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV VITE_HIDE_PWA_PROMPT=true
+ENV VITE_DISABLE_AUTO_UPDATE=true
 RUN apk add git && bun run build
 
 

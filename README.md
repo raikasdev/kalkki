@@ -4,7 +4,7 @@
 </h1>
 
 <div align="center">
-  <p>Modern scientific calculator inspired by <a href="https://speedcrunch.org">SpeedCrunch</a> working in the browser</p>
+  <p>Modern scientific calculator in the browser inspired by <a href="https://speedcrunch.org">SpeedCrunch</a></p>
   <p><a href="https://kalkki.raikas.dev">Demo</a></p>
 </div>
 
