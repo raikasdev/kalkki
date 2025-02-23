@@ -138,7 +138,7 @@ export default function evaluate(tokens: Token[], ans: LargeNumber, ind: LargeNu
 					.with([1], () => ok(func(args[0])))
 					.otherwise(() => err("INVALID_ARG_COUNT" as const));
 			})
-			.with({ type: "func", name: P.union("log", "ncr", "npr")}, token => {
+			.with({ type: "func", name: P.union("log", "ncr", "npr", "nthroot")}, token => {
 				// Custom methods with two arguments
 				const funcName = token.name;
 				const func = functions[funcName];

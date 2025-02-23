@@ -99,7 +99,20 @@ const documentation: Record<string, Function> = {
       sv: 'Naturlig logaritm (bas e)'
     },
     usage: 'ln(x)',
-  }
+  },
+  nthroot: {
+    description: {
+      fi: 'Juurifunktio',
+      en: 'n:th root',
+      sv: 'n:te rot'
+    },
+
+    usage: {
+      fi: 'nthroot(n; x)',
+      en: 'nthroot(n; x)',
+      sv: 'nthroot(n; x)',
+    },
+  },
 };
 
 export function getDocumentation(fn: string, lang = "fi" as 'fi' | 'en' | 'sv'): ResolvedFunction | null {

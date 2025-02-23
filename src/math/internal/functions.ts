@@ -23,6 +23,11 @@ function log(base: LargeNumber, x: LargeNumber | undefined = undefined): LargeNu
 	return x.log(base).run();
 }
 
+function nthroot(n: LargeNumber, x: LargeNumber | undefined = undefined): LargeNumber {
+	if (!x) return new LargeNumber(NaN);
+	return x.pow(new LargeNumber(1).div(n)).run();
+}
+
 function lg(x: LargeNumber): LargeNumber {
 	return log(new LargeNumber(10), x);
 }
@@ -62,4 +67,5 @@ export const functions = {
 	average,
 	radians,
 	degrees,
+	nthroot,
 } as const;

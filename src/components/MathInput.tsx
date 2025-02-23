@@ -4,7 +4,7 @@ import type { AppState } from '../App';
 import { calculateAsync } from "../math";
 import prettify from "../math/prettify";
 import { getOpenFunction, MathError, parseError } from "../util";
-import { getDocumentation } from "../util/documentation";
+import { getDocumentation } from "../math/documentation";
 import { latexToMath } from "../math/latex-to-math";
 import { Options } from "./TopBar";
 import { translate } from "@/lang";

@@ -126,7 +126,7 @@ const tokenMatchers = [
 				/^((a(rc)?)?(sin|cos|tan))/,
 				/^(log|lg|ln)/,
 				/^(sqrt|√)/,
-				/^(ncr|npr|average|exp|floor|ceil|gamma|trunc|erf|efrc|csc|cot|degrees|radians|cbrt)/,
+				/^(ncr|npr|average|exp|floor|ceil|gamma|trunc|erf|efrc|csc|cot|degrees|radians|cbrt|nthroot)/,
 				/^(a(?:r)?(sin|cos|tan)h)/,
 			]
 				.map(subRegex => subRegex.source)
@@ -142,7 +142,7 @@ const tokenMatchers = [
 					"average", "exp", "floor", "ceil", "acosh",
 					"asinh", 'atanh', "gamma", "trunc", "erf",
 					"erfc", "csc", "cot", "degrees", "radians",
-					"cbrt",
+					"cbrt", "nthroot",
 					name => name
 				)
 				.with("log", "log10", () => "log" as const)
