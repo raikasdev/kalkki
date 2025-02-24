@@ -16,6 +16,7 @@ export function AutoUpdate({ language }: { language: Language }) {
           cache: 'no-store',
         });
         const json = await res.json();
+        if (!json.gitHash || json.gitHash.length !== 7) return; // Invalid hash/response
         if (json.gitHash === GIT_HASH) return;
 
         // It's updated
