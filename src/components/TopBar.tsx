@@ -1,4 +1,7 @@
+import { AppState } from "@/App";
+import SelfDestructButton from "@/components/SelfDestructButton";
 import { Language, translate } from "@/lang";
+import { Copyright, Info, Smile, TriangleAlert } from "lucide-react";
 import { ReactNode } from "preact/compat";
 
 export type Options = {
@@ -22,9 +25,10 @@ function OptionButton({ currentValue, set, children, lang }: {
     </li>
   )
 }
-export function TopBar({ options, setOptions }: {
+export function TopBar({ options, setOptions, setAppState }: {
   options: Options,
   setOptions: (v: Partial<Options>) => void,
+  setAppState: (v: Partial<AppState>) => void,
 }) {
   return (
     <nav className="top-bar">
@@ -134,13 +138,15 @@ export function TopBar({ options, setOptions }: {
             </li>*/}
           </ul>
         </li>
-        {/*<li className="menu-item">
-          <span>Ohje</span>
+        <li className="menu-item">
+          <span>{translate('help', options.language)}</span>
           <ul className="dropdown">
-            <li><button>Avaa käyttöohje</button></li>
-            <li><button>Versiotiedot</button></li>
+            <li><a href={translate('feedbackLink', options.language)}><Smile size={'1.25rem'} /> {translate('helpSendFeedback', options.language)}</a></li>
+            <li><button onClick={() => setAppState({ pageOpen: 'about' })}><Info size={'1.25rem'} /> {translate('helpInfo', options.language)}</button></li>
+            <li><button onClick={() => setAppState({ pageOpen: 'copyright' })}><Copyright size={'1.25rem'} /> {translate('helpCopyrights', options.language)}</button></li>
+            <SelfDestructButton language={options.language} />
           </ul>
-        </li>*/}
+        </li>
       </ul>
     </nav>
   );

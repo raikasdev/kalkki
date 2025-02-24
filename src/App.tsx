@@ -9,6 +9,8 @@ import { LargeNumber } from '@/math/internal/large-number';
 import { prepareWorker } from '@/math';
 import { getDefaultLanguage, translate } from '@/lang';
 import { AutoUpdate } from '@/components/AutoUpdate';
+import AboutPage from '@/pages/About';
+import CopyrightPage from '@/pages/Copyright';
 
 export type AppState = {
   answer: LargeNumber;
@@ -19,6 +21,7 @@ export type AppState = {
   history: string[];
   workHistory: string[];
   historyIndex: number;
+  pageOpen: null | 'about' | 'copyright';
 }
 
 const DEFAULT_OPTIONS = {
@@ -38,6 +41,7 @@ function getDefaultAppState(): AppState {
     history: [], // Only past commands
     workHistory: [], // User may edit these
     historyIndex: -1,
+    pageOpen: null,
   };
 
   if (localStorage.getItem('kalkki-history') === null) return appState;
@@ -85,9 +89,11 @@ export function App() {
   const inputRef = useRef<HTMLInputElement>(null);
   return (
     <>
-      <TopBar options={options} setOptions={setOptions} />
+      <AboutPage language={options.language} visible={appState.pageOpen === 'about'} setVisible={(v) => setAppState({ pageOpen: v ? 'about' : null })} />
+      <CopyrightPage language={options.language} visible={appState.pageOpen === 'copyright'} setVisible={(v) => setAppState({ pageOpen: v ? 'copyright' : null })} />
+      <TopBar options={options} setOptions={setOptions} setAppState={setAppState} />
       <div class="history">
-        <div className={`welcome-message${appState.answers.length > 0 ? ' hidden' : ''}`}>
+        <div className={`welcome-message${appState.answers.length > 0 ? ' hidden' : ''}`} {...(appState.answers.length ? { 'aria-hidden': true } : {})}>
           <Logo height="128" width="128" />
           <h1>Kalkki</h1>
           <p dangerouslySetInnerHTML={{ __html: translate('welcome', options.language) }} />

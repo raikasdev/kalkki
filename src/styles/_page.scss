@@ -1,0 +1,103 @@
+// Pages are "ovelays" that show text based content
+.page-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+  z-index: 10000;
+  background-color: #1d2d35;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23162228' fill-opacity='0.4'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  color: white;
+
+  transition: all 0.25s ease-in-out;
+
+  transform: translateY(100%);
+  opacity: 0;
+
+  &.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.page-overlay .close {
+  position: fixed;
+  appearance: none;
+  margin: 0;
+  border: none;
+  background: none;
+
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+
+  opacity: 0.5;
+  transition: opacity 0.3s cubic-bezier(.25, .46, .45, .94);
+
+  &:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+}
+
+.page-overlay .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 450px;
+  text-align: center;
+  height: 100%;
+  justify-content: center;
+  min-height: fit-content;
+
+  h1,
+  h2,
+  p {
+    margin: 0;
+  }
+
+  svg {
+    flex: none;
+  }
+
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: left;
+    margin-top: 1.5rem;
+  }
+}
+
+.copyright-page {
+  .content {
+    margin: 4rem 0; // Some breathing space
+  }
+  code {
+    text-align: justify;
+    margin: 1.5rem 0;
+  }
+
+  ul {
+    padding-left: 0;
+    margin: 0;
+  }
+
+  h3 {
+    margin: 0.5rem 0;
+  }
+
+  a {
+    color: #B2DC5B;
+
+    &:active {
+      color: #B2DC5B;
+    }
+  }
+}

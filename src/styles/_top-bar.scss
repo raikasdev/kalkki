@@ -58,7 +58,8 @@
   z-index: 10; // Avoid overlap with the other buttons on the edge
 }
 .dropdown button,
-.dropdown span {
+.dropdown span,
+.dropdown a {
   width: 100%;
   text-align: left;
   padding: 6px 12px;
@@ -67,10 +68,24 @@
   font-size: 13px;
   color: rgb(50, 50, 50);
   cursor: default;
-  display: block;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
   font-family: inherit;
   line-height: 1.5;
+  box-sizing: border-box;
 }
+
+.dropdown a,
+.dropdown button {
+  appearance: none;
+  text-decoration: none;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 .has-submenu {
   position: relative;
 }
@@ -81,12 +96,14 @@
   font-size: 14px;
 }
 .dropdown button:hover,
-.dropdown span:hover {
+.dropdown span:hover,
+.dropdown a:hover {
   background-color: rgba(0, 0, 0, 0.05);
 }
 /* Focus styles for keyboard navigation */
 .dropdown button:focus,
-.dropdown span:focus {
+.dropdown span:focus,
+.dropdown a:focus {
   outline: 2px solid rgb(0, 120, 215);
   outline-offset: -2px;
   background-color: rgba(0, 0, 0, 0.05);
@@ -94,4 +111,12 @@
 
 ul {
   list-style: none;
+}
+
+li {
+  white-space: nowrap;
+}
+
+.dropdown button.destructive {
+  color: oklch(0.444 0.177 26.899);
 }
