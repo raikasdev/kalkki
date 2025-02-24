@@ -36,7 +36,7 @@ export default function CopyrightPage({ language, visible, setVisible }: { langu
                   <a
                     href={
                       (dep.link.startsWith('git+') ? dep.link.substring(4) : dep.link)
-                        .replace('ssh://github.com', 'https://github.com')
+                        .replace('ssh://git@github.com', 'https://github.com')
                     }
                     rel="nofollow"
                   >

@@ -1,7 +1,7 @@
 import { AppState } from "@/App";
 import SelfDestructButton from "@/components/SelfDestructButton";
 import { Language, translate } from "@/lang";
-import { Copyright, Info, Smile, TriangleAlert } from "lucide-react";
+import { Copyright, Info, Smile } from "lucide-react";
 import { ReactNode } from "preact/compat";
 
 export type Options = {
