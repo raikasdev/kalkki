@@ -27,8 +27,8 @@ export type TokenId = ReturnType<TokenMatcher[1]>["type"];
  * @see {@link TokenId} for a comprehensive list of the different token types.
  * @example
  * ```typescript
- * type ConstantToken = Token<"cons">
- * //   ConstantToken = { type: "cons"; name: "pi" | "e" }
+ * type ConstantToken = Token<"var">
+ * //   ConstantToken = { type: "var"; name: "pi" | "e" }
  * type FunctionToken = Token<"func">
  * //   FunctionToken = { type: "func"; name: "sin" | "cos" ... }
  * type LeftBrakToken = Token<"lbrk">
@@ -91,61 +91,12 @@ const tokenMatchers = [
 		_ => ({ type: 'nextparam' as const }),
 	],
 	[
-		// Constants: "pi", "e", and unicode variations
-		/^(pi|π|e(?![a-z]+\()|ℇ|𝑒|ℯ)/i,
-		str => ({
-			type: "cons" as const,
-			name: match(str.toLowerCase())
-				.with("pi", "e", name => name)
-				.with("π", () => "pi" as const)
-				.with("ℇ", "𝑒", "ℯ", () => "e" as const)
-				.otherwise(name => {
-					throw Error(`Programmer error: neglected constant "${name}"`);
-				}),
-		}),
-	],
-	[
-		// Memory register: "ans" (answer register), "mem" (independent memory register)
-		/^(ans|mem|m|ind)/i,
-		str => ({
-			type: "memo" as const,
-			name: match(str.toLowerCase())
-				.with("ans", () => "ans" as const)
-				.with("m", "ind", "mem", () => "ind" as const)
-				.otherwise(name => {
-					throw Error(`Programmer error: neglected memory register "${name}"`);
-				}),
-		}),
-	],
-	[
 		// Function name: "sin", "log", "√", etc...
-		new RegExp(
-			[
-				// TODO: Should we also support the "sin^(-1)" notation for arcus functions?
-				// TODO: Should we also support the "sin^(2)(x) == sin(x^2)" notation?
-				/^((a(rc)?)?(sin|cos|tan))/,
-				/^(log|lg|ln)/,
-				/^(sqrt|√)/,
-				/^(ncr|npr|average|exp|floor|ceil|gamma|trunc|erf|efrc|csc|cot|degrees|radians|cbrt|nthroot)/,
-				/^(a(?:r)?(sin|cos|tan)h)/,
-			]
-				.map(subRegex => subRegex.source)
-				.join("|"),
-			"i"
-		),
+		/^([\p{L}_][\p{L}_0-9]*)(?=\()/iu,
 		str => ({
 			type: "func" as const,
 			name: match(str.toLowerCase())
-				.with(
-					"sqrt", "ln", "lg", "sin", "cos", "tan",
-					"asin", "acos", "atan", "ncr", "npr",
-					"average", "exp", "floor", "ceil", "acosh",
-					"asinh", 'atanh', "gamma", "trunc", "erf",
-					"erfc", "csc", "cot", "degrees", "radians",
-					"cbrt", "nthroot",
-					name => name
-				)
-				.with("log", "log10", () => "log" as const)
+				.with("log10", () => "log" as const)
 				.with("√", () => "sqrt" as const)
 				.with("arcsin", () => "asin" as const)
 				.with("arccos", () => "acos" as const)
@@ -153,9 +104,19 @@ const tokenMatchers = [
 				.with("arsinh", () => "asinh" as const)
 				.with("arcosh", () => "acosh" as const)
 				.with("artanh", () => "atanh" as const)
-				.otherwise(name => {
-					throw Error(`Programmer error: neglected function "${name}"`);
-				}) satisfies Functions,
+				.otherwise(name => name),
+		}),
+	],
+	[
+		// Variables, first letter any letter or underscore, other letters can also be numbers
+		// Any unresolved string
+		/^([\p{L}_][\p{L}_0-9]*)/ui,
+		str => ({
+			type: "var" as const,
+			name: match(str.toLowerCase())
+				.with("π", () => "pi" as const)
+				.with("ℇ", "𝑒", "ℯ", () => "e" as const)
+				.otherwise(name => name),
 		}),
 	],
 ] satisfies [RegExp, (str: string) => { type: string }][];

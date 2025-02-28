@@ -45,8 +45,8 @@ function* prettiedCharacters(tokens: Token[]) {
 			.with({ type: "rbrk" }, () => ")")
       .with({ type: "nextparam" }, () => ";")
 			.with({ type: "memo", name: "ans" }, () => "ANS")
-      .with({ type: "cons", name: "pi" }, () => "π")
-			.with({ type: "cons", name: "e" }, () => "e")
+      .with({ type: "var", name: "pi" }, () => "π")
+			.with({ type: "var", name: "e" }, () => "e")
 			.with({ type: "oper", name: "*" }, () => "×")
 			.with({ type: "oper", name: "-" }, () => "−")
 			.with({ type: "oper", name: any }, token => token.name)
@@ -76,7 +76,7 @@ function* prettiedCharacters(tokens: Token[]) {
 					// No space before semicolon: "sin(x; y)"
 					[any, any, { type: 'nextparam' }],
 					// Negative numbers: e.g. "-5" and "-5 + 5" instead of "- 5" and "- 5 + 5"
-					[not({ type: union("litr", "cons", "memo", "rbrk") }), { type: "oper", name: "-" }, any],
+					[not({ type: union("litr", "var", "memo", "rbrk") }), { type: "oper", name: "-" }, any],
 					() => false
 				)
 				.with([any, any, P.nullish], () => false)

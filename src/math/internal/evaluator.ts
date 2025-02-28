@@ -10,6 +10,7 @@ export type EvalResult = Result<LargeNumber, EvalErrorId>;
 export type EvalErrorId =
 	| "UNEXPECTED_EOF"
 	| "UNEXPECTED_TOKEN"
+	| "UNKNOWN_NAME"
 	| "INVALID_ARG_COUNT"
 	| "NOT_A_NUMBER"
 	| "INFINITY"
@@ -20,6 +21,27 @@ export type EvalErrorId =
 	| "TIMEOUT";
 
 /**
+ * A function defined by the user
+ */
+type UserFunction = {
+	type: 'function';
+	name: string;
+	parameters: string[];
+	value: string;
+}
+
+/**
+ * A variable defined by the user
+ */
+type UserVariable = {
+	type: 'variable';
+	name: string;
+	value: LargeNumber;
+}
+
+type UserObject = UserVariable | UserFunction;
+
+/**
  * Parses and evaluates a mathematical expression as a list of `Token`s into a `LargeNumber` value.
  *
  * The returned `Result` is either
@@ -27,7 +49,7 @@ export type EvalErrorId =
  * - A string representing a syntax error in the input
  *
  */
-export default function evaluate(tokens: Token[], ans: LargeNumber, ind: LargeNumber, angleUnit: AngleUnit): EvalResult {
+export default function evaluate(tokens: Token[], userSpace: UserObject[], angleUnit: AngleUnit): EvalResult {
 	// This function is an otherwise stock-standard Pratt parser but instead
 	// of building a full AST as the `left` value, we instead eagerly evaluate
 	// the sub-expressions in the `led` parselets.
@@ -112,11 +134,17 @@ export default function evaluate(tokens: Token[], ans: LargeNumber, ind: LargeNu
 	function nud(token: Token | undefined): EvalResult {
 		return match(token)
 			.with(undefined, () => err("UNEXPECTED_EOF" as const))
-			.with({ type: "litr" }, token => ok(token.value))
-			.with({ type: "cons", name: "pi" }, () => ok(LargeNumber.PI as LargeNumber))
-			.with({ type: "cons", name: "e" }, () => ok(LargeNumber.E as LargeNumber))
-			.with({ type: "memo", name: "ans" }, () => ok(ans))
-			.with({ type: "memo", name: "ind" }, () => ok(ind))
+			.with({ type: "litr" }, token => {
+				// Unless the next token is a operator, treat as next times val (5cos(5)=5*cos(5), 5pi=5*pi)
+				const nextToken = peek();
+				if (nextToken.type === 'oper') {
+					return ok(token.value);
+				}
+
+				return evalExpr(3).map(right => right.mul(token.value).run());
+			})
+			.with({ type: "var", name: "pi" }, () => ok(LargeNumber.PI as LargeNumber))
+			.with({ type: "var", name: "e" }, () => ok(LargeNumber.E as LargeNumber))
 			.with({ type: "oper", name: "-" }, () => evalExpr(3).map(right => right.neg().run()))
 			.with({ type: "lbrk" }, () =>
 				evalExpr(0).andThen(value =>
@@ -224,9 +252,13 @@ export default function evaluate(tokens: Token[], ans: LargeNumber, ind: LargeNu
 				.with({ type: "oper", name: "/" }, () => evalExpr(3).map(right => left.value.div(right).run()))
 				.with({ type: "oper", name: "^" }, () => evalExpr(3).map(right => left.value.pow(right).run()))
 				.with({ type: "oper", name: "!" }, () => ok(factorial(left.value)))
+				// Variables and constants should be treated as multiplication of them
+				//.with({ type: "var" }, () => ok(left.value.mul(evalExpr(1)).run())))
 				// Right bracket should never get parsed by anything else than the left bracket parselet
 				.with({ type: "rbrk" }, () => err("NO_LHS_BRACKET" as const))
-				.otherwise(() => err("UNEXPECTED_TOKEN"))
+				.otherwise(() => {
+					return err("UNEXPECTED_TOKEN")
+				})
 		);
 	}
 
@@ -260,7 +292,7 @@ export default function evaluate(tokens: Token[], ans: LargeNumber, ind: LargeNu
 function lbp(token: Token) {
 	return match(token)
 		.with({ type: P.union("lbrk", "rbrk", "nextparam") }, () => 0)
-		.with({ type: P.union("litr", "memo", "cons") }, () => 1)
+		.with({ type: P.union("litr", "var") }, () => 1)
 		.with({ type: "oper", name: P.union("+", "-") }, () => 2)
 		.with({ type: "oper", name: P.union("*", "/") }, () => 3)
 		.with({ type: "oper", name: "^" }, () => 4)
