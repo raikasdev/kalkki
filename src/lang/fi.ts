@@ -2,7 +2,7 @@ export const fi = {
   /** Welcome message */
   welcome: 'Tervetuloa! Kalkki on <a href="https://github.com/raikasdev/kalkki">avointa lähdekoodia</a>.',
   welcomeStart: 'Aloita kirjoittamalla lauseke alla olevaan kenttään.',
-  welcomePwaPrompt: 'Tietokoneella parhaan kokemuksen saat <span id="pwa-install-prompt" hidden><a href="#" onclick="installPWA()">asentamalla sen sovelluksena tästä</a> tai </span><a href="/app">iframe-tilassa</a>.',
+  welcomePwaPrompt: '<span id="pwa-install-prompt" hidden>Tietokoneella parhaan kokemuksen saat <a href="#" onclick="installPWA()">asentamalla sen sovelluksena tästä</a>.',
   /** Options */
   options: 'Asetukset',
   optionsSelected: '(valittu)',
@@ -13,6 +13,7 @@ export const fi = {
   optionsPrecision: 'Tuloksen tarkkuus',
   optionsPrecisionNumber: 'numeroa',
   optionsPreserveSession: 'Säilytä istunto',
+  optionsFullScreen: 'Koko näytön tila',
   optionsYes: 'Kyllä',
   optionsNo: 'Ei',
   /** Help menu */

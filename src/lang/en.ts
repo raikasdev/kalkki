@@ -4,7 +4,7 @@ export const en: typeof fi = {
   /** Welcome message */
   welcome: 'Welcome! Kalkki is <a href="https://github.com/raikasdev/kalkki">open source</a>.',
   welcomeStart: 'Start by writing an expression in the field below.',
-  welcomePwaPrompt: 'For the best experience on desktop, <span id="pwa-install-prompt" hidden><a href="#" onclick="installPWA()">install Kalkki as an PWA application</a> or </span><a href="/app">open in iframe mode</a>.',
+  welcomePwaPrompt: '<span id="pwa-install-prompt" hidden>For the best experience on desktop, <a href="#" onclick="installPWA()">install Kalkki as a PWA application</a>.',
   /** Options */
   options: 'Options',
   optionsSelected: '(selected)',
@@ -15,6 +15,7 @@ export const en: typeof fi = {
   optionsPrecision: 'Result precision',
   optionsPrecisionNumber: 'digits',
   optionsPreserveSession: 'Preserve session',
+  optionsFullScreen: 'Full screen mode',
   optionsYes: 'Yes',
   optionsNo: 'No',
   /** Help menu */

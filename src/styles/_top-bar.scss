@@ -6,7 +6,9 @@
   user-select: none;
   position: relative;
   z-index: 1000;
+  flex-shrink: 0;
 }
+
 .menu-bar {
   height: 100%;
   display: flex;

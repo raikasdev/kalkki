@@ -9,6 +9,7 @@ export type Options = {
   angleUnit: 'deg' | 'rad';
   resultAccuracy: number;
   preserveSessions: boolean;
+  fullScreen: boolean;
 }
 
 function OptionButton({ currentValue, set, children, lang }: {
@@ -129,6 +130,27 @@ export function TopBar({ options, setOptions, setAppState }: {
                 </OptionButton>
               </ul>
             </li>
+            {(import.meta.env.VITE_ABITTI_BUILD !== 'true' && !window.matchMedia('(display-mode: standalone)').matches) && (
+              <li className="has-submenu fullscreen-option">
+                <span>{translate("optionsFullScreen", options.language)}</span>
+                <ul className="submenu">
+                  <OptionButton
+                    currentValue={options.fullScreen === true}
+                    set={() => setOptions({ fullScreen: true })}
+                    lang={options.language}
+                  >
+                    {translate("optionsYes", options.language)}
+                  </OptionButton>
+                  <OptionButton
+                    currentValue={options.fullScreen === false}
+                    set={() => setOptions({ fullScreen: false })}
+                    lang={options.language}
+                  >
+                    {translate("optionsNo", options.language)}
+                  </OptionButton>
+                </ul>
+              </li>
+            )}
             {/*<li className="has-submenu">
               <span>Toiminta</span>
               <ul className="submenu">

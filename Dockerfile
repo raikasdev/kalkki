@@ -8,8 +8,7 @@ FROM oven/bun:1.2-alpine AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ENV VITE_HIDE_PWA_PROMPT=true
-ENV VITE_DISABLE_AUTO_UPDATE=true
+ENV VITE_ABITTI_BUILD=true
 RUN apk add git && bun run build
 
 

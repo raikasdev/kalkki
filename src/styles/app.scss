@@ -11,7 +11,7 @@
   justify-content: space-between;
   height: 100vh;
   box-sizing: border-box;
-  width: 100%;
+  width: 100vw;
 }
 
 .welcome-message {
@@ -47,5 +47,19 @@
   &.hidden {
     opacity: 0;
     z-index: -1;
+  }
+}
+
+@media screen and (min-width: 720px) {
+  body.limit-size #app {
+    max-width: 500px;
+    max-height: 640px;
+    border: 5px solid rgba(0, 0, 0, 0.2);
+  }
+}
+
+@media screen and (max-width: 719px) {
+  .fullscreen-option {
+    display: none;
   }
 }

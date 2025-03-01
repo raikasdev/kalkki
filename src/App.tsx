@@ -31,6 +31,7 @@ const DEFAULT_OPTIONS = {
   resultAccuracy: 8,
   language: getDefaultLanguage(),
   preserveSessions: true,
+  fullScreen: import.meta.env.VITE_ABITTI_BUILD === 'true',
 };
 
 function getDefaultAppState(): AppState {
@@ -91,6 +92,14 @@ export function App() {
     }));
   }, [options, appState, options]);
 
+  // Set full-screen body class
+  useEffect(() => {
+    if (options.fullScreen) {
+      document.body.classList.remove('limit-size');
+    } else {
+      document.body.classList.add('limit-size');
+    }
+  }, [options]);
 
   const inputRef = useRef<HTMLInputElement>(null);
   return (
@@ -105,7 +114,7 @@ export function App() {
           <p dangerouslySetInnerHTML={{ __html: translate('welcome', options.language) }} />
           <p>{translate('welcomeStart', options.language)}</p>
           {
-            import.meta.env.VITE_HIDE_PWA_PROMPT !== 'true' && (
+            import.meta.env.VITE_ABITTI_BUILD !== 'true' && (
               <p class="hide-pwa-prompt" dangerouslySetInnerHTML={{ __html: translate('welcomePwaPrompt', options.language) }} />
             )
           }
@@ -113,7 +122,7 @@ export function App() {
         {appState.answers.map((line, index) => <HistoryLine key={`line-${index}`} inputRef={inputRef} {...line} accuracy={options.resultAccuracy} />)}
       </div>
       <MathInput inputRef={inputRef} state={appState} setState={setAppState} options={options} />
-      {import.meta.env.VITE_DISABLE_AUTO_UPDATE !== 'true' && <AutoUpdate language={options.language} />}
+      {import.meta.env.VITE_ABITTI_BUILD !== 'true' && <AutoUpdate language={options.language} />}
     </>
   )
 }
