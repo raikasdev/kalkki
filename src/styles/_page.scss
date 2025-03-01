@@ -23,6 +23,10 @@
     transform: translateY(0);
     opacity: 1;
   }
+
+  .content {
+    margin: 4rem 0; // Some breathing space
+  }
 }
 
 .page-overlay .close {
@@ -76,9 +80,6 @@
 }
 
 .copyright-page {
-  .content {
-    margin: 4rem 0; // Some breathing space
-  }
   code {
     text-align: justify;
     margin: 1.5rem 0;
