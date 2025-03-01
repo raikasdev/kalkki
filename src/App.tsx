@@ -94,6 +94,7 @@ export function App() {
 
   // Set full-screen body class
   useEffect(() => {
+    if (import.meta.env.VITE_ABITTI_BUILD === 'true' || window.matchMedia('(display-mode: standalone)').matches) return;
     if (options.fullScreen) {
       document.body.classList.remove('limit-size');
     } else {
