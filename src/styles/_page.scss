@@ -23,10 +23,6 @@
     transform: translateY(0);
     opacity: 1;
   }
-
-  .content {
-    margin: 4rem 0; // Some breathing space
-  }
 }
 
 .page-overlay .close {
@@ -56,9 +52,10 @@
   gap: 0.5rem;
   max-width: 450px;
   text-align: center;
-  height: 100%;
+  height: max-content;
   justify-content: center;
   min-height: fit-content;
+  margin: 4rem 0; // Some breathing space
 
   h1,
   h2,
