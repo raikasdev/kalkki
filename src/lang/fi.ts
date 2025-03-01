@@ -49,5 +49,20 @@ export const fi = {
   copyrightLicense: 'Lisenssi',
   copyrightAuthor: 'Tekijä:',
   copyrightAuthorDefault: 'Paketin \'%s\' kehittäjät',
-  copyrightFullLicense: 'Löydät täydet lisenssit <a href="/third-party-licenses.txt">täältä</a>.'
+  copyrightFullLicense: 'Löydät täydet lisenssit <a href="/third-party-licenses.txt">täältä</a>.',
+  
+  /** Errors */
+  errorUnknownSymbol: 'tuntematon symboli kohdassa %s',
+  errorInfinity: 'liian suuri tai ääretön arvo',
+  errorInvalidArgCount: 'funktio sai virheellisen määrän argumentteja',
+  errorNaN: 'vastaus ei ole numero',
+  errorNoLhsBracket: 'vasen sulje puuttuu',
+  errorNoRhsBracket: 'oikea sulje puuttuu',
+  errorTrigPrecision: 'trigonometrinen tarkkuusvirhe',
+  errorUnexpectedEOF: 'odottamaton lausekkeen loppu',
+  errorUnexpectedToken: 'odottamaton symboli',
+  errorPrecisionOverflow: 'liian suuri numero laskettavaksi',
+  errorTimeout: 'virhe: laskuoperaatio kesti liian kauan',
+  errorUnknownName: '%s: tuntematon muuttuja tai funktio',
+  errorReservedName: '%s on järjestelmän varaama nimi',
 }

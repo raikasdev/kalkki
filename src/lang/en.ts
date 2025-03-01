@@ -49,5 +49,20 @@ export const en: typeof fi = {
   copyrightLicense: 'License',
   copyrightAuthor: 'Author:',
   copyrightAuthorDefault: 'Developers of \'%s\'',
-  copyrightFullLicense: 'You can find the full licenses of packages mentioned <a href="/third-party-licenses.txt">here</a>.'
+  copyrightFullLicense: 'You can find the full licenses of packages mentioned <a href="/third-party-licenses.txt">here</a>.',
+
+  /** Errors */
+  errorUnknownSymbol: 'unknown symbol at %s',
+  errorInfinity: 'too large or infinite value',
+  errorInvalidArgCount: 'function received an invalid amount of arguments',
+  errorNaN: 'answer is not a number',
+  errorNoLhsBracket: 'left bracket missing',
+  errorNoRhsBracket: 'right bracket missing',
+  errorTrigPrecision: 'trigonomtric precision error',
+  errorUnexpectedEOF: 'unexpected end of input',
+  errorUnexpectedToken: 'unexpected token',
+  errorPrecisionOverflow: 'number is too large to calculate',
+  errorTimeout: 'error: operation timed out',
+  errorUnknownName: '%s: unknown variable or function',
+  errorReservedName: '%s is a reserved name',
 }

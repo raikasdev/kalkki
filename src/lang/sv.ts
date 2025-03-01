@@ -50,5 +50,20 @@ export const sv: typeof fi = {
   copyrightLicense: 'Licens',  
   copyrightAuthor: 'Författare:',  
   copyrightAuthorDefault: 'Utvecklarna av \'%s\'',  
-  copyrightFullLicense: 'Du hittar de fullständiga licenserna för de nämnda paketen <a href="/third-party-licenses.txt">här</a>.'  
+  copyrightFullLicense: 'Du hittar de fullständiga licenserna för de nämnda paketen <a href="/third-party-licenses.txt">här</a>.',
+
+  /** Errors */
+  errorUnknownSymbol: 'okänt symbol vid %s',
+  errorInfinity: 'för stort eller oändligt värde',
+  errorInvalidArgCount: 'metoden fick ett felaktigt antal argument',
+  errorNaN: 'svaret är inte ett nummer',
+  errorNoLhsBracket: 'vänster parentes saknas',
+  errorNoRhsBracket: 'höger parentes saknas',
+  errorTrigPrecision: 'trigonometrisk precision fel',
+  errorUnexpectedEOF: 'oväntat slut på uttrycket',
+  errorUnexpectedToken: 'oväntat symbol',
+  errorPrecisionOverflow: 'för stort nummer att beräkna',
+  errorTimeout: 'fel: beräkningsoperationen tog för lång tid',
+  errorUnknownName: '%s: okänt variabel eller funktion',
+  errorReservedName: '%s är ett reserverat namn',
 }

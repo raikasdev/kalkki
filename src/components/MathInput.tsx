@@ -101,7 +101,7 @@ export default function MathInput({
       const res = await calculateAsync(input, answer, userSpace, options.angleUnit);
       if (res.isErr()) {
         setState({
-          extraInfo: parseError(res.error as unknown as MathError),
+          extraInfo: parseError(res.error as unknown as MathError, options.language),
         });
       } else {
         setState({

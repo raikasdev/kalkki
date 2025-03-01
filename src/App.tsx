@@ -30,7 +30,7 @@ const DEFAULT_OPTIONS = {
   angleUnit: 'deg',
   resultAccuracy: 8,
   language: getDefaultLanguage(),
-  preserveSessions: false, // Off by default, so multiple tabs don't interfere with each other
+  preserveSessions: true,
 };
 
 function getDefaultAppState(): AppState {

@@ -1,39 +1,40 @@
 import { LexicalError } from "../math/internal/tokeniser";
 import { EvalError, UserObject } from "../math/internal/evaluator";
 import { LargeNumber } from "@/math/internal/large-number";
+import { Language, translate } from "@/lang";
 
 export type MathError = EvalError | LexicalError;
-export function parseError(error: MathError) {
+export function parseError(error: MathError, lang: Language) {
   if (error.type === 'UNKNOWN_TOKEN') {
     // LexicalError
-    return `tuntematon symboli kohdassa ${error.idx}`;
+    return translate('errorUnknownSymbol', lang).replace('%s', `${error.idx}`);
   }
 
   switch (error.type) {
     case "INFINITY":
-      return 'liian suuri tai ääretön arvo';
+      return translate('errorInfinity', lang);
     case "INVALID_ARG_COUNT":
-      return 'metodi sai virheellisen määrän argumentteja';
+      return translate('errorInvalidArgCount', lang);
     case "NOT_A_NUMBER":
-      return 'vastaus ei ole numero';
+      return translate('errorNaN', lang);
     case "NO_LHS_BRACKET":
-      return 'vasen sulje puuttuu';
+      return translate('errorNoLhsBracket', lang);
     case "NO_RHS_BRACKET":
-      return 'oikea sulje puuttuu';
+      return translate('errorNoRhsBracket', lang);
     case "TRIG_PRECISION":
-      return 'trigonometrinen tarkkuusvirhe';
+      return translate('errorTrigPrecision', lang);
     case "UNEXPECTED_EOF":
-      return 'odottamaton lausekkeen loppu';
+      return translate('errorUnexpectedEOF', lang);
     case "UNEXPECTED_TOKEN":
-      return 'odottamaton symboli';
+      return translate('errorUnexpectedToken', lang);
     case "PRECISION_OVERFLOW":
-      return 'liian suuri numero laskettavaksi';
+      return translate('errorPrecisionOverflow', lang);
     case "TIMEOUT":
-      return "virhe: laskuoperaatio kesti liian kauan";
+      return translate('errorTimeout', lang);
     case "UNKNOWN_NAME":
-      return `${error.name}: tuntematon muuttuja tai funktio`;
+      return translate('errorUnknownName', lang).replace('%s', error.name);
     case "RESERVED_NAME":
-      return `${error.name} on järjestelmän varaama nimi`;
+      return translate('errorReservedName', lang).replace('%s', error.name);
   }
 
   console.error('Unhandled error!', error);
