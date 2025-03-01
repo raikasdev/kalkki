@@ -1,7 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 
 import evaluate, { EvalError, EvalValue, UserObject } from "./internal/evaluator";
-import tokenise, { Token } from "./internal/tokeniser";
+import tokenise from "./internal/tokeniser";
 import { LargeNumber } from "@/math/internal/large-number";
 import Worker from '@/math/worker?worker';
 import { deserializeUserspace, serializeUserspace } from "@/util";

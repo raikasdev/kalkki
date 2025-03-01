@@ -237,7 +237,8 @@ export default function evaluate(tokens: Token[], ans: LargeNumber, userSpace: M
 						// The tangent is parallel when the argument is $ pi/2 + n × pi $ where
 						// $ n $ is an integer. Since we use an approximation for pi, we can only
 						// check if the argument is "close enough" to being an integer.
-						const coefficient = argInRads.sub(LargeNumber.PI.div(new LargeNumber(2))).div(LargeNumber.PI);
+						const coefficient = argInRads.sub(LargeNumber.PI.div(new LargeNumber(2))).div(LargeNumber.PI).run();
+						// Must .run() because coefficient is being subtracted from itself
 						const distFromCriticalPoint = coefficient.sub(coefficient.round()).abs().run();
 						const isArgCritical = distFromCriticalPoint.lt(LargeNumber.TAN_PRECISION as LargeNumber);
 

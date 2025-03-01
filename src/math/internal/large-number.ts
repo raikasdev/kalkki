@@ -99,7 +99,7 @@ export class LargeNumberOperation {
                 if (val instanceof LargeNumber) {
                     return g.Float(val.toString());
                 } else {
-                    return g.Float(val.run().toString());
+                    return g.Float(val.run(precisionBits).toString());
                 }
             }
             for (const operation of this.operations) {
