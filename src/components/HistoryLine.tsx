@@ -15,16 +15,18 @@ export default function HistoryLine({ expression, answer, latex, inputRef, accur
       <p class="expression">
         {expression}
       </p>
-      {answer && <p class="answer" onClick={(event) => {
-        if (event.detail !== 2) return;
-        if (!inputRef?.current) return;
-        event.preventDefault();
-        inputRef.current.value += answer.toSignificantDigits(accuracy).toString().replace('.', ',');
-        inputRef.current.focus();
-      }}>
-        <span class="equals">= </span>
-        {answer.toSignificantDigits(accuracy).toString().replace('.', ',')}
-      </p>}
+      {answer ? (
+        <p class="answer" onClick={(event) => {
+          if (event.detail !== 2) return;
+          if (!inputRef?.current) return;
+          event.preventDefault();
+          inputRef.current.value += answer.toSignificantDigits(accuracy).toString().replace('.', ',');
+          inputRef.current.focus();
+        }}>
+          <span class="equals">= </span>
+          {answer.toSignificantDigits(accuracy).toString().replace('.', ',')}
+        </p>
+      ) : <p class="answer" aria-hidden>⠀</p>} {/* Space taker */}
     </div>
   )
 }
