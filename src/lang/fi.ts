@@ -66,4 +66,6 @@ export const fi = {
   errorTimeout: 'virhe: laskuoperaatio kesti liian kauan',
   errorUnknownName: '%s: tuntematon muuttuja tai funktio',
   errorReservedName: '%s on järjestelmän varaama nimi',
+  errorRecursion: 'loputon silmukka',
+  errorUnknown: 'käsittelyvirhe',
 }

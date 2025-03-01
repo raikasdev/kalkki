@@ -31,12 +31,15 @@ export function calculate(expression: string, ans: LargeNumber, userSpace: Map<s
 		const res = ok(result.value);
 		resultCache.set(cacheKey, res); // The preview has probably already calculated the value, so no need to recalc
 		return res;
-	} catch (err) {
+	} catch (error) {
 		// Usually means out-of-bits
 		// Can't err here for some reason...
-		console.error("Execution fail", err)
+		if (error instanceof RangeError) {
+			return err({ type: 'RECURSION' } as const);
+		}
+		console.error("Execution fail", error);
 	}
-	return err("PRECISION_OVERFLOW");
+	return err({ type: "PRECISION_OVERFLOW" } as const);
 }
 
 /**

@@ -9,7 +9,8 @@ import { factorial, functions } from "./functions";
 export type EvalResult = Result<LargeNumber, EvalError>;
 export type EvalValue = { value?: LargeNumber; userSpace?: Map<string, UserObject>; }
 export type EvalError = {
-	type: "UNEXPECTED_EOF"
+	type: 
+	| "UNEXPECTED_EOF"
 	| "UNEXPECTED_TOKEN"
 	| "INVALID_ARG_COUNT"
 	| "NOT_A_NUMBER"
@@ -18,6 +19,7 @@ export type EvalError = {
 	| "NO_RHS_BRACKET"
 	| "TRIG_PRECISION"
 	| "PRECISION_OVERFLOW"
+	| "RECURSION"
 	| "TIMEOUT";
 } | {
 	type: 'UNKNOWN_NAME' | 'RESERVED_NAME',
@@ -51,6 +53,7 @@ const RESERVED_VARIABLES = [
 	"arcos", "lg", "degrees", "radians", "arsinh", "arcosh", "artanh",
 	"log10", "√", "π", "ℇ", "𝑒", "ℯ"
 ];
+const SYNTAX_ERRORS = ["UNEXPECTED_EOF", "UNEXPECTED_TOKEN", "NO_LHS_BRACKET", "NO_RHS_BRACKET"];
 
 /**
  * Parses and evaluates a mathematical expression as a list of `Token`s into a `LargeNumber` value.
@@ -349,8 +352,12 @@ export default function evaluate(tokens: Token[], ans: LargeNumber, userSpace: M
 				}
 			}
 
-			if (tokens.length === 0) {
-				return err({ type: 'UNEXPECTED_EOF' });
+			// Evaluate the tokens once with every parameter being 1, if no syntax errors we pass
+			const tempUserSpace = new Map(userSpace);
+			parameters.forEach((p) => tempUserSpace.set(p, { type: 'variable', value: new LargeNumber(1) }));
+			const response = evaluate(tokens, ans, tempUserSpace, angleUnit);
+			if (response.isErr() && SYNTAX_ERRORS.includes(response.error.type)) {
+				return err(response.error);
 			}
 
 			userSpace.set(

@@ -29,6 +29,8 @@ export function parseError(error: MathError, lang: Language) {
       return translate('errorUnexpectedToken', lang);
     case "PRECISION_OVERFLOW":
       return translate('errorPrecisionOverflow', lang);
+    case "RECURSION":
+      return translate('errorRecursion', lang);
     case "TIMEOUT":
       return translate('errorTimeout', lang);
     case "UNKNOWN_NAME":
@@ -38,7 +40,7 @@ export function parseError(error: MathError, lang: Language) {
   }
 
   console.error('Unhandled error!', error);
-  return 'käsittelyvirhe';
+  return translate('errorUnknown', lang);
 }
 
 /**

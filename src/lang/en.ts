@@ -66,4 +66,6 @@ export const en: typeof fi = {
   errorTimeout: 'error: operation timed out',
   errorUnknownName: '%s: unknown variable or function',
   errorReservedName: '%s is a reserved name',
+  errorRecursion: 'infinite loop',
+  errorUnknown: 'unknown error',
 }

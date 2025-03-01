@@ -67,4 +67,6 @@ export const sv: typeof fi = {
   errorTimeout: 'fel: beräkningsoperationen tog för lång tid',
   errorUnknownName: '%s: okänt variabel eller funktion',
   errorReservedName: '%s är ett reserverat namn',
+  errorRecursion: 'oändlig loop',
+  errorUnknown: 'behandlingsfel',
 }
