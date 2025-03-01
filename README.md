@@ -31,7 +31,6 @@ Tada! You have a dev server running on :5173. Consult package.json 'scripts' for
 
 ## TODO
 
-- Variable support
 - Autocorrect / suggestions
 - Unit conversion
 - Make the LaTeX support more stable

@@ -1,5 +1,7 @@
 import { calculate } from '@/math/index';
 import { LargeNumber } from '@/math/internal/large-number';
+import { deserializeUserspace, serializeUserspace } from '@/util';
+import { ok } from 'neverthrow';
 
 type Request = {
   type: 'init' | 'calculate';
@@ -14,11 +16,23 @@ self.onmessage = async function(e) {
     return;
   }
   if (!req.data || !req.id) return;
-  const [exp, ans, ind, deg] = req.data;
+  const [exp, ans, userSpace, deg] = req.data;
   await LargeNumber.init();
 
-  self.postMessage(JSON.stringify({
-    id: req.id,
-    ...calculate(exp, new LargeNumber(ans), new LargeNumber(ind), deg)
-  }));
-}
+  const res = calculate(exp, new LargeNumber(ans), deserializeUserspace(JSON.parse(userSpace)), deg);
+  if (res.isErr()) {
+    self.postMessage(JSON.stringify({
+      id: req.id,
+      ...res,
+    }));
+  } else {
+    const val: Record<string, unknown> = { value: res.value.value?.toString() };
+    if (res.value.userSpace) {
+      val.userSpace = JSON.stringify(serializeUserspace(res.value.userSpace));
+    }
+    self.postMessage(JSON.stringify({
+      id: req.id,
+      ...ok(val),
+    }));
+  }
+  }

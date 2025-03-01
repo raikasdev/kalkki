@@ -1,9 +1,10 @@
-import { err, ok } from "neverthrow";
+import { err, ok, Result } from "neverthrow";
 
-import evaluate from "./internal/evaluator";
-import tokenise from "./internal/tokeniser";
+import evaluate, { EvalError, EvalValue, UserObject } from "./internal/evaluator";
+import tokenise, { Token } from "./internal/tokeniser";
 import { LargeNumber } from "@/math/internal/large-number";
 import Worker from '@/math/worker?worker';
+import { deserializeUserspace, serializeUserspace } from "@/util";
 
 export type { Token, TokenId } from "./internal/tokeniser";
 export { tokenise, evaluate };
@@ -12,22 +13,23 @@ export type AngleUnit = "deg" | "rad";
 
 const resultCache = new Map();
 
-export function calculate(expression: string, ans: LargeNumber, ind: LargeNumber, angleUnit: AngleUnit) {
+export function calculate(expression: string, ans: LargeNumber, userSpace: Map<string, UserObject>, angleUnit: AngleUnit): Result<EvalValue, EvalError | string> {
 	// This could be a one-liner with neverthrow's `andThen` but we want to
 	// jump out of neverthrow-land for React anyhow soon
 	const tokens = tokenise(expression);
-	if (tokens.isErr()) return err(tokens);
+	if (tokens.isErr()) return err("TOKENISER_ERROR");
 	try {
-		if (resultCache.has(`${angleUnit}:${ans}:${ind}:${expression}`)) {
-			return resultCache.get(`${angleUnit}:${ans}:${ind}:${expression}`);
+		const cacheKey = `${angleUnit}:${ans}:${JSON.stringify(userSpace)}:${expression}`;
+		if (resultCache.has(cacheKey)) {
+			return resultCache.get(cacheKey);
 		}
-		const result = evaluate(tokens.value, ans, ind, angleUnit);
+		const result = evaluate(tokens.value, ans, userSpace, angleUnit);
 		if (result.isErr()) {
 			return err(result.error);
 		}
 
 		const res = ok(result.value);
-		resultCache.set(`${angleUnit}:${ans}:${ind}:${expression}`, res); // The preview has probably already calculated the value, so no need to recalc
+		resultCache.set(cacheKey, res); // The preview has probably already calculated the value, so no need to recalc
 		return res;
 	} catch (err) {
 		// Usually means out-of-bits
@@ -68,10 +70,11 @@ async function getWorker(cb: (w: Worker) => Promise<void>) {
 	}
 }
 
-export function calculateAsync(expression: string, ans: LargeNumber, ind: LargeNumber, angleUnit: AngleUnit): Promise<ReturnType<typeof calculate>> {
+export function calculateAsync(expression: string, ans: LargeNumber, userSpace: Map<string, UserObject>, angleUnit: AngleUnit): Promise<ReturnType<typeof calculate>> {
 	return new Promise((resolve) => {
-		if (resultCache.has(`${angleUnit}:${ans}:${ind}:${expression}`)) {
-			resolve(resultCache.get(`${angleUnit}:${ans}:${ind}:${expression}`));
+		const cacheKey = `${angleUnit}:${ans}:${JSON.stringify(userSpace)}:${expression}`;
+		if (resultCache.has(cacheKey)) {
+			resolve(resultCache.get(cacheKey));
 		}
 
 		const randomId = Math.random().toString(16).substring(2);
@@ -79,7 +82,7 @@ export function calculateAsync(expression: string, ans: LargeNumber, ind: LargeN
 			w.postMessage(JSON.stringify({
 				type: 'calculate',
 				id: randomId,
-				data: [expression, ans.toString(), ind.toString(), angleUnit],
+				data: [expression, ans.toString(), JSON.stringify(serializeUserspace(userSpace)), angleUnit],
 			}));
 
 			const timeoutTimer = setTimeout(() => {
@@ -95,8 +98,16 @@ export function calculateAsync(expression: string, ans: LargeNumber, ind: LargeN
 				clearTimeout(timeoutTimer);
 				if (data.value) {
 					// Workers have individual caches, so have to do this here too
-					const value = ok(new LargeNumber(data.value.value));
-					resultCache.set(`${angleUnit}:${ans}:${ind}:${expression}`, value);
+					const response = data.value;
+					const res: Record<string, unknown> = {};
+					if (response.value) {
+						res.value = new LargeNumber(response.value);
+					}
+					if (response.userSpace) {
+						res.userSpace = deserializeUserspace(JSON.parse(response.userSpace as string));
+					}
+					const value = ok(res);
+					resultCache.set(cacheKey, value);
 					resolve(value);
 				} else {
 					resolve(err(data.error));

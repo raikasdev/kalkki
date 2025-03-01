@@ -90,7 +90,7 @@ export class LargeNumberOperation {
     y1(): LargeNumberOperation { return this.op("y1"); }
     zeta(): LargeNumberOperation { return this.op("zeta"); }
 
-    run(precisionBits = 170): LargeNumber {
+    run(precisionBits = 256): LargeNumber {
         if (LargeNumber.calculate == null) throw new Error('WASM not loaded');
         const result = LargeNumber.calculate((g) => {
             let val = g.Float(this.value.toString());
@@ -177,7 +177,7 @@ export class LargeNumberOperation {
                 }                
             }    
             return val;
-        }, { precisionBits }) as any; // 170 = ~51 digits
+        }, { precisionBits }) as any; // 256 = ~77 digits, seems like SpeedCrunch does 256 too according to docs ("about 78 digits")
         return new LargeNumber(result);
     };
 }
@@ -222,8 +222,8 @@ export class LargeNumber {
 
     toSignificantDigits(digits: number) {
         const significant = new Decimal(this.value).toSignificantDigits(digits);
-        // If the number has a scientific notation of exactly the bit precision (170 = 51), we should count it as zero (for example sin(pi) != 0)
-        if (significant.toString().endsWith('-51')) {
+        // If the number has a scientific notation of exactly the bit precision (256 = 77), we should count it as zero (for example sin(pi) != 0)
+        if (significant.toString().endsWith('-77')) {
             return new Decimal(0);
         }
 

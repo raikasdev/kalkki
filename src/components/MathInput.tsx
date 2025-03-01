@@ -10,7 +10,7 @@ import { Options } from "./TopBar";
 import { translate } from "@/lang";
 
 export default function MathInput({
-  state: { answer, answers, extraInfo, ind, latex, history, workHistory, historyIndex },
+  state: { answer, answers, extraInfo, latex, history, workHistory, historyIndex, userSpace },
   setState,
   inputRef,
   options
@@ -56,7 +56,7 @@ export default function MathInput({
       event.preventDefault();
 
       inputRef.current.disabled = true;
-      const res = await calculateAsync(input, answer, ind, options.angleUnit);
+      const res = await calculateAsync(input, answer, userSpace, options.angleUnit);
       inputRef.current.disabled = false;
       inputRef.current.focus();
 
@@ -66,17 +66,18 @@ export default function MathInput({
 
       const { value } = res;
       setState({
-        answer: value,
+        answer: value.value ?? answer,
         extraInfo: '',
         answers: [{
           expression: prettify(input),
-          answer: value,
+          answer: value.value,
           latex,
         }, ...answers],
         latex: false,
         history: [input, ...history],
         workHistory: [input, ...history],
         historyIndex: -1,
+        userSpace: value.userSpace ?? userSpace,
       });
       inputRef.current.value = "";
     } else if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
@@ -97,18 +98,18 @@ export default function MathInput({
           return;
         }
       }
-      const res = await calculateAsync(input, answer, ind, options.angleUnit);
+      const res = await calculateAsync(input, answer, userSpace, options.angleUnit);
       if (res.isErr()) {
         setState({
           extraInfo: parseError(res.error as unknown as MathError),
         });
       } else {
         setState({
-          extraInfo: res.value.toSignificantDigits(options.resultAccuracy).toString().replace('.', ','),
+          extraInfo: res.value.value?.toSignificantDigits(options.resultAccuracy).toString().replace('.', ',') ?? null,
         })
       }
     }
-  }, [inputRef, answer, ind, latex, options]);
+  }, [inputRef, answer, userSpace, latex, options]);
 
   const processKeyDown = useCallback((event: KeyboardEvent) => {
     if (!inputRef.current) return;
@@ -171,7 +172,7 @@ export default function MathInput({
         })
       }
     }
-  }, [inputRef, answer, ind]);
+  }, [inputRef, answer, userSpace]);
 
   // Handle global paste events
   useEffect(() => {

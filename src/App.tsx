@@ -11,10 +11,12 @@ import { getDefaultLanguage, translate } from '@/lang';
 import { AutoUpdate } from '@/components/AutoUpdate';
 import AboutPage from '@/pages/About';
 import CopyrightPage from '@/pages/Copyright';
+import { UserObject } from '@/math/internal/evaluator';
+import { deserializeUserspace, serializeUserspace } from '@/util';
 
 export type AppState = {
   answer: LargeNumber;
-  ind: LargeNumber;
+  userSpace: Map<string, UserObject>;
   answers: HistoryLineData[];
   extraInfo: string | null;
   latex: boolean;
@@ -34,7 +36,7 @@ const DEFAULT_OPTIONS = {
 function getDefaultAppState(): AppState {
   const appState: AppState = {
     answer: new LargeNumber(0),
-    ind: new LargeNumber(0),
+    userSpace: new Map(),
     answers: [],
     extraInfo: null,
     latex: false,
@@ -46,11 +48,14 @@ function getDefaultAppState(): AppState {
 
   if (localStorage.getItem('kalkki-history') === null) return appState;
   try {
-    const { history, answers } = JSON.parse(localStorage.getItem('kalkki-history') ?? '{}');
+    const { history, answers, userSpace } = JSON.parse(localStorage.getItem('kalkki-history') ?? '{}');
     if (!history || !answers) throw new Error('Invalid history data');
     appState.history = history;
     appState.workHistory = history;
-    appState.answers = answers.map((i: Record<string, string>) => ({ ...i, answer: new LargeNumber(i.answer) }));
+    if (userSpace) {
+      appState.userSpace = deserializeUserspace(userSpace);
+    }
+    appState.answers = answers.map((i: Record<string, string>) => ({ ...i, answer: !i.answer ? undefined : new LargeNumber(i.answer) }));
   } catch (e) {
     console.error('Loading history from local storage failed!', e);
     localStorage.removeItem('kalkki-history');
@@ -81,7 +86,8 @@ export function App() {
 
     localStorage.setItem('kalkki-history', JSON.stringify({
       history: appState.history,
-      answers: appState.answers.map((i) => ({ ...i, answer: i.answer.toString() })), // Class value needs to be serialized
+      answers: appState.answers.map((i) => ({ ...i, answer: i.answer?.toString() })), // Class value needs to be serialized
+      userSpace: serializeUserspace(appState.userSpace),
     }));
   }, [options, appState, options]);
 

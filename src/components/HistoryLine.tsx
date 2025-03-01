@@ -4,7 +4,7 @@ import { RefObject } from "preact";
 
 export type HistoryLineData = {
   expression: string;
-  answer: LargeNumber;
+  answer?: LargeNumber;
   latex: boolean;
 }
 
@@ -15,7 +15,7 @@ export default function HistoryLine({ expression, answer, latex, inputRef, accur
       <p class="expression">
         {expression}
       </p>
-      <p class="answer" onClick={(event) => {
+      {answer && <p class="answer" onClick={(event) => {
         if (event.detail !== 2) return;
         if (!inputRef?.current) return;
         event.preventDefault();
@@ -24,7 +24,7 @@ export default function HistoryLine({ expression, answer, latex, inputRef, accur
       }}>
         <span class="equals">= </span>
         {answer.toSignificantDigits(accuracy).toString().replace('.', ',')}
-      </p>
+      </p>}
     </div>
   )
 }

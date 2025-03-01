@@ -61,13 +61,13 @@ const tokenMatchers = [
 		}),
 	],
 	[
-		// Operators: "-", "+", "/", "*", "^"
+		// Operators: "-", "+", "/", "*", "^" and "="
 		// The multiplication and minus signs have unicode variants that also need to be handled
-		/^[-+/*^−×!]/,
+		/^[-=+/*^−×!]/,
 		str => ({
 			type: "oper" as const,
 			name: match(str)
-				.with("-", "+", "/", "*", "^", "!", op => op)
+				.with("-", "+", "/", "*", "^", "!", "=", op => op)
 				.with("−", () => "-" as const)
 				.with("×", () => "*" as const)
 				.otherwise(op => {

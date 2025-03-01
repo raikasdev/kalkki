@@ -6,11 +6,11 @@ import { AngleUnit } from "..";
 import { Token } from "./tokeniser";
 import { factorial, functions } from "./functions";
 
-export type EvalResult = Result<LargeNumber, EvalErrorId>;
-export type EvalErrorId =
-	| "UNEXPECTED_EOF"
+export type EvalResult = Result<LargeNumber, EvalError>;
+export type EvalValue = { value?: LargeNumber; userSpace?: Map<string, UserObject>; }
+export type EvalError = {
+	type: "UNEXPECTED_EOF"
 	| "UNEXPECTED_TOKEN"
-	| "UNKNOWN_NAME"
 	| "INVALID_ARG_COUNT"
 	| "NOT_A_NUMBER"
 	| "INFINITY"
@@ -19,27 +19,38 @@ export type EvalErrorId =
 	| "TRIG_PRECISION"
 	| "PRECISION_OVERFLOW"
 	| "TIMEOUT";
+} | {
+	type: 'UNKNOWN_NAME' | 'RESERVED_NAME',
+	name: string;
+};
 
 /**
  * A function defined by the user
  */
-type UserFunction = {
+export type UserFunction = {
 	type: 'function';
-	name: string;
 	parameters: string[];
-	value: string;
+	value: Token[];
 }
 
 /**
  * A variable defined by the user
  */
-type UserVariable = {
+export type UserVariable = {
 	type: 'variable';
-	name: string;
 	value: LargeNumber;
 }
 
-type UserObject = UserVariable | UserFunction;
+export type UserObject = UserVariable | UserFunction;
+
+const RESERVED_VARIABLES = [
+	'pi', 'e', 'ans', "sqrt", "ln", "sin", "cos", "tan", "asin",
+	"acos", "atan", "exp", "floor", "ceil", "acosh", "asinh",
+	'atanh', "gamma", "trunc", "erf", "erfc", "csc", "cot", "cbrt",
+	"average", "log", "ncr", "npr", "nthroot", "arccos", "arctan",
+	"arcos", "lg", "degrees", "radians", "arsinh", "arcosh", "artanh",
+	"log10", "√", "π", "ℇ", "𝑒", "ℯ"
+];
 
 /**
  * Parses and evaluates a mathematical expression as a list of `Token`s into a `LargeNumber` value.
@@ -49,7 +60,7 @@ type UserObject = UserVariable | UserFunction;
  * - A string representing a syntax error in the input
  *
  */
-export default function evaluate(tokens: Token[], userSpace: UserObject[], angleUnit: AngleUnit): EvalResult {
+export default function evaluate(tokens: Token[], ans: LargeNumber, userSpace: Map<string, UserObject>, angleUnit: AngleUnit): Result<EvalValue, EvalError> {
 	// This function is an otherwise stock-standard Pratt parser but instead
 	// of building a full AST as the `left` value, we instead eagerly evaluate
 	// the sub-expressions in the `led` parselets.
@@ -80,13 +91,13 @@ export default function evaluate(tokens: Token[], userSpace: UserObject[], angle
 	 *
 	 * Can either just peek at the next token or consume it, based on the value of the second argument.
 	 */
-	function expect(pattern: Pattern.Pattern<Token>, consumeNext: boolean): Result<Token, EvalErrorId> {
+	function expect(pattern: Pattern.Pattern<Token>, consumeNext: boolean): Result<Token, EvalError> {
 		const token = consumeNext ? next() : peek();
 
 		if (!token) {
-			return err("UNEXPECTED_EOF");
+			return err({ type: "UNEXPECTED_EOF" });
 		}
-		if (!isMatching(pattern, token)) return err("UNEXPECTED_TOKEN");
+		if (!isMatching(pattern, token)) return err({ type: "UNEXPECTED_TOKEN" });
 
 		return ok(token);
 	}
@@ -96,18 +107,17 @@ export default function evaluate(tokens: Token[], userSpace: UserObject[], angle
 	 */
 	function parseFunction() {
 		// First check if we have an opening bracket
-		if (expect({ type: "lbrk" }, true).isErr()) return err("UNEXPECTED_TOKEN" as const);
+		if (expect({ type: "lbrk" }, true).isErr()) return err({ type: "UNEXPECTED_TOKEN" } as const);
 
 		// Parse arguments until we hit the closing bracket
 		const args: LargeNumber[] = [];
-
 		while (true) {
 			const result = evalExpr(0);
 			if (result.isErr()) return result;
 			args.push(result.value);
 
 			const nextToken = peek();
-			if (!nextToken) return err("UNEXPECTED_EOF" as const);
+			if (!nextToken) return err({ type: "UNEXPECTED_EOF" } as const);
 			
 			if (nextToken.type === "rbrk") {
 				// Consume the closing bracket and break
@@ -118,7 +128,7 @@ export default function evaluate(tokens: Token[], userSpace: UserObject[], angle
 				next();
 				continue;
 			} else {
-				return err("UNEXPECTED_TOKEN" as const);
+				return err({ type: "UNEXPECTED_TOKEN" } as const);
 			}
 		}
 
@@ -133,24 +143,29 @@ export default function evaluate(tokens: Token[], userSpace: UserObject[], angle
 	 */
 	function nud(token: Token | undefined): EvalResult {
 		return match(token)
-			.with(undefined, () => err("UNEXPECTED_EOF" as const))
+			.with(undefined, () => err({ type: "UNEXPECTED_EOF" } as const))
 			.with({ type: "litr" }, token => {
 				// Unless the next token is a operator, treat as next times val (5cos(5)=5*cos(5), 5pi=5*pi)
 				const nextToken = peek();
-				if (nextToken.type === 'oper') {
-					return ok(token.value);
+				if (nextToken && ["func", "var", "lbrk"].includes(nextToken.type)) {
+					return evalExpr(3).map(right => right.mul(token.value).run());
 				}
 
-				return evalExpr(3).map(right => right.mul(token.value).run());
+				return ok(token.value);
 			})
 			.with({ type: "var", name: "pi" }, () => ok(LargeNumber.PI as LargeNumber))
 			.with({ type: "var", name: "e" }, () => ok(LargeNumber.E as LargeNumber))
+			.with({ type: "var", name: "ans" }, () => ok(ans))
+			.with({ type: "var", name: P.any }, ({ name }) => {
+				const variable = userSpace.get(name) as UserVariable | undefined;
+				if (!variable || variable.type !== 'variable') return err({ type: "UNKNOWN_NAME", name } as const);
+				return ok(variable.value);
+			})
 			.with({ type: "oper", name: "-" }, () => evalExpr(3).map(right => right.neg().run()))
-			.with({ type: "lbrk" }, () =>
-				evalExpr(0).andThen(value =>
+			.with({ type: "lbrk" }, () => evalExpr(0).andThen(value =>
 					expect({ type: "rbrk" }, true)
 						.map(() => value)
-						.mapErr(() => "NO_RHS_BRACKET" as const)
+						.mapErr(() => ({ type: "NO_RHS_BRACKET" } as const))
 				)
 			)
 			.with({ type: "func", name: P.union("lg", "degrees", "radians")}, token => {
@@ -164,7 +179,7 @@ export default function evaluate(tokens: Token[], userSpace: UserObject[], angle
 
 				return match([args.length])
 					.with([1], () => ok(func(args[0])))
-					.otherwise(() => err("INVALID_ARG_COUNT" as const));
+					.otherwise(() => err({ type: "INVALID_ARG_COUNT" } as const));
 			})
 			.with({ type: "func", name: P.union("log", "ncr", "npr", "nthroot")}, token => {
 				// Custom methods with two arguments
@@ -177,7 +192,7 @@ export default function evaluate(tokens: Token[], userSpace: UserObject[], angle
 
 				return match([args.length])
 					.with([2], () => ok(func(args[0], args[1])))
-					.otherwise(() => err("INVALID_ARG_COUNT" as const));
+					.otherwise(() => err({ type: "INVALID_ARG_COUNT" } as const));
 			})
 			.with({ type: "func", name: P.union("average")}, token => {
 				// Custom methods with unlimited params
@@ -226,14 +241,32 @@ export default function evaluate(tokens: Token[], userSpace: UserObject[], angle
 						const distFromCriticalPoint = coefficient.sub(coefficient.round()).abs().run();
 						const isArgCritical = distFromCriticalPoint.lt(LargeNumber.TAN_PRECISION as LargeNumber);
 
-						if (isArgCritical) return err("TRIG_PRECISION" as const);
+						if (isArgCritical) return err({ type: "TRIG_PRECISION" } as const);
 
 						return ok(argInRads.tan().run());
 					})
 					.with([any, any, 1], () => ok(func().run()))
-					.otherwise(() => err("INVALID_ARG_COUNT" as const));
+					.otherwise(() => err({ type: "INVALID_ARG_COUNT" } as const));
 			})
-			.otherwise(() => err("UNEXPECTED_TOKEN"));
+			.with({ type: 'func', name: P.any }, ({ name }) => {
+				const userFunc = userSpace.get(name) as UserFunction | undefined;
+				if (!userFunc || userFunc.type !== 'function') return err({ type: "UNKNOWN_NAME", name } as const);
+				const res = parseFunction();
+				if (res.isErr()) return err(res.error);
+
+				const args = res.value;
+				if (args.length !== userFunc.parameters.length) return err({ type: "INVALID_ARG_COUNT" } as const);
+				const funcUserSpace = new Map(userSpace);
+				userFunc.parameters.forEach((key, paramIndex) => {
+					funcUserSpace.set(key, { type: 'variable', value: args[paramIndex] });
+				});
+
+				const evalResult = evaluate(userFunc.value, ans, funcUserSpace, angleUnit);
+				if (evalResult.isErr()) return err(evalResult.error);
+				if (!evalResult.value.value) return err({ type: 'UNEXPECTED_TOKEN' } as const);
+				return ok(evalResult.value.value);
+			})
+			.otherwise(() => err({ type: "UNEXPECTED_TOKEN" } as const));
 	}
 
 	/**
@@ -242,23 +275,22 @@ export default function evaluate(tokens: Token[], userSpace: UserObject[], angle
 	 *
 	 * Returns the value of a sub-expression with a preceding (i.e. left) expression (i.e. value).
 	 */
-	function led(token: Token | undefined, left: Ok<LargeNumber, EvalErrorId>): EvalResult {
+	function led(token: Token | undefined, left: Ok<LargeNumber, EvalError>): EvalResult {
 		return (
 			match(token)
-				.with(undefined, () => err("UNEXPECTED_EOF" as const))
+				.with(undefined, () => err({ type: "UNEXPECTED_EOF" } as const))
 				.with({ type: "oper", name: "+" }, () => evalExpr(2).map(right => left.value.add(right).run()))
 				.with({ type: "oper", name: "-" }, () => evalExpr(2).map(right => left.value.sub(right).run()))
 				.with({ type: "oper", name: "*" }, () => evalExpr(3).map(right => left.value.mul(right).run()))
 				.with({ type: "oper", name: "/" }, () => evalExpr(3).map(right => left.value.div(right).run()))
 				.with({ type: "oper", name: "^" }, () => evalExpr(3).map(right => left.value.pow(right).run()))
 				.with({ type: "oper", name: "!" }, () => ok(factorial(left.value)))
-				// Variables and constants should be treated as multiplication of them
-				//.with({ type: "var" }, () => ok(left.value.mul(evalExpr(1)).run())))
 				// Right bracket should never get parsed by anything else than the left bracket parselet
-				.with({ type: "rbrk" }, () => err("NO_LHS_BRACKET" as const))
-				.otherwise(() => {
-					return err("UNEXPECTED_TOKEN")
-				})
+				.with({ type: "rbrk" }, () => err({ type: "NO_LHS_BRACKET" } as const))
+				// Neither should equals. Only for variable and function definition
+				// which is parsed elsewhere. Kalkki is not a CAS calculator.
+				.with({ type: "oper", name: "=" }, () => err({ type: "UNEXPECTED_TOKEN" } as const))
+				.otherwise(() => err({ type: "UNEXPECTED_TOKEN" } as const))
 		);
 	}
 
@@ -272,19 +304,74 @@ export default function evaluate(tokens: Token[], userSpace: UserObject[], angle
 		return left;
 	}
 
+	// Is this an assignation call?
+	const assignToken = tokens.findIndex((i) => i.type === 'oper' && i.name === '=');
+	if (assignToken !== -1) {
+		// Seems like it, is it in the right place (after variable of a function definition)
+		const variable = tokens.splice(0, assignToken + 1);
+		variable.pop(); // Equals sign
+
+		if (variable.length === 1 && variable[0].type === 'var') {
+			const varName = variable[0].name;
+			if (RESERVED_VARIABLES.includes(varName)) {
+				return err({ type: 'RESERVED_NAME', name: varName });
+			}
+
+			// Great! Set variable to eval value of tokens
+			const value = evalExpr(0);
+			if (value.isErr()) return err(value.error);
+			userSpace.set(varName, { type: 'variable', value: value.value });
+
+			return ok({ value: value.value, userSpace });
+		} else if (variable.length >= 3 && variable[0].type === 'func') { // Function + lbrk + rbkr
+			const funcName = variable[0].name;
+			if (RESERVED_VARIABLES.includes(funcName)) {
+				return err({ type: 'RESERVED_NAME', name: funcName });
+			}
+
+			// Just make sure the brackets are correct and remove them
+			if (variable[1].type !== 'lbrk') return err({ type: 'NO_LHS_BRACKET' } as const);
+			if (variable[variable.length - 1].type !== 'rbrk') return err({ type: 'NO_RHS_BRACKET' } as const);
+			const rawParameters = variable.slice(2, variable.length - 1);
+			const parameters: string[] = [];
+			// Check all parameters are variable names
+			for (let i = 0; i < rawParameters.length; i++) {
+				const param = rawParameters[i];
+				if (param.type !== 'var') return err({ type: 'UNEXPECTED_TOKEN' });
+				parameters.push(param.name);
+
+				if (i < rawParameters.length - 1) {
+					// Next must be "nextparam" or throw error
+					const separator = rawParameters[i + 1];
+					if (separator.type !== 'nextparam') return err({ type: 'UNEXPECTED_TOKEN' });
+					rawParameters.splice(i + 1, 1); // And remove it
+				}
+			}
+
+			userSpace.set(
+				funcName,
+				{ type: 'function', parameters, value: tokens }
+			);
+
+			return ok({ userSpace });
+		}
+
+		return err({ type: 'UNEXPECTED_TOKEN' });
+	}
+
 	const result = evalExpr(0);
 
-	// After the root eval call there shouldn't be anything to peek at
-	if (peek()) {
-		return err("UNEXPECTED_TOKEN");
-	} else if (result.isErr()) {
-		return result;
+	if (result.isErr()) {
+		return err(result.error);
+	} else if (peek()) {
+		// After the root eval call there shouldn't be anything to peek at
+		return err({ type: "UNEXPECTED_TOKEN" } as const);
 	} else if (result.value.isNaN()) {
-		return err("NOT_A_NUMBER");
+		return err({ type: "NOT_A_NUMBER" } as const);
 	} else if (!result.value.isFinite()) {
-		return err("INFINITY");
+		return err({ type: "INFINITY" } as const);
 	} else {
-		return result;
+		return ok({ value: result.value });
 	}
 }
 
@@ -292,6 +379,7 @@ export default function evaluate(tokens: Token[], userSpace: UserObject[], angle
 function lbp(token: Token) {
 	return match(token)
 		.with({ type: P.union("lbrk", "rbrk", "nextparam") }, () => 0)
+		.with({ type: "oper", name: "=" }, () => 0)
 		.with({ type: P.union("litr", "var") }, () => 1)
 		.with({ type: "oper", name: P.union("+", "-") }, () => 2)
 		.with({ type: "oper", name: P.union("*", "/") }, () => 3)

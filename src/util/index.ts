@@ -1,14 +1,15 @@
 import { LexicalError } from "../math/internal/tokeniser";
-import { EvalErrorId } from "../math/internal/evaluator";
+import { EvalError, UserObject } from "../math/internal/evaluator";
+import { LargeNumber } from "@/math/internal/large-number";
 
-export type MathError = EvalErrorId | { error: LexicalError };
+export type MathError = EvalError | LexicalError;
 export function parseError(error: MathError) {
-  if (typeof error === 'object' && error.error.type === 'UNKNOWN_TOKEN') {
+  if (error.type === 'UNKNOWN_TOKEN') {
     // LexicalError
-    return `tuntematon symboli kohdassa ${error.error.idx}`;
+    return `tuntematon symboli kohdassa ${error.idx}`;
   }
 
-  switch (error) {
+  switch (error.type) {
     case "INFINITY":
       return 'liian suuri tai ääretön arvo';
     case "INVALID_ARG_COUNT":
@@ -28,7 +29,11 @@ export function parseError(error: MathError) {
     case "PRECISION_OVERFLOW":
       return 'liian suuri numero laskettavaksi';
     case "TIMEOUT":
-      return "virhe: laskuoperaatio kesti liian kauan"
+      return "virhe: laskuoperaatio kesti liian kauan";
+    case "UNKNOWN_NAME":
+      return `${error.name}: tuntematon muuttuja tai funktio`;
+    case "RESERVED_NAME":
+      return `${error.name} on järjestelmän varaama nimi`;
   }
 
   console.error('Unhandled error!', error);
@@ -54,4 +59,54 @@ export function getOpenFunction(expression: string): string | null {
   }
 
   return funcName.length === 0 ? null : funcName.reverse().join("");
+}
+
+export function serializeUserspace(userSpace: Map<string, UserObject>) {
+  const obj: Record<string, unknown> = {};
+
+  for (const [name, value] of userSpace.entries()) {
+    if (value.type === 'variable') {
+      obj[name] = {
+        ...value,
+        value: value.value.toString(),
+      };
+    } else {
+      obj[name] = {
+        ...value,
+        value: value.value.map((i) => {
+          return i.type === 'litr' ? {
+            ...i,
+            value: i.value.toString(),
+          } : i
+        }),
+      };
+    }
+  }
+
+  return obj;
+}
+
+export function deserializeUserspace(userSpace: Record<string, any>): Map<string, UserObject> {
+  const obj: Map<string, UserObject> = new Map();
+
+  for (const [name, value] of Object.entries(userSpace)) {
+    if (value.type === 'variable') {
+      obj.set(name, {
+        ...value,
+        value: new LargeNumber(value.value),
+      });
+    } else {
+      obj.set(name, {
+        ...value,
+        value: value.value.map((i: any) => {
+          return i.type === 'litr' ? {
+            ...i,
+            value: new LargeNumber(i.value),
+          } : i
+        }),
+      });
+    }
+  }
+
+  return obj;
 }
