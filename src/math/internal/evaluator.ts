@@ -348,6 +348,10 @@ export default function evaluate(tokens: Token[], ans: LargeNumber, userSpace: M
 				}
 			}
 
+			if (tokens.length === 0) {
+				return err({ type: 'UNEXPECTED_EOF' });
+			}
+
 			userSpace.set(
 				funcName,
 				{ type: 'function', parameters, value: tokens }
