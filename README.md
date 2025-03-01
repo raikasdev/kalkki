@@ -15,10 +15,12 @@ Little backstory: I like SpeedCrunch a lot! But with the Finnish matriculation e
 
 - Familiar terminal style
 - Experimental LaTeX pasting support
-- Tokenizer based math parser (forked from Abicus)
-- Super fast math evaluation powered by [GMP and WASM](https://github.com/Daninet/gmp-wasm)
+- Support for user defined variables and functions
+- Vast selection of built-in functions
 - History (up and down arrow)
 - Progressive Web App for offline usage
+- Super fast math evaluation powered by [GMP and WASM](https://github.com/Daninet/gmp-wasm)
+- Tokeniser based math parser (forked from Abicus)
 
 ## Usage
 

@@ -19,11 +19,13 @@ export type EvalError = {
 	| "NO_RHS_BRACKET"
 	| "TRIG_PRECISION"
 	| "PRECISION_OVERFLOW"
-	| "RECURSION"
-	| "TIMEOUT";
+	| "RECURSION";
 } | {
 	type: 'UNKNOWN_NAME' | 'RESERVED_NAME',
 	name: string;
+} | {
+	type: 'TIMEOUT';
+	expression: string;
 };
 
 /**

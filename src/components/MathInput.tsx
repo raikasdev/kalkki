@@ -100,8 +100,10 @@ export default function MathInput({
       }
       const res = await calculateAsync(input, answer, userSpace, options.angleUnit);
       if (res.isErr()) {
+        const error = res.error as unknown as MathError;
+        if (error.type === 'TIMEOUT' && error.expression !== inputRef.current.value) return;
         setState({
-          extraInfo: parseError(res.error as unknown as MathError, options.language),
+          extraInfo: parseError(error, options.language),
         });
       } else {
         setState({

@@ -89,7 +89,7 @@ export function calculateAsync(expression: string, ans: LargeNumber, userSpace: 
 			}));
 
 			const timeoutTimer = setTimeout(() => {
-				resolve(err("TIMEOUT"));
+				resolve(err({ type: "TIMEOUT", expression }));
 				innerReject(new Error('Operation timeout'));
 			}, 5000);
 
