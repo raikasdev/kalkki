@@ -75,6 +75,8 @@ function* prettiedCharacters(tokens: Token[]) {
 					[any, any, { type: "rbrk" }],
 					// No space between function name and opening brakcet: "sin(…"
 					[any, { type: "func" }, { type: "lbrk" }],
+					// No space between rbrk and other "(10)(10)"
+					[any, { type: "func" }, { type: "lbrk" }],
 					// No space between factorial: "5!"
 					[any, any, { type: 'oper', name: '!' }],
 					// No space before semicolon: "sin(x; y)"
@@ -85,6 +87,9 @@ function* prettiedCharacters(tokens: Token[]) {
 				)
 				.with([any, any, P.nullish], () => false)
 				.otherwise(() => true);
+
+    // (10)(10) => (10) × (10)
+		if (cur?.type === 'rbrk' && (rhs && rhs.type !== 'oper')) yield " × ";
 
 		if (shouldHaveSpace) yield " ";
 	}

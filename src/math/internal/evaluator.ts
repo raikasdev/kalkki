@@ -169,8 +169,16 @@ export default function evaluate(tokens: Token[], ans: LargeNumber, userSpace: M
 			.with({ type: "oper", name: "-" }, () => evalExpr(3).map(right => right.neg().run()))
 			.with({ type: "lbrk" }, () => evalExpr(0).andThen(value =>
 					expect({ type: "rbrk" }, true)
-						.map(() => value)
 						.mapErr(() => ({ type: "NO_RHS_BRACKET" } as const))
+						.andThen(() => {
+							// (5)(5) => 25
+							const nextToken = peek();
+							if (nextToken && ["func", "var", "lbrk", "litr"].includes(nextToken.type)) {
+								return evalExpr(3).map(right => right.mul(value).run());
+							}
+
+							return ok(value);
+						})
 				)
 			)
 			.with({ type: "func", name: P.union("lg", "degrees", "radians")}, token => {
