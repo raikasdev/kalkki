@@ -1,7 +1,7 @@
 import type { fi } from "./fi";
 
 export const nl: typeof fi = {
-	localeName: 'Nederlands',
+	localeName: "Nederlands",
 
 	/** Welcome message */
 	welcome:

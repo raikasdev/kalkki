@@ -1,6 +1,6 @@
 export const fi = {
-	localeName: 'suomi',
-	
+	localeName: "suomi",
+
 	/** Welcome message */
 	welcome:
 		'Tervetuloa! Kalkki on <a href="https://github.com/raikasdev/kalkki">avointa lähdekoodia</a>.',

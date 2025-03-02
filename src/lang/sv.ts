@@ -1,7 +1,7 @@
 import type { fi } from "./fi";
 
 export const sv: typeof fi = {
-	localeName: 'svenska',
+	localeName: "svenska",
 
 	/** Welcome message */
 	welcome:

@@ -1,6 +1,6 @@
 import type { AppState } from "@/App";
 import SelfDestructButton from "@/components/SelfDestructButton";
-import { getLanguages, type Language, translate } from "@/lang";
+import { type Language, getLanguages, translate } from "@/lang";
 import { Copyright, Info, Smile } from "lucide-react";
 import type { ReactNode } from "preact/compat";
 
@@ -86,7 +86,7 @@ export function TopBar({
 											lang={options.language}
 											key={language}
 										>
-											{translate('localeName', language)}
+											{translate("localeName", language)}
 										</OptionButton>
 									))}
 								</ul>
