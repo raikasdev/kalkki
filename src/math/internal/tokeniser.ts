@@ -1,7 +1,7 @@
-import { err, ok, Result } from "neverthrow";
-import { match } from "ts-pattern";
-import { functions } from "./functions";
 import { LargeNumber } from "@/math/internal/large-number";
+import { Result, err, ok } from "neverthrow";
+import { match } from "ts-pattern";
+import type { functions } from "./functions";
 
 /**
  * Represents an error where the tokeniser couldn't match the input to any token.
@@ -37,7 +37,7 @@ export type TokenId = ReturnType<TokenMatcher[1]>["type"];
  */
 export type Token<T extends TokenId = TokenId> = Extract<TokenAny, { type: T }>;
 
-export type DecimalFunctions = keyof typeof LargeNumber['prototype'];
+export type DecimalFunctions = keyof (typeof LargeNumber)["prototype"];
 export type Functions = DecimalFunctions | keyof typeof functions;
 
 /**
@@ -55,7 +55,7 @@ const tokenMatchers = [
 	[
 		// Unsigned numeric literal: "0", "123", "25.6", etc...
 		/^((\d+[,.]\d+)|([1-9]\d*)|0)/,
-		str => ({
+		(str) => ({
 			type: "litr" as const,
 			value: new LargeNumber(str.replace(",", ".")),
 		}),
@@ -64,13 +64,13 @@ const tokenMatchers = [
 		// Operators: "-", "+", "/", "*", "^" and "="
 		// The multiplication and minus signs have unicode variants that also need to be handled
 		/^[-=+/*^−×!]/,
-		str => ({
+		(str) => ({
 			type: "oper" as const,
 			name: match(str)
-				.with("-", "+", "/", "*", "^", "!", "=", op => op)
+				.with("-", "+", "/", "*", "^", "!", "=", (op) => op)
 				.with("−", () => "-" as const)
 				.with("×", () => "*" as const)
-				.otherwise(op => {
+				.otherwise((op) => {
 					throw Error(`Programmer error: neglected operator "${op}"`);
 				}),
 		}),
@@ -78,22 +78,22 @@ const tokenMatchers = [
 	[
 		// Left bracket: "("
 		/^\(/,
-		_ => ({ type: "lbrk" as const }),
+		(_) => ({ type: "lbrk" as const }),
 	],
 	[
 		// Right bracket: ")"
 		/^\)/,
-		_ => ({ type: "rbrk" as const }),
+		(_) => ({ type: "rbrk" as const }),
 	],
 	[
 		// Semicolon, parameter separator
 		/^;/,
-		_ => ({ type: 'nextparam' as const }),
+		(_) => ({ type: "nextparam" as const }),
 	],
 	[
 		// Function name: "sin", "log", "√", etc...
 		/^([\p{L}_][\p{L}_0-9]*)(?=\()/iu,
-		str => ({
+		(str) => ({
 			type: "func" as const,
 			name: match(str.toLowerCase())
 				.with("log10", () => "log" as const)
@@ -104,19 +104,19 @@ const tokenMatchers = [
 				.with("arsinh", () => "asinh" as const)
 				.with("arcosh", () => "acosh" as const)
 				.with("artanh", () => "atanh" as const)
-				.otherwise(name => name),
+				.otherwise((name) => name),
 		}),
 	],
 	[
 		// Variables, first letter any letter or underscore, other letters can also be numbers
 		// Any unresolved string
-		/^([\p{L}_][\p{L}_0-9]*)/ui,
-		str => ({
+		/^([\p{L}_][\p{L}_0-9]*)/iu,
+		(str) => ({
 			type: "var" as const,
 			name: match(str.toLowerCase())
 				.with("π", () => "pi" as const)
 				.with("ℇ", "𝑒", "ℯ", () => "e" as const)
-				.otherwise(name => name),
+				.otherwise((name) => name),
 		}),
 	],
 ] satisfies [RegExp, (str: string) => { type: string }][];
@@ -133,7 +133,9 @@ const tokenMatchers = [
  * tokenise("1 ö 2") // => Err({ type: "UNKNOWN_TOKEN", idx: 2 }) // 2 === "1 ö 2".indexOf("ö")
  * ```
  */
-export default function tokenise(expression: string): Result<Token[], LexicalError> {
+export default function tokenise(
+	expression: string,
+): Result<Token[], LexicalError> {
 	return Result.combine([...tokens(expression)]);
 }
 
@@ -149,7 +151,9 @@ export default function tokenise(expression: string): Result<Token[], LexicalErr
  * @see {@link tokenise}
  * @see {@link Token}
  */
-function* tokens(expression: string): Generator<Result<Token, LexicalError>, void, void> {
+function* tokens(
+	expression: string,
+): Generator<Result<Token, LexicalError>, void, void> {
 	const end = expression.length;
 	let idx = 0;
 
@@ -159,17 +163,19 @@ function* tokens(expression: string): Generator<Result<Token, LexicalError>, voi
 		const whitespace = /^\s+/.exec(slice)?.[0];
 		if (whitespace) {
 			idx += whitespace.length;
-			continue eating;
+			continue;
 		}
 
 		if (import.meta.env.DEV && slice.startsWith("improbatur")) {
-			throw Error("Simulated Error: This is a simulated error for testing purposes.");
+			throw Error(
+				"Simulated Error: This is a simulated error for testing purposes.",
+			);
 		}
 
-		matching: for (const [regex, build] of tokenMatchers) {
+		for (const [regex, build] of tokenMatchers) {
 			const str = regex.exec(slice)?.[0];
 
-			if (!str) continue matching;
+			if (!str) continue;
 
 			const token = build(str);
 

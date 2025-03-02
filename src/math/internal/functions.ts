@@ -5,7 +5,7 @@ import { LargeNumber } from "@/math/internal/large-number";
  * Returns an error if the input is negative or not an integer.
  */
 export function factorial(n: LargeNumber): LargeNumber {
-	if (n.isNegative()) return new LargeNumber(NaN);
+	if (n.isNegative()) return new LargeNumber(Number.NaN);
 	if (!n.isInteger()) {
 		return n.add(new LargeNumber(1)).gamma().run();
 	}
@@ -18,13 +18,19 @@ export function factorial(n: LargeNumber): LargeNumber {
  * @param base Log base
  * @param x Value to log
  */
-function log(base: LargeNumber, x: LargeNumber | undefined = undefined): LargeNumber {
-	if (!x) return new LargeNumber(NaN);
+function log(
+	base: LargeNumber,
+	x: LargeNumber | undefined = undefined,
+): LargeNumber {
+	if (!x) return new LargeNumber(Number.NaN);
 	return x.log(base).run();
 }
 
-function nthroot(n: LargeNumber, x: LargeNumber | undefined = undefined): LargeNumber {
-	if (!x) return new LargeNumber(NaN);
+function nthroot(
+	n: LargeNumber,
+	x: LargeNumber | undefined = undefined,
+): LargeNumber {
+	if (!x) return new LargeNumber(Number.NaN);
 	return x.pow(new LargeNumber(1).div(n)).run();
 }
 
@@ -32,16 +38,26 @@ function lg(x: LargeNumber): LargeNumber {
 	return log(new LargeNumber(10), x);
 }
 
-function ncr(n: LargeNumber, r: LargeNumber | undefined = undefined): LargeNumber {
-	if (!r) return new LargeNumber(NaN);
+function ncr(
+	n: LargeNumber,
+	r: LargeNumber | undefined = undefined,
+): LargeNumber {
+	if (!r) return new LargeNumber(Number.NaN);
 	if (r.gt(n)) return new LargeNumber(0);
-	return factorial(n).div(factorial(r).mul(factorial(n.sub(r).run()))).run();
+	return factorial(n)
+		.div(factorial(r).mul(factorial(n.sub(r).run())))
+		.run();
 }
 
-function npr(n: LargeNumber, r: LargeNumber | undefined = undefined): LargeNumber {
-	if (!r) return new LargeNumber(NaN);
+function npr(
+	n: LargeNumber,
+	r: LargeNumber | undefined = undefined,
+): LargeNumber {
+	if (!r) return new LargeNumber(Number.NaN);
 	if (r.gt(n)) return new LargeNumber(0);
-	return factorial(n).div(factorial(n.sub(r).run())).run();
+	return factorial(n)
+		.div(factorial(n.sub(r).run()))
+		.run();
 }
 
 function average(...nums: LargeNumber[]): LargeNumber {

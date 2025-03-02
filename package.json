@@ -1,29 +1,36 @@
 {
-  "name": "kalkki",
-  "private": true,
-  "version": "1.1.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "licenses": "npx generate-license-file --input package.json --output public/third-party-licenses.txt && npx license-report --output=json --config .licensesrc.json > src/utils/licenses.json"
-  },
-  "dependencies": {
-    "decimal.js": "^10.5.0",
-    "gmp-wasm": "^1.3.2",
-    "latex-utensils": "^6.2.0",
-    "lucide-react": "^0.475.0",
-    "neverthrow": "^8.1.1",
-    "preact": "^10.26.2",
-    "ts-pattern": "5.2.0"
-  },
-  "devDependencies": {
-    "@preact/preset-vite": "^2.10.1",
-    "@types/bun": "^1.2.2",
-    "sass-embedded": "^1.85.0",
-    "typescript": "~5.7.2",
-    "vite": "^6.1.0",
-    "vite-plugin-pwa": "^0.21.1"
-  }
+	"name": "kalkki",
+	"private": true,
+	"version": "1.1.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"licenses": "npx generate-license-file --input package.json --output public/third-party-licenses.txt && npx license-report --output=json --config .licensesrc.json > src/utils/licenses.json",
+		"lint": "biome lint --fix",
+		"format": "biome format --fix",
+		"check": "biome check --fix",
+		"prepare": "husky"
+	},
+	"dependencies": {
+		"decimal.js": "^10.5.0",
+		"gmp-wasm": "^1.3.2",
+		"latex-utensils": "^6.2.0",
+		"lucide-react": "^0.475.0",
+		"neverthrow": "^8.1.1",
+		"preact": "^10.26.2",
+		"ts-pattern": "5.2.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@preact/preset-vite": "^2.10.1",
+		"@types/bun": "^1.2.2",
+		"husky": "^9.1.7",
+		"sass-embedded": "^1.85.0",
+		"typescript": "~5.7.2",
+		"vite": "^6.1.0",
+		"vite-plugin-pwa": "^0.21.1"
+	},
+	"trustedDependencies": ["husky"]
 }

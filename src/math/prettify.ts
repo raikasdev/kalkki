@@ -1,5 +1,5 @@
-import { match, P } from "ts-pattern";
-import { tokenise, Token } from ".";
+import { P, match } from "ts-pattern";
+import { type Token, tokenise } from ".";
 
 /**
  * Takes in an unformatted expression (e.g. `1+2*(cos(2)/sqrt(pi))`) and gives out a "prettified"
@@ -36,22 +36,24 @@ function* prettiedCharacters(tokens: Token[]) {
 
 	for (let i = 0; i < tokens.length; i++) {
 		const lhs = tokens[i - 1] ?? null;
-		const cur = tokens[i]!;
+		const cur = tokens[i];
 		const rhs = tokens[i + 1] ?? null;
 
 		const formattedToken = match(cur)
-			.with({ type: "litr" }, token => token.value.toString().replace(".", ","))
+			.with({ type: "litr" }, (token) =>
+				token.value.toString().replace(".", ","),
+			)
 			.with({ type: "lbrk" }, () => "(")
 			.with({ type: "rbrk" }, () => ")")
-      .with({ type: "nextparam" }, () => ";")
+			.with({ type: "nextparam" }, () => ";")
 			.with({ type: "var", name: "ans" }, () => "ANS")
-      .with({ type: "var", name: "pi" }, () => "π")
+			.with({ type: "var", name: "pi" }, () => "π")
 			.with({ type: "var", name: "e" }, () => "e")
-			.with({ type: "var", name: any }, token => token.name)
+			.with({ type: "var", name: any }, (token) => token.name)
 			.with({ type: "oper", name: "*" }, () => "×")
 			.with({ type: "oper", name: "-" }, () => "−")
-			.with({ type: "oper", name: any }, token => token.name)
-			.with({ type: "func", name: any }, token =>
+			.with({ type: "oper", name: any }, (token) => token.name)
+			.with({ type: "func", name: any }, (token) =>
 				match(token.name)
 					.with("asin", () => "arcsin")
 					.with("acos", () => "arccos")
@@ -59,9 +61,9 @@ function* prettiedCharacters(tokens: Token[]) {
 					.with("asinh", () => "arsinh" as const)
 					.with("acosh", () => "arcosh" as const)
 					.with("atanh", () => "artanh" as const)
-					.otherwise(() => token.name)
+					.otherwise(() => token.name),
 			)
-      .otherwise(token => token);
+			.otherwise((token) => token);
 
 		yield formattedToken;
 
@@ -78,18 +80,22 @@ function* prettiedCharacters(tokens: Token[]) {
 					// No space between rbrk and other "(10)(10)"
 					[any, { type: "func" }, { type: "lbrk" }],
 					// No space between factorial: "5!"
-					[any, any, { type: 'oper', name: '!' }],
+					[any, any, { type: "oper", name: "!" }],
 					// No space before semicolon: "sin(x; y)"
-					[any, any, { type: 'nextparam' }],
+					[any, any, { type: "nextparam" }],
 					// Negative numbers: e.g. "-5" and "-5 + 5" instead of "- 5" and "- 5 + 5"
-					[not({ type: union("litr", "var", "rbrk") }), { type: "oper", name: "-" }, any],
-					() => false
+					[
+						not({ type: union("litr", "var", "rbrk") }),
+						{ type: "oper", name: "-" },
+						any,
+					],
+					() => false,
 				)
 				.with([any, any, P.nullish], () => false)
 				.otherwise(() => true);
 
-    // (10)(10) => (10) × (10)
-		if (cur?.type === 'rbrk' && (rhs && rhs.type !== 'oper')) yield " × ";
+		// (10)(10) => (10) × (10)
+		if (cur?.type === "rbrk" && rhs && rhs.type !== "oper") yield " × ";
 
 		if (shouldHaveSpace) yield " ";
 	}

@@ -1,1 +1,80 @@
-[{"name":"decimal.js","author":"Michael Mclaughlin M8ch88l@gmail.com","licenseType":"MIT","link":"git+https://github.com/MikeMcl/decimal.js.git"},{"name":"gmp-wasm","author":"Dani Biró <danibiro93@gmail.com> (https://danibiro.com)","licenseType":"LGPL-3.0-only","link":"git+https://github.com/Daninet/gmp-wasm.git"},{"name":"latex-utensils","author":"n/a","licenseType":"MIT","link":"git+https://github.com/tamuratak/latex-utensils.git"},{"name":"lucide-react","author":"Eric Fennis","licenseType":"ISC","link":"git+https://github.com/lucide-icons/lucide.git"},{"name":"neverthrow","author":"Giorgio Delgado","licenseType":"MIT","link":"git+https://github.com/supermacro/neverthrow.git"},{"name":"preact","author":"n/a","licenseType":"MIT","link":"git+https://github.com/preactjs/preact.git"},{"name":"ts-pattern","author":"Gabriel Vergnaud","licenseType":"MIT","link":"git+ssh://git@github.com/gvergnaud/ts-pattern.git"},{"name":"@preact/preset-vite","author":"The Preact Team (https://preactjs.com)","licenseType":"MIT","link":"git+https://github.com/preactjs/preset-vite.git"},{"name":"@types/bun","author":"n/a","licenseType":"MIT","link":"https://github.com/DefinitelyTyped/DefinitelyTyped.git"},{"name":"sass-embedded","author":"Google Inc.","licenseType":"MIT","link":"git+https://github.com/sass/embedded-host-node.git"},{"name":"typescript","author":"Microsoft Corp.","licenseType":"Apache-2.0","link":"git+https://github.com/microsoft/TypeScript.git"},{"name":"vite","author":"Evan You","licenseType":"MIT","link":"git+https://github.com/vitejs/vite.git"},{"name":"vite-plugin-pwa","author":"antfu <anthonyfu117@hotmail.com>","licenseType":"MIT","link":"git+https://github.com/vite-pwa/vite-plugin-pwa.git"}]
+[
+	{
+		"name": "decimal.js",
+		"author": "Michael Mclaughlin M8ch88l@gmail.com",
+		"licenseType": "MIT",
+		"link": "git+https://github.com/MikeMcl/decimal.js.git"
+	},
+	{
+		"name": "gmp-wasm",
+		"author": "Dani Biró <danibiro93@gmail.com> (https://danibiro.com)",
+		"licenseType": "LGPL-3.0-only",
+		"link": "git+https://github.com/Daninet/gmp-wasm.git"
+	},
+	{
+		"name": "latex-utensils",
+		"author": "n/a",
+		"licenseType": "MIT",
+		"link": "git+https://github.com/tamuratak/latex-utensils.git"
+	},
+	{
+		"name": "lucide-react",
+		"author": "Eric Fennis",
+		"licenseType": "ISC",
+		"link": "git+https://github.com/lucide-icons/lucide.git"
+	},
+	{
+		"name": "neverthrow",
+		"author": "Giorgio Delgado",
+		"licenseType": "MIT",
+		"link": "git+https://github.com/supermacro/neverthrow.git"
+	},
+	{
+		"name": "preact",
+		"author": "n/a",
+		"licenseType": "MIT",
+		"link": "git+https://github.com/preactjs/preact.git"
+	},
+	{
+		"name": "ts-pattern",
+		"author": "Gabriel Vergnaud",
+		"licenseType": "MIT",
+		"link": "git+ssh://git@github.com/gvergnaud/ts-pattern.git"
+	},
+	{
+		"name": "@preact/preset-vite",
+		"author": "The Preact Team (https://preactjs.com)",
+		"licenseType": "MIT",
+		"link": "git+https://github.com/preactjs/preset-vite.git"
+	},
+	{
+		"name": "@types/bun",
+		"author": "n/a",
+		"licenseType": "MIT",
+		"link": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+	},
+	{
+		"name": "sass-embedded",
+		"author": "Google Inc.",
+		"licenseType": "MIT",
+		"link": "git+https://github.com/sass/embedded-host-node.git"
+	},
+	{
+		"name": "typescript",
+		"author": "Microsoft Corp.",
+		"licenseType": "Apache-2.0",
+		"link": "git+https://github.com/microsoft/TypeScript.git"
+	},
+	{
+		"name": "vite",
+		"author": "Evan You",
+		"licenseType": "MIT",
+		"link": "git+https://github.com/vitejs/vite.git"
+	},
+	{
+		"name": "vite-plugin-pwa",
+		"author": "antfu <anthonyfu117@hotmail.com>",
+		"licenseType": "MIT",
+		"link": "git+https://github.com/vite-pwa/vite-plugin-pwa.git"
+	}
+]

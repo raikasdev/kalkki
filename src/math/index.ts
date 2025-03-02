@@ -1,10 +1,14 @@
-import { err, ok, Result } from "neverthrow";
+import { type Result, err, ok } from "neverthrow";
 
-import evaluate, { EvalError, EvalValue, UserObject } from "./internal/evaluator";
-import tokenise from "./internal/tokeniser";
 import { LargeNumber } from "@/math/internal/large-number";
-import Worker from '@/math/worker?worker';
+import Worker from "@/math/worker?worker";
 import { deserializeUserspace, serializeUserspace } from "@/util";
+import evaluate, {
+	type EvaluationError,
+	type EvalValue,
+	type UserObject,
+} from "./internal/evaluator";
+import tokenise from "./internal/tokeniser";
 
 export type { Token, TokenId } from "./internal/tokeniser";
 export { tokenise, evaluate };
@@ -13,7 +17,12 @@ export type AngleUnit = "deg" | "rad";
 
 const resultCache = new Map();
 
-export function calculate(expression: string, ans: LargeNumber, userSpace: Map<string, UserObject>, angleUnit: AngleUnit): Result<EvalValue, EvalError | string> {
+export function calculate(
+	expression: string,
+	ans: LargeNumber,
+	userSpace: Map<string, UserObject>,
+	angleUnit: AngleUnit,
+): Result<EvalValue, EvaluationError | string> {
 	// This could be a one-liner with neverthrow's `andThen` but we want to
 	// jump out of neverthrow-land for React anyhow soon
 	const tokens = tokenise(expression);
@@ -35,7 +44,7 @@ export function calculate(expression: string, ans: LargeNumber, userSpace: Map<s
 		// Usually means out-of-bits
 		// Can't err here for some reason...
 		if (error instanceof RangeError) {
-			return err({ type: 'RECURSION' } as const);
+			return err({ type: "RECURSION" } as const);
 		}
 		console.error("Execution fail", error);
 	}
@@ -55,7 +64,7 @@ async function getWorker(cb: (w: Worker) => Promise<void>) {
 	let worker = workers.pop();
 	if (!worker) {
 		worker = new Worker();
-		worker.postMessage(JSON.stringify({ type: 'init' }));
+		worker.postMessage(JSON.stringify({ type: "init" }));
 	}
 	try {
 		await cb(worker);
@@ -73,7 +82,12 @@ async function getWorker(cb: (w: Worker) => Promise<void>) {
 	}
 }
 
-export function calculateAsync(expression: string, ans: LargeNumber, userSpace: Map<string, UserObject>, angleUnit: AngleUnit): Promise<ReturnType<typeof calculate>> {
+export function calculateAsync(
+	expression: string,
+	ans: LargeNumber,
+	userSpace: Map<string, UserObject>,
+	angleUnit: AngleUnit,
+): Promise<ReturnType<typeof calculate>> {
 	return new Promise((resolve) => {
 		const cacheKey = `${angleUnit}:${ans}:${JSON.stringify(userSpace)}:${expression}`;
 		if (resultCache.has(cacheKey)) {
@@ -81,44 +95,59 @@ export function calculateAsync(expression: string, ans: LargeNumber, userSpace: 
 		}
 
 		const randomId = Math.random().toString(16).substring(2);
-		getWorker((w) => new Promise((innerResolve, innerReject) => {
-			w.postMessage(JSON.stringify({
-				type: 'calculate',
-				id: randomId,
-				data: [expression, ans.toString(), JSON.stringify(serializeUserspace(userSpace)), angleUnit],
-			}));
+		getWorker(
+			(w) =>
+				new Promise((innerResolve, innerReject) => {
+					w.postMessage(
+						JSON.stringify({
+							type: "calculate",
+							id: randomId,
+							data: [
+								expression,
+								ans.toString(),
+								JSON.stringify(serializeUserspace(userSpace)),
+								angleUnit,
+							],
+						}),
+					);
 
-			const timeoutTimer = setTimeout(() => {
-				resolve(err({ type: "TIMEOUT", expression }));
-				innerReject(new Error('Operation timeout'));
-			}, 5000);
+					const timeoutTimer = setTimeout(() => {
+						resolve(err({ type: "TIMEOUT", expression }));
+						innerReject(new Error("Operation timeout"));
+					}, 5000);
 
-			function listener(e: MessageEvent<string>) {
-				const data: { id?: string; value?: any; error?: any; } = JSON.parse(e.data);
-				if (data.id !== randomId) return;
-				delete data.id;
-				w.removeEventListener('message', listener);
-				clearTimeout(timeoutTimer);
-				if (data.value) {
-					// Workers have individual caches, so have to do this here too
-					const response = data.value;
-					const res: Record<string, unknown> = {};
-					if (response.value) {
-						res.value = new LargeNumber(response.value);
+					function listener(e: MessageEvent<string>) {
+						const data: {
+							id?: string;
+							value?: Record<string, string>;
+							error: string | EvaluationError;
+						} = JSON.parse(e.data);
+						if (data.id !== randomId) return;
+						w.removeEventListener("message", listener);
+						clearTimeout(timeoutTimer);
+						if (data.value) {
+							// Workers have individual caches, so have to do this here too
+							const response = data.value;
+							const res: Record<string, unknown> = {};
+							if (response.value) {
+								res.value = new LargeNumber(response.value);
+							}
+							if (response.userSpace) {
+								res.userSpace = deserializeUserspace(
+									JSON.parse(response.userSpace as string),
+								);
+							}
+							const value = ok(res);
+							resultCache.set(cacheKey, value);
+							resolve(value);
+						} else {
+							resolve(err(data.error));
+						}
+						innerResolve();
 					}
-					if (response.userSpace) {
-						res.userSpace = deserializeUserspace(JSON.parse(response.userSpace as string));
-					}
-					const value = ok(res);
-					resultCache.set(cacheKey, value);
-					resolve(value);
-				} else {
-					resolve(err(data.error));
-				}
-				innerResolve();
-			}
 
-			w.addEventListener('message', listener);
-		}));
+					w.addEventListener("message", listener);
+				}),
+		);
 	});
 }
