@@ -31,7 +31,7 @@ You can do these with your *favorite package manager*. I like [Bun](https://bun.
 
 Tada! You have a dev server running on :5173. Consult package.json 'scripts' for more information.
 
-The project uses [Biome](https://biomejs.dev/) for linting and code formatting. Make sure to `bun run check` your code before submitting a PR. We use `husky` for pre-commti checks.
+The project uses [Biome](https://biomejs.dev/) for linting and code formatting. Make sure to `bun run check` your code before submitting a PR. We use `husky` for pre-commit checks.
 
 ## TODO
 
