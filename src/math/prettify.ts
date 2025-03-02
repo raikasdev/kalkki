@@ -79,6 +79,8 @@ function* prettiedCharacters(tokens: Token[]) {
 					[any, { type: "func" }, { type: "lbrk" }],
 					// No space between rbrk and other "(10)(10)"
 					[any, { type: "func" }, { type: "lbrk" }],
+					// No space before number + variable (10x, 5x, 2cos(x))
+					[any, { type: "litr" }, { type: union("var", "func", "lbrk") }],
 					// No space between factorial: "5!"
 					[any, any, { type: "oper", name: "!" }],
 					// No space before semicolon: "sin(x; y)"
@@ -96,6 +98,9 @@ function* prettiedCharacters(tokens: Token[]) {
 
 		// (10)(10) => (10) × (10)
 		if (cur?.type === "rbrk" && rhs && rhs.type !== "oper") yield " × ";
+
+		// 2cos(x) => 2 × cos(x)
+		if (cur?.type === "litr" && rhs && rhs.type === "func") yield " × ";
 
 		if (shouldHaveSpace) yield " ";
 	}
