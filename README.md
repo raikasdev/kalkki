@@ -42,7 +42,7 @@ The project uses [Biome](https://biomejs.dev/) for linting and code formatting. 
 
 ## License
 
-Licensed under the MIT license, consult LICENSE for more information.
+Licensed under the AGPLv3 license, consult LICENSE for more information.
 
 ### Credits
 

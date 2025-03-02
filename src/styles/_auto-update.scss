@@ -58,7 +58,8 @@
       background-color: #a1cb4a;
     }
 
-    &:active {
+    &:active,
+    &:visited {
       background-color: #91bb3a;
     }
   }

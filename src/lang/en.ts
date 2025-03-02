@@ -49,8 +49,8 @@ export const en: typeof fi = {
 	aboutThanksYTL:
 		"Matriculation Examination Board of Finland for developing the math engine in Abicus",
 	aboutLicense: "License",
-	aboutLicenseMit:
-		"This program is open source and licensed under the MIT license and provided without any warranty.",
+	aboutLicenseGPL:
+		"This program is open source and licensed under the AGPLv3 license and provided without any warranty.",
 
 	/** Copyright page */
 	copyrightOSS: "Open source licenses",

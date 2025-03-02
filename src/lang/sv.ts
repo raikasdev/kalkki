@@ -50,8 +50,8 @@ export const sv: typeof fi = {
 	aboutThanksYTL:
 		"Studentexamensnämnden i Finland för att ha utvecklat matematikmotorn i Abicus",
 	aboutLicense: "Licens",
-	aboutLicenseMit:
-		"Detta program är öppen källkod och licensierat under MIT-licensen utan någon garanti.",
+	aboutLicenseGPL:
+		"Detta program är öppen källkod och licensierat under AGPLv3-licensen utan någon garanti.",
 
 	/** Upphovsrättssida */
 	copyrightOSS: "Licenser för öppen källkod",

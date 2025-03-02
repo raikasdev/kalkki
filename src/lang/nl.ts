@@ -50,8 +50,8 @@ export const nl: typeof fi = {
 	aboutThanksYTL:
 		"Toelatingsexamenraad van Finland voor het ontwikkelen van de wiskunde-engine in Abicus",
 	aboutLicense: "Licentie",
-	aboutLicenseMit:
-		"Dit programma is open source en gelicentieerd onder de MIT-licentie en wordt geleverd zonder enige garantie.",
+	aboutLicenseGPL:
+		"Dit programma is open source en gelicentieerd onder de AGPLv3-licentie en wordt geleverd zonder enige garantie.",
 
 	/** Copyright page */
 	copyrightOSS: "Open source licenties",

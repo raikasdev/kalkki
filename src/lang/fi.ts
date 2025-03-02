@@ -49,8 +49,8 @@ export const fi = {
 	aboutThanksYTL:
 		"Ylioppilastutkintolautakunta Abicuksen matematiikkamoottorin kehittämisestä",
 	aboutLicense: "Lisenssi",
-	aboutLicenseMit:
-		"Tätä ohjelma on avointa lähdekoodia ja sitä jaetaan MIT-lisenssin ehdoin ilman mitään takuuta tai takeita toimivuudesta.",
+	aboutLicenseGPL:
+		"Tätä ohjelma on avointa lähdekoodia ja sitä jaetaan AGPLv3-lisenssin ehdoin ilman mitään takuuta tai takeita toimivuudesta.",
 
 	/** Copyright page */
 	copyrightOSS: "Avoimen lähdekoodin lisenssit",

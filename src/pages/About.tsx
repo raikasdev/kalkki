@@ -35,7 +35,11 @@ export default function AboutPage({
 					<p>{translate("aboutThanksYTL", language)}</p>
 
 					<h2>{translate("aboutLicense", language)}</h2>
-					<p>{translate("aboutLicenseMit", language)}</p>
+					<p>{translate("aboutLicenseGPL", language)}</p>
+					<code>
+						Copyright (C) 2025 Roni Äikäs{" "}
+						<a href="https://raikas.dev">(https://raikas.dev)</a>
+					</code>
 				</div>
 			</div>
 		</div>

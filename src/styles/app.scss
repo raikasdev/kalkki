@@ -39,7 +39,8 @@
   a {
     color: #B2DC5B;
 
-    &:active {
+    &:active,
+    &:visited {
       color: #B2DC5B;
     }
   }
