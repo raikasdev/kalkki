@@ -42,6 +42,12 @@
 		"link": "git+ssh://git@github.com/gvergnaud/ts-pattern.git"
 	},
 	{
+		"name": "@biomejs/biome",
+		"author": "Emanuele Stoppa",
+		"licenseType": "MIT OR Apache-2.0",
+		"link": "git+https://github.com/biomejs/biome.git"
+	},
+	{
 		"name": "@preact/preset-vite",
 		"author": "The Preact Team (https://preactjs.com)",
 		"licenseType": "MIT",
@@ -52,6 +58,12 @@
 		"author": "n/a",
 		"licenseType": "MIT",
 		"link": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+	},
+	{
+		"name": "husky",
+		"author": "typicode",
+		"licenseType": "MIT",
+		"link": "git+https://github.com/typicode/husky.git"
 	},
 	{
 		"name": "sass-embedded",
