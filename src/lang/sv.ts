@@ -1,6 +1,8 @@
 import type { fi } from "./fi";
 
 export const sv: typeof fi = {
+	localeName: 'svenska',
+
 	/** Welcome message */
 	welcome:
 		'Välkommen! Kalkki är <a href="https://github.com/raikasdev/kalkki">öppen källkod</a>.',

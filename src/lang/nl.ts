@@ -1,6 +1,8 @@
 import type { fi } from "./fi";
 
 export const nl: typeof fi = {
+	localeName: 'Nederlands',
+
 	/** Welcome message */
 	welcome:
 		'Welkom! Kalkki is <a href="https://github.com/raikasdev/kalkki">open source</a>.',

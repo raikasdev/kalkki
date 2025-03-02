@@ -1,6 +1,6 @@
 import type { AppState } from "@/App";
 import SelfDestructButton from "@/components/SelfDestructButton";
-import { type Language, translate } from "@/lang";
+import { getLanguages, type Language, translate } from "@/lang";
 import { Copyright, Info, Smile } from "lucide-react";
 import type { ReactNode } from "preact/compat";
 
@@ -79,34 +79,16 @@ export function TopBar({
 							<li className="has-submenu">
 								<span>{translate("optionsLanguage", options.language)}</span>
 								<ul className="submenu">
-									<OptionButton
-										currentValue={options.language === "fi"}
-										set={() => setOptions({ language: "fi" })}
-										lang={options.language}
-									>
-										suomi
-									</OptionButton>
-									<OptionButton
-										currentValue={options.language === "sv"}
-										set={() => setOptions({ language: "sv" })}
-										lang={options.language}
-									>
-										svenska
-									</OptionButton>
-									<OptionButton
-										currentValue={options.language === "en"}
-										set={() => setOptions({ language: "en" })}
-										lang={options.language}
-									>
-										English
-									</OptionButton>
-									<OptionButton
-										currentValue={options.language === "nl"}
-										set={() => setOptions({ language: "nl" })}
-										lang={options.language}
-									>
-										Nederlands
-									</OptionButton>
+									{getLanguages().map((language) => (
+										<OptionButton
+											currentValue={options.language === language}
+											set={() => setOptions({ language })}
+											lang={options.language}
+											key={language}
+										>
+											{translate('localeName', language)}
+										</OptionButton>
+									))}
 								</ul>
 							</li>
 						}

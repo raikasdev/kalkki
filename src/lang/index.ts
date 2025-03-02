@@ -24,3 +24,7 @@ export function getDefaultLanguage(): Language {
 	}
 	return "fi";
 }
+
+export function getLanguages(): Language[] {
+	return Object.keys(languages) as Language[];
+}
