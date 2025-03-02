@@ -100,6 +100,13 @@ export function TopBar({
 									>
 										English
 									</OptionButton>
+									<OptionButton
+										currentValue={options.language === "nl"}
+										set={() => setOptions({ language: "nl" })}
+										lang={options.language}
+									>
+										Nederlands
+									</OptionButton>
 								</ul>
 							</li>
 						}
