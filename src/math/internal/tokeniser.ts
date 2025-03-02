@@ -53,8 +53,8 @@ const tokenMatchers = [
 	// - When adding new types, remember to mark the `type` property `as const` for TypeScript.
 
 	[
-		// Unsigned numeric literal: "0", "123", "25.6", etc...
-		/^((\d+[,.]\d+)|([1-9]\d*)|0)/,
+		// Unsigned numeric literal: "0", "123", "25.6", "1,04e-10" etc...
+		/^((\d+[,.]\d+)|([1-9]\d*)|0)([eE][-+]?\d+)?/,
 		(str) => ({
 			type: "litr" as const,
 			value: new LargeNumber(str.replace(",", ".")),

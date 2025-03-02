@@ -1,0 +1,40 @@
+/**
+ * Based on https://github.com/morhetz/gruvbox licensed under MIT
+ */
+body.theme-gruvbox-dark {
+  --theme-background: #282828; /* s:bg0 */
+  --theme-text-color: #ebdbb2; /* s:fg1 */
+  --theme-comment-color: #928374; /* s:gray */
+  --theme-link-color: #a89984; /* s:fg4 */
+  --theme-link-color-secondary: #b8a994; /* Lighter s:fg4 */
+  --theme-answer: #b8bb26; /* s:green */
+  --theme-warning: #fb4934; /* s:red */
+  --theme-input-background: #3c3836; /* s:bg1 */
+  --theme-cursor: #fe8019; /* s:orange */
+  --theme-symbol-litr: #d3869b; /* s:purple */
+  --theme-symbol-oper: #83a598; /* s:blue */
+  --theme-symbol-func: #8ec07c; /* s:aqua */
+  --theme-symbol-var: #83a598; /* s:blue */
+  --theme-symbol-separator: #504945; /* s:bg2 */
+  --theme-symbol-rbrk: #ebdbb2; /* s:fg1 */
+  --theme-symbol-lbrk: #ebdbb2; /* s:fg1 */
+}
+
+body.theme-gruvbox-light {
+  --theme-background: #fbf1c7; /* s:bg0 */
+  --theme-text-color: #3c3836; /* s:fg1 */
+  --theme-comment-color: #928374; /* s:gray */
+  --theme-link-color: #a89984; /* s:fg4 */
+  --theme-link-color-secondary: #988974; /* Darker s:fg4 */
+  --theme-answer: #79740e; /* s:green */
+  --theme-warning: #9d0006; /* s:red */
+  --theme-input-background: #ebdbb2; /* s:bg1 */
+  --theme-cursor: #af3a03; /* s:orange */
+  --theme-symbol-litr: #8f3f71; /* s:purple */
+  --theme-symbol-oper: #076678; /* s:blue */
+  --theme-symbol-func: #427b58; /* s:aqua */
+  --theme-symbol-var: #076678; /* s:blue */
+  --theme-symbol-separator: #d5c4a1; /* s:bg2 */
+  --theme-symbol-rbrk: #3c3836; /* s:fg1 */
+  --theme-symbol-lbrk: #3c3836; /* s:fg1 */
+}

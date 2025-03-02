@@ -5,6 +5,12 @@
 @use 'auto-update';
 @use 'page';
 
+// Import themes
+@use 'themes/catpuccin';
+@use 'themes/dracula';
+@use 'themes/gruvbox';
+@use 'themes/speedcrunch';
+
 #app {
   display: flex;
   flex-direction: column;
@@ -26,7 +32,7 @@
   width: 100%;
   box-sizing: border-box;
   transition: opacity 150ms cubic-bezier(.25, .46, .45, .94);
-  color: rgba(255, 255, 255, 0.95);
+  color: var(--theme-text-color, rgba(255, 255, 255, 0.95));
 
   h1 {
     margin: 0.5rem 0;
@@ -36,12 +42,20 @@
     margin: 0.25rem 0;
   }
 
+  svg {
+    color: var(--theme-logo-color, #B2DC5B);
+  }
+
   a {
-    color: #B2DC5B;
+    color: var(--theme-link-color, #B2DC5B);
 
     &:active,
     &:visited {
-      color: #B2DC5B;
+      color: var(--theme-link-color, #B2DC5B);
+    }
+
+    &:hover {
+      color: var(--theme-link-color-secondary, #a1cb4a);
     }
   }
 

@@ -65,6 +65,7 @@
 
   svg {
     flex: none;
+    color: #B2DC5B;
   }
 
   .main-content {
@@ -78,6 +79,10 @@
 
   a {
     color: #B2DC5B;
+
+    &:hover {
+      color: #a1cb4a;
+    }
 
     &:active,
     &:visited {

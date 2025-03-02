@@ -1,0 +1,23 @@
+/**
+ * Based on Speedcrunch themes https://bitbucket.org/heldercorreia/speedcrunch
+ * Licensed under GPLv2
+ * See https://bitbucket.org/heldercorreia/speedcrunch/src/master/LICENSE for more information
+ */
+
+body.theme-speedcrunch-terminal {
+  --theme-background: #300a24;
+  --theme-text-color: #ad7fa8;
+  --theme-answer: #689fcf;
+  --theme-warning: #ef2928;
+  --theme-input-background: #26001a;
+  --theme-cursor: #8c648c;
+  --theme-symbol-litr: #ffffff;
+  --theme-symbol-oper: #c4a000;
+  --theme-symbol-func: #ef2928;
+  --theme-symbol-var: #4a9a07;
+  --theme-symbol-separator: #ad7fa8;
+  --theme-symbol-rbrk: #ad7fa8;
+  --theme-symbol-lbrk: #ad7fa8;
+  --theme-link-color: #ef2928;
+  --theme-link-color-secondary: #f24746;
+}

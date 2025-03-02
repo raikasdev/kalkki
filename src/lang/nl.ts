@@ -23,6 +23,8 @@ export const nl: typeof fi = {
 	optionsFullScreen: "Volledige schermmodus",
 	optionsYes: "Ja",
 	optionsNo: "Nee",
+	optionsTheme: "Thema",
+
 	/** Help menu */
 	help: "Help",
 	helpSendFeedback: "Feedback geven",

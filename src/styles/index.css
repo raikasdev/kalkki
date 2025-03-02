@@ -71,6 +71,7 @@ body {
 	justify-content: center;
 	align-items: center;
 	overflow: hidden;
+	background-color: var(--theme-background, #1d2d35);
 }
 
 @media (display-mode: standalone) {

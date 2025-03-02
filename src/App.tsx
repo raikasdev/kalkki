@@ -32,6 +32,7 @@ const DEFAULT_OPTIONS = {
 	language: getDefaultLanguage(),
 	preserveSessions: true,
 	fullScreen: import.meta.env.VITE_ABITTI_BUILD === "true",
+	theme: "default",
 };
 
 function getDefaultAppState(): AppState {
@@ -117,6 +118,14 @@ export function App() {
 		} else {
 			document.body.classList.add("limit-size");
 		}
+	}, [options]);
+
+	// Set theme class
+	useEffect(() => {
+		document.body.classList.remove(
+			...document.body.classList.values().filter((i) => i.startsWith("theme-")),
+		);
+		document.body.classList.add(`theme-${options.theme}`);
 	}, [options]);
 
 	const inputRef = useRef<HTMLInputElement>(null);

@@ -1,6 +1,7 @@
 import { translate } from "@/lang";
+import syntaxHighlight from "@/math/syntax-highlighter";
 import type { RefObject } from "preact";
-import { useCallback, useEffect } from "preact/hooks";
+import { useCallback, useEffect, useRef } from "preact/hooks";
 import type { AppState } from "../App";
 import { calculateAsync } from "../math";
 import { getDocumentation } from "../math/documentation";
@@ -29,6 +30,16 @@ export default function MathInput({
 	inputRef: RefObject<HTMLInputElement>;
 	options: Options;
 }) {
+	const syntaxRef = useRef<HTMLParagraphElement>(null);
+
+	// Syntax highlighting
+	const handleChange = useCallback(() => {
+		if (!syntaxRef.current) return;
+		syntaxRef.current.innerHTML = syntaxHighlight(
+			inputRef.current?.value ?? "",
+		);
+	}, [inputRef]);
+
 	useEffect(() => {
 		// Focus on any keyboard activity
 		const handleKeyPress = (e: KeyboardEvent) => {
@@ -101,6 +112,7 @@ export default function MathInput({
 					userSpace: value.userSpace ?? userSpace,
 				});
 				inputRef.current.value = "";
+				handleChange();
 			} else if (event.key !== "ArrowDown" && event.key !== "ArrowUp") {
 				if (input === "") {
 					setState({
@@ -146,7 +158,17 @@ export default function MathInput({
 				}
 			}
 		},
-		[inputRef, answer, userSpace, latex, options, answers, history, setState],
+		[
+			inputRef,
+			answer,
+			userSpace,
+			latex,
+			options,
+			answers,
+			history,
+			setState,
+			handleChange,
+		],
 	);
 
 	const processKeyDown = useCallback(
@@ -176,6 +198,7 @@ export default function MathInput({
 					historyIndex: index,
 					workHistory,
 				});
+				handleChange();
 			} else if (event.key === "ArrowDown") {
 				event.preventDefault();
 				const index = historyIndex - 1;
@@ -187,9 +210,10 @@ export default function MathInput({
 					historyIndex: index,
 					workHistory,
 				});
+				handleChange();
 			}
 		},
-		[historyIndex, history, inputRef, setState, workHistory],
+		[historyIndex, history, inputRef, setState, workHistory, handleChange],
 	);
 
 	const pasteLatex = useCallback(
@@ -219,10 +243,11 @@ export default function MathInput({
 					setState({
 						latex: true,
 					});
+					handleChange();
 				}
 			}
 		},
-		[inputRef, setState],
+		[inputRef, setState, handleChange],
 	);
 
 	// Handle global paste events
@@ -250,12 +275,14 @@ export default function MathInput({
 					<p dangerouslySetInnerHTML={{ __html: extraInfo }} />
 				</div>
 			)}
+			<p class="syntax-highlight" ref={syntaxRef} />
 			<input
 				ref={inputRef}
 				name="math-line"
 				onKeyUp={processInput}
 				onKeyDown={processKeyDown}
 				onPaste={pasteLatex}
+				onChange={handleChange}
 				// biome-ignore lint/a11y/noAutofocus: Application is meant to be used immediately after opening
 				autoFocus
 				spellcheck={false}

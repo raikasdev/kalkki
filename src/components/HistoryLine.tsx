@@ -1,4 +1,5 @@
 import type { LargeNumber } from "@/math/internal/large-number";
+import syntaxHighlight from "@/math/syntax-highlighter";
 import { CircleAlert } from "lucide-react";
 import type { RefObject } from "preact";
 import { useCallback } from "preact/hooks";
@@ -26,6 +27,7 @@ export default function HistoryLine({
 			.toSignificantDigits(accuracy)
 			.toString()
 			.replace(".", ",");
+		inputRef.current.dispatchEvent(new Event("input", { bubbles: true })); // Syntax highlight
 		inputRef.current.focus();
 	}, [inputRef?.current, accuracy, answer]);
 
@@ -33,11 +35,16 @@ export default function HistoryLine({
 		<div class="history-line">
 			{latex && (
 				<p class="latex-warning">
-					<CircleAlert size={18} /> Luotu LaTeXin pohjalta, voi sisältää
-					virheitä
+					<CircleAlert size={18} /> LaTeX experimental support
 				</p>
 			)}
-			<p class="expression">{expression}</p>
+			{/* biome-ignore lint/security/noDangerouslySetInnerHtml: Internal function */}
+			<p
+				class="expression syntax-highlight"
+				dangerouslySetInnerHTML={{
+					__html: syntaxHighlight(expression),
+				}}
+			/>
 			{answer ? (
 				<p
 					class="answer"
@@ -48,7 +55,7 @@ export default function HistoryLine({
 					}}
 					onKeyPress={() => copyAnswer()}
 				>
-					<span class="equals">= </span>
+					<span class="equals">{"="} </span>
 					{answer.toSignificantDigits(accuracy).toString().replace(".", ",")}
 				</p>
 			) : (

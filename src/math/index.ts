@@ -8,7 +8,7 @@ import evaluate, {
 	type EvalValue,
 	type UserObject,
 } from "./internal/evaluator";
-import tokenise from "./internal/tokeniser";
+import tokenise, { type LexicalError } from "./internal/tokeniser";
 
 export type { Token, TokenId } from "./internal/tokeniser";
 export { tokenise, evaluate };
@@ -22,11 +22,11 @@ export function calculate(
 	ans: LargeNumber,
 	userSpace: Map<string, UserObject>,
 	angleUnit: AngleUnit,
-): Result<EvalValue, EvaluationError | string> {
+): Result<EvalValue, EvaluationError | LexicalError> {
 	// This could be a one-liner with neverthrow's `andThen` but we want to
 	// jump out of neverthrow-land for React anyhow soon
 	const tokens = tokenise(expression);
-	if (tokens.isErr()) return err("TOKENISER_ERROR");
+	if (tokens.isErr()) return err(tokens.error);
 	try {
 		const cacheKey = `${angleUnit}:${ans}:${JSON.stringify(userSpace)}:${expression}`;
 		if (resultCache.has(cacheKey)) {
@@ -120,7 +120,7 @@ export function calculateAsync(
 						const data: {
 							id?: string;
 							value?: Record<string, string>;
-							error: string | EvaluationError;
+							error: LexicalError | EvaluationError;
 						} = JSON.parse(e.data);
 						if (data.id !== randomId) return;
 						w.removeEventListener("message", listener);

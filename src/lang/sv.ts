@@ -22,6 +22,8 @@ export const sv: typeof fi = {
 	optionsFullScreen: "Helskärmsläge",
 	optionsYes: "Ja",
 	optionsNo: "Nej",
+	optionsTheme: "Tema",
+
 	/** Help */
 	help: "Hjälp",
 	helpSendFeedback: "Ge feedback",

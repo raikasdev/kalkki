@@ -1,6 +1,7 @@
 import type { AppState } from "@/App";
 import SelfDestructButton from "@/components/SelfDestructButton";
 import { type Language, getLanguages, translate } from "@/lang";
+import { themes } from "@/util/themes";
 import { Copyright, Info, Smile } from "lucide-react";
 import type { ReactNode } from "preact/compat";
 
@@ -10,6 +11,7 @@ export type Options = {
 	resultAccuracy: number;
 	preserveSessions: boolean;
 	fullScreen: boolean;
+	theme: keyof typeof themes;
 };
 
 function OptionButton({
@@ -151,6 +153,23 @@ export function TopBar({
 								>
 									{translate("optionsNo", options.language)}
 								</OptionButton>
+							</ul>
+						</li>
+						<li className="has-submenu">
+							<span>{translate("optionsTheme", options.language)}</span>
+							<ul className="submenu">
+								{(
+									Object.entries(themes) as [keyof typeof themes, string][]
+								).map(([id, name]) => (
+									<OptionButton
+										key={id}
+										currentValue={options.theme === id}
+										set={() => setOptions({ theme: id })}
+										lang={options.language}
+									>
+										{name}
+									</OptionButton>
+								))}
 							</ul>
 						</li>
 						{import.meta.env.VITE_ABITTI_BUILD !== "true" &&

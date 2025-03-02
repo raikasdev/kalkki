@@ -17,7 +17,7 @@
 
   .expression,
   .latex-warning {
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--theme-text-color, rgba(255, 255, 255, 0.8));
     font-size: 14px;
     line-height: 1.2;
   }
@@ -27,16 +27,17 @@
   }
 
   .answer {
-    color: white;
+    color: var(--theme-answer, white);
     word-break: break-all;
   }
 
   .equals {
     user-select: none;
+    color: var(--theme-symbol-oper);
   }
 
   .latex-warning {
-    color: oklch(.666 .179 58.318);
+    color: var(--theme-warning, oklch(.666 .179 58.318));
     display: flex;
     align-items: flex-end;
     gap: 0.25rem;

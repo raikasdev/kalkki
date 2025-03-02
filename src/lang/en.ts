@@ -22,6 +22,8 @@ export const en: typeof fi = {
 	optionsFullScreen: "Full screen mode",
 	optionsYes: "Yes",
 	optionsNo: "No",
+	optionsTheme: "Theme",
+
 	/** Help menu */
 	help: "Help",
 	helpSendFeedback: "Give feedback",

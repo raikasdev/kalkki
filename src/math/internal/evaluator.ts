@@ -26,7 +26,8 @@ export type EvaluationError =
 				| "NO_RHS_BRACKET"
 				| "TRIG_PRECISION"
 				| "PRECISION_OVERFLOW"
-				| "RECURSION";
+				| "RECURSION"
+				| "TOKENISER_ERROR";
 	  }
 	| {
 			type: "UNKNOWN_NAME" | "RESERVED_NAME";

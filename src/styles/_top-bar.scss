@@ -58,6 +58,10 @@
   left: 100%;
   top: -1px; // Border
   z-index: 10; // Avoid overlap with the other buttons on the edge
+
+  /* TODO: make it responsive/scrollable overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;*/
 }
 .dropdown button,
 .dropdown span,

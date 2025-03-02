@@ -20,6 +20,8 @@ export const fi = {
 	optionsFullScreen: "Koko näytön tila",
 	optionsYes: "Kyllä",
 	optionsNo: "Ei",
+	optionsTheme: "Teema",
+
 	/** Help menu */
 	help: "Apua",
 	helpSendFeedback: "Lähetä palautetta",
