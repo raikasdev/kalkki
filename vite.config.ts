@@ -40,16 +40,7 @@ export default defineConfig({
 				lang: "fi",
 			},
 			workbox: {
-				runtimeCaching: [
-					{
-            urlPattern: /^\/manifest\.json$/,
-            handler: "NetworkOnly",
-          },
-          {
-            urlPattern: /^\/third-party-licenses\.txt$/,
-            handler: "NetworkOnly",
-          },
-				]
+				navigateFallbackDenylist: [/^\/manifest\.json$/, /^\/third-party-licenses\.txt/]
 			}
 		}),
 		{
