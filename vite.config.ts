@@ -39,6 +39,18 @@ export default defineConfig({
 				],
 				lang: "fi",
 			},
+			workbox: {
+				runtimeCaching: [
+					{
+            urlPattern: /^\/manifest\.json$/,
+            handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^\/third-party-licenses\.txt$/,
+            handler: "NetworkOnly",
+          },
+				]
+			}
 		}),
 		{
 			name: "generate-manifest",
