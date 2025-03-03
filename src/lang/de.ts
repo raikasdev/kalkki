@@ -46,7 +46,7 @@ export const de: typeof fi = {
 	/** About page */
 	aboutVersion: "Version",
 	aboutFromStudents:
-		"Taschenrechner App von Studenten, für Studenten gemacht. Kalkki wurde von Roni Äikäs in der Hochschule entwickelt.",
+		"Taschenrechner App von Studenten, für Studenten gemacht. Kalkki wurde von Roni Äikäs entwickelt, als er im Gymnasium war.",
 	aboutThanks: "Besonderer Dank",
 	aboutThanksTsry: "Testausserveri ry und andere software tester",
 	aboutThanksYTL:
