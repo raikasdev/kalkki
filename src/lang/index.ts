@@ -1,3 +1,4 @@
+import { de } from "@/lang/de";
 import { en } from "@/lang/en";
 import { nl } from "@/lang/nl";
 import { sv } from "@/lang/sv";
@@ -8,6 +9,7 @@ const languages = {
 	en,
 	sv,
 	nl,
+	de,
 };
 
 type TranslationKey = keyof typeof fi;
