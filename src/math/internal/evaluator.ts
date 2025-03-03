@@ -176,6 +176,10 @@ export default function evaluate(
 		if (expect({ type: "lbrk" }, true).isErr())
 			return err({ type: "UNEXPECTED_TOKEN" } as const);
 
+		const firstToken = peek();
+		if (!firstToken) return err({ type: "UNEXPECTED_EOF" } as const);
+		if (firstToken.type === 'rbrk') return ok([]); // No args
+
 		// Parse arguments until we hit the closing bracket
 		const args: LargeNumber[] = [];
 		while (true) {
@@ -377,13 +381,15 @@ export default function evaluate(
 				},
 			)
 			.with({ type: "func", name: P.any }, ({ name }) => {
+				console.log('func', name)
 				const userFunc = userSpace.get(name) as UserFunction | undefined;
 				if (!userFunc || userFunc.type !== "function")
 					return err({ type: "UNKNOWN_NAME", name } as const);
 				const res = parseFunction();
 				if (res.isErr()) return err(res.error);
-
 				const args = res.value;
+				console.log('argss', args)
+
 				if (args.length !== userFunc.parameters.length)
 					return err({ type: "INVALID_ARG_COUNT" } as const);
 				const funcUserSpace = new Map(userSpace);
