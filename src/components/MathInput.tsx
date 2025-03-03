@@ -1,7 +1,7 @@
 import { translate } from "@/lang";
 import syntaxHighlight from "@/math/syntax-highlighter";
 import type { RefObject } from "preact";
-import { useCallback, useEffect, useState } from "preact/hooks";
+import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 import type { AppState } from "../App";
 import { calculateAsync } from "../math";
 import { getDocumentation } from "../math/documentation";
@@ -31,6 +31,7 @@ export default function MathInput({
 	options: Options;
 }) {
 	const [syntax, setSyntax] = useState<ReturnType<typeof syntaxHighlight> | null>(null);
+	const syntaxRef = useRef<HTMLParagraphElement>(null);
 
 	// Syntax highlighting
 	const handleChange = useCallback(() => {
@@ -268,6 +269,11 @@ export default function MathInput({
 		return () => window.removeEventListener("paste", handlePaste);
 	}, [inputRef]);
 
+	const handleScroll = useCallback(() => {
+		if (!syntaxRef.current) return;
+		syntaxRef.current.scrollLeft = inputRef.current?.scrollLeft ?? 0;
+	}, [inputRef]);
+	
 	return (
 		<div class="input">
 			{extraInfo && (
@@ -276,7 +282,7 @@ export default function MathInput({
 					<p dangerouslySetInnerHTML={{ __html: extraInfo }} />
 				</div>
 			)}
-			<p class="syntax-highlight">
+			<p class="syntax-highlight" ref={syntaxRef}>
 				{syntax}
 			</p>
 			<input
@@ -286,6 +292,7 @@ export default function MathInput({
 				onKeyDown={processKeyDown}
 				onPaste={pasteLatex}
 				onChange={handleChange}
+				onScroll={handleScroll}
 				// biome-ignore lint/a11y/noAutofocus: Application is meant to be used immediately after opening
 				autoFocus
 				spellcheck={false}

@@ -55,6 +55,8 @@
     font-size: 18px;
     font-family: monospace;
     pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
   }
 }
 
