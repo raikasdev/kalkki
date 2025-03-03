@@ -1,4 +1,4 @@
-import Decimal from "decimal.js";
+import { toSignificantDigits } from "@/util/number-formatting";
 import { type GMPLib, init } from "gmp-wasm";
 
 // Allows us to chain operations and run them in one go
@@ -322,7 +322,6 @@ export class LargeNumberOperation {
 						case "exp":
 						case "exp10":
 						case "exp2":
-						case "factorial":
 						case "floor":
 						case "frac":
 						case "gamma":
@@ -352,6 +351,27 @@ export class LargeNumberOperation {
 						case "zeta":
 							if (operation.value) throw new Error("Invalid operation");
 							val = val[operation.type]() as Float;
+							break;
+						case "factorial":
+							if (operation.value) throw new Error("Invalid operation");
+							// <100000 should perform faster with calculating (simple string length check)
+							// so we can run those faster by just calculating them
+							// otherwise gamma approx
+							if (
+								this.value.toString().length <= 5 &&
+								!this.value.toString().includes(".")
+							) {
+								val = val[operation.type]() as Float;
+							} else {
+								// gamma
+								val = g
+									.Float("10")
+									.pow(
+										((val.add("1") as Float).lngamma() as Float).div(
+											g.Float("10").ln(),
+										),
+									) as Float;
+							}
 							break;
 						default:
 							throw new Error("Unsupported operation");
@@ -416,10 +436,11 @@ export class LargeNumber {
 	}
 
 	toSignificantDigits(digits: number) {
-		const significant = new Decimal(this.value).toSignificantDigits(digits);
+		const significant = toSignificantDigits(this.value, digits);
+
 		// If the number has a scientific notation of exactly the bit precision (256 = 77), we should count it as zero (for example sin(pi) != 0)
 		if (significant.toString().endsWith("-77")) {
-			return new Decimal(0);
+			return "0";
 		}
 
 		return significant;

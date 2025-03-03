@@ -6,9 +6,6 @@ import { LargeNumber } from "@/math/internal/large-number";
  */
 export function factorial(n: LargeNumber): LargeNumber {
 	if (n.isNegative()) return new LargeNumber(Number.NaN);
-	if (!n.isInteger()) {
-		return n.add(new LargeNumber(1)).gamma().run();
-	}
 
 	return n.factorial().run();
 }

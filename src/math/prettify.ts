@@ -97,7 +97,13 @@ function* prettiedCharacters(tokens: Token[]) {
 				.otherwise(() => true);
 
 		// (10)(10) => (10) × (10)
-		if (cur?.type === "rbrk" && rhs && rhs.type !== "oper") yield " × ";
+		if (
+			cur?.type === "rbrk" &&
+			rhs &&
+			rhs.type !== "oper" &&
+			rhs.type !== "rbrk"
+		)
+			yield " × ";
 
 		// 2cos(x) => 2 × cos(x)
 		if (cur?.type === "litr" && rhs && rhs.type === "func") yield " × ";

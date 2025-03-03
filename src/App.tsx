@@ -99,7 +99,7 @@ export function App() {
 				history: appState.history,
 				answers: appState.answers.map((i) => ({
 					...i,
-					answer: i.answer?.toString(),
+					answer: i.answer?.toSignificantDigits(100),
 				})), // Class value needs to be serialized
 				userSpace: serializeUserspace(appState.userSpace),
 			}),

@@ -1,4 +1,5 @@
 import { translate } from "@/lang";
+import { LargeNumber } from "@/math/internal/large-number";
 import syntaxHighlight from "@/math/syntax-highlighter";
 import type { RefObject } from "preact";
 import { useCallback, useEffect, useRef, useState } from "preact/hooks";
@@ -30,16 +31,14 @@ export default function MathInput({
 	inputRef: RefObject<HTMLInputElement>;
 	options: Options;
 }) {
-	const [syntax, setSyntax] = useState<ReturnType<typeof syntaxHighlight> | null>(null);
+	const [syntax, setSyntax] = useState<ReturnType<
+		typeof syntaxHighlight
+	> | null>(null);
 	const syntaxRef = useRef<HTMLParagraphElement>(null);
 
 	// Syntax highlighting
 	const handleChange = useCallback(() => {
-		setSyntax(
-			syntaxHighlight(
-				inputRef.current?.value ?? "",
-			)
-		);
+		setSyntax(syntaxHighlight(inputRef.current?.value ?? ""));
 	}, [inputRef]);
 
 	useEffect(() => {
@@ -273,7 +272,7 @@ export default function MathInput({
 		if (!syntaxRef.current) return;
 		syntaxRef.current.scrollLeft = inputRef.current?.scrollLeft ?? 0;
 	}, [inputRef]);
-	
+
 	return (
 		<div class="input">
 			{extraInfo && (
