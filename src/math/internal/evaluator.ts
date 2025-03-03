@@ -437,6 +437,9 @@ export default function evaluate(
 				.with({ type: "oper", name: "/" }, () =>
 					evalExpr(3).map((right) => left.value.div(right).run()),
 				)
+				.with({ type: "oper", name: "\\" }, () => // Integer division
+					evalExpr(3).map((right) => left.value.div(right).floor().run()),
+				)
 				.with({ type: "oper", name: "^" }, () =>
 					evalExpr(3).map((right) => left.value.pow(right).run()),
 				)
@@ -552,7 +555,7 @@ function lbp(token: Token) {
 		.with({ type: "oper", name: "=" }, () => 0)
 		.with({ type: P.union("litr", "var") }, () => 1)
 		.with({ type: "oper", name: P.union("+", "-") }, () => 2)
-		.with({ type: "oper", name: P.union("*", "/") }, () => 3)
+		.with({ type: "oper", name: P.union("*", "/", "\\") }, () => 3)
 		.with({ type: "oper", name: "^" }, () => 4)
 		.with({ type: "oper", name: "!" }, () => 5)
 		.with({ type: "func" }, () => 6)
