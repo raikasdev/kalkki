@@ -144,34 +144,32 @@ export default function syntaxHighlight(expression: string) {
 	const tokens = tokenise(expression);
 	if (tokens.isErr()) return expression.replaceAll(" ", "&nbsp;"); // Tokenisation errors should be rare
 
-	let htmlString = "";
-	for (const token of tokens.value) {
-		htmlString += `<span class="symbol-${token.type}">`;
+	return tokens.value.map((token) => {
+		let value = '\u00A0'; // &nbsp;
 		switch (token.type) {
 			case "litr":
-				htmlString += token.value;
+				value = token.value;
 				break;
 			case "var":
 			case "func":
 			case "oper":
 			case "unknown":
-				htmlString += token.name;
+				value = token.name;
 				break;
 			case "nextparam":
-				htmlString += ";";
+				value = ";";
 				break;
 			case "lbrk":
-				htmlString += "(";
+				value = "(";
 				break;
 			case "rbrk":
-				htmlString += ")";
-				break;
-			default:
-				// Whitespace and just in case
-				htmlString += "&nbsp;";
+				value = ")";
 				break;
 		}
-		htmlString += "</span>";
-	}
-	return htmlString;
+		return (
+			<span className={`symbol-${token.type}`}>
+				{value}
+			</span>
+		)
+	});
 }

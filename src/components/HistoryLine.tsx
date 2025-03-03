@@ -41,10 +41,9 @@ export default function HistoryLine({
 			{/* biome-ignore lint/security/noDangerouslySetInnerHtml: Internal function */}
 			<p
 				class="expression syntax-highlight"
-				dangerouslySetInnerHTML={{
-					__html: syntaxHighlight(expression),
-				}}
-			/>
+			>
+				{syntaxHighlight(expression)}
+			</p>
 			{answer ? (
 				<p
 					class="answer"

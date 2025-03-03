@@ -1,7 +1,7 @@
 import { translate } from "@/lang";
 import syntaxHighlight from "@/math/syntax-highlighter";
 import type { RefObject } from "preact";
-import { useCallback, useEffect, useRef } from "preact/hooks";
+import { useCallback, useEffect, useState } from "preact/hooks";
 import type { AppState } from "../App";
 import { calculateAsync } from "../math";
 import { getDocumentation } from "../math/documentation";
@@ -30,13 +30,14 @@ export default function MathInput({
 	inputRef: RefObject<HTMLInputElement>;
 	options: Options;
 }) {
-	const syntaxRef = useRef<HTMLParagraphElement>(null);
+	const [syntax, setSyntax] = useState<ReturnType<typeof syntaxHighlight> | null>(null);
 
 	// Syntax highlighting
 	const handleChange = useCallback(() => {
-		if (!syntaxRef.current) return;
-		syntaxRef.current.innerHTML = syntaxHighlight(
-			inputRef.current?.value ?? "",
+		setSyntax(
+			syntaxHighlight(
+				inputRef.current?.value ?? "",
+			)
 		);
 	}, [inputRef]);
 
@@ -275,7 +276,9 @@ export default function MathInput({
 					<p dangerouslySetInnerHTML={{ __html: extraInfo }} />
 				</div>
 			)}
-			<p class="syntax-highlight" ref={syntaxRef} />
+			<p class="syntax-highlight">
+				{syntax}
+			</p>
 			<input
 				ref={inputRef}
 				name="math-line"
