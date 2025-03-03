@@ -74,6 +74,12 @@ body {
 	background-color: var(--theme-background, #1d2d35);
 }
 
+@supports (max-height: 100dvh) {
+	body {
+	  min-height: 100dvh;
+	}  
+}
+
 @media (display-mode: standalone) {
 	.hide-pwa-prompt {
 		display: none;
