@@ -25,6 +25,12 @@
   }
 }
 
+@supports (max-height: 100dvh) {
+  .page-overlay {
+    max-height: 100dvh;
+  }  
+}
+
 .page-overlay .close {
   position: fixed;
   appearance: none;

@@ -20,6 +20,12 @@
   width: 100vw;
 }
 
+@supports (max-height: 100dvh) {
+  #app {
+    height: 100dvh;
+  }  
+}
+
 .welcome-message {
   position: absolute;
   top: 4rem;
