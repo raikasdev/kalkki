@@ -37,6 +37,7 @@ The project uses [Biome](https://biomejs.dev/) for linting and code formatting. 
 
 - Autocorrect / suggestions
 - Unit conversion
+- Improve memory usage and large number formatting (toSignificantDigits)
 - Make the LaTeX support more stable
 - Check the AI-generated Swedish translation
 
