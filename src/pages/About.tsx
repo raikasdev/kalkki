@@ -21,9 +21,6 @@ export default function AboutPage({
 				</div>
 				<h1>Kalkki</h1>
 				<p>
-					<i>”Calc is slang for calculator”</i>
-				</p>
-				<p>
 					{translate("aboutVersion", language)}{" "}
 					{import.meta.env.VITE_APP_VERSION} (Git{" "}
 					{import.meta.env.VITE_GIT_COMMIT})
