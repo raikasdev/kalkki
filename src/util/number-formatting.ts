@@ -175,7 +175,15 @@ export function toSignificantDigits(numStr: string, significantDigits: number) {
 			} else {
 				result = rounded.substring(0, eValue + 1);
 				if (eValue + 1 < rounded.length) {
-					result += `.${rounded.substring(eValue + 1)}`;
+					// Check if all remaining digits are zeros
+					const remainingDigits = rounded.substring(eValue + 1);
+					if (remainingDigits.split('').every(digit => digit === '0')) {
+						// If all remaining digits are zeros, don't add decimal part
+						result = result;
+					} else {
+						// Otherwise add decimal part
+						result += `.${remainingDigits}`;
+					}
 				}
 			}
 		} else {
