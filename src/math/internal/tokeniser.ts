@@ -93,7 +93,7 @@ const tokenMatchers = [
 	],
 	[
 		// Function name: "sin", "log", "√", etc...
-		/^([\p{L}_][\p{L}_0-9]*)(?=\()/iu,
+		/^([\p{L}_√][\p{L}_0-9]*)(?=\()/iu,
 		(str) => ({
 			type: "func" as const,
 			name: match(str.toLowerCase())

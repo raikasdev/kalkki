@@ -144,8 +144,8 @@ export default function syntaxHighlight(expression: string) {
 	const tokens = tokenise(expression);
 	if (tokens.isErr()) return expression.replaceAll(" ", "&nbsp;"); // Tokenisation errors should be rare
 
-	return tokens.value.map((token) => {
-		let value = '\u00A0'; // &nbsp;
+	return tokens.value.map((token, tokenIndex) => {
+		let value = "\u00A0"; // &nbsp;
 		switch (token.type) {
 			case "litr":
 				value = token.value;
@@ -167,9 +167,12 @@ export default function syntaxHighlight(expression: string) {
 				break;
 		}
 		return (
-			<span className={`symbol-${token.type}`}>
+			<span
+				className={`symbol-${token.type}`}
+				key={`${token.type}-${tokenIndex}`}
+			>
 				{value}
 			</span>
-		)
+		);
 	});
 }

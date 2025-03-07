@@ -78,7 +78,7 @@ function* prettiedCharacters(tokens: Token[]) {
 					// No space between function name and opening brakcet: "sin(…"
 					[any, { type: "func" }, { type: "lbrk" }],
 					// No space between rbrk and other "(10)(10)"
-					[any, { type: "func" }, { type: "lbrk" }],
+					[any, { type: "rbrk" }, { type: "lbrk" }],
 					// No space before number + variable (10x, 5x, 2cos(x))
 					[any, { type: "litr" }, { type: union("var", "func", "lbrk") }],
 					// No space between factorial: "5!"
@@ -98,15 +98,21 @@ function* prettiedCharacters(tokens: Token[]) {
 
 		// (10)(10) => (10) × (10)
 		if (
-			cur?.type === "rbrk" &&
+			cur?.type !== "oper" &&
+			cur?.type !== "func" &&
 			rhs &&
-			rhs.type !== "oper" &&
-			rhs.type !== "rbrk"
+			rhs.type === "lbrk"
 		)
 			yield " × ";
 
 		// 2cos(x) => 2 × cos(x)
-		if (cur?.type === "litr" && rhs && rhs.type === "func") yield " × ";
+		// 2pi => 2 × pi (to visualize difference between 5/2pi not being 5/(2*pi))
+		if (
+			cur?.type === "litr" &&
+			rhs &&
+			(rhs.type === "func" || rhs.type === "var")
+		)
+			yield " × ";
 
 		if (shouldHaveSpace) yield " ";
 	}

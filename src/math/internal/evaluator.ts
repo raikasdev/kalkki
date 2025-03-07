@@ -178,7 +178,7 @@ export default function evaluate(
 
 		const firstToken = peek();
 		if (!firstToken) return err({ type: "UNEXPECTED_EOF" } as const);
-		if (firstToken.type === 'rbrk') {
+		if (firstToken.type === "rbrk") {
 			next();
 			return ok([]); // No args
 		}
@@ -220,15 +220,7 @@ export default function evaluate(
 	function nud(token: Token | undefined): EvalResult {
 		return match(token)
 			.with(undefined, () => err({ type: "UNEXPECTED_EOF" } as const))
-			.with({ type: "litr" }, (token) => {
-				// Unless the next token is a operator, treat as next times val (5cos(5)=5*cos(5), 5pi=5*pi)
-				const nextToken = peek();
-				if (nextToken && ["func", "var", "lbrk"].includes(nextToken.type)) {
-					return evalExpr(3).map((right) => right.mul(token.value).run());
-				}
-
-				return ok(token.value);
-			})
+			.with({ type: "litr" }, (token) => ok(token.value))
 			.with({ type: "var", name: "pi" }, () =>
 				ok(LargeNumber.PI as LargeNumber),
 			)
@@ -437,13 +429,24 @@ export default function evaluate(
 				.with({ type: "oper", name: "/" }, () =>
 					evalExpr(3).map((right) => left.value.div(right).run()),
 				)
-				.with({ type: "oper", name: "\\" }, () => // Integer division
+				.with({ type: "oper", name: "\\" }, () =>
+					// Integer division
 					evalExpr(3).map((right) => left.value.div(right).floor().run()),
 				)
 				.with({ type: "oper", name: "^" }, () =>
 					evalExpr(3).map((right) => left.value.pow(right).run()),
 				)
 				.with({ type: "oper", name: "!" }, () => ok(factorial(left.value)))
+				// Implicit multiplication cases
+				.with({ type: P.union("var", "func", "lbrk") }, (token) => {
+					// Put the token back so it can be parsed by nud
+					idx--;
+					// Use a precedence of 2.5 for implicit multiplication
+					// (between addition/subtraction and multiplication/division)
+					return evalExpr(lbp(token)).map((right) =>
+						left.value.mul(right).run(),
+					);
+				})
 				// Right bracket should never get parsed by anything else than the left bracket parselet
 				.with({ type: "rbrk" }, () => err({ type: "NO_LHS_BRACKET" } as const))
 				// Neither should equals. Only for variable and function definition
@@ -549,16 +552,17 @@ export default function evaluate(
 }
 
 /** Returns the Left Binding Power of the given token */
-function lbp(token: Token) {
+function lbp(token: Token): number {
 	return match(token)
-		.with({ type: P.union("lbrk", "rbrk", "nextparam") }, () => 0)
+		.with({ type: P.union("rbrk", "nextparam") }, () => 0)
 		.with({ type: "oper", name: "=" }, () => 0)
-		.with({ type: P.union("litr", "var") }, () => 1)
+		.with({ type: P.union("litr") }, () => 1)
 		.with({ type: "oper", name: P.union("+", "-") }, () => 2)
+		.with({ type: P.union("var", "func") }, () => 2.5) // Implicit multiplication
 		.with({ type: "oper", name: P.union("*", "/", "\\") }, () => 3)
 		.with({ type: "oper", name: "^" }, () => 4)
 		.with({ type: "oper", name: "!" }, () => 5)
-		.with({ type: "func" }, () => 6)
+		.with({ type: "lbrk" }, () => 3.5) // Implicit multiplication
 		.exhaustive();
 }
 
