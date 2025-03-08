@@ -1,3 +1,9 @@
+# 0.2.1
+
+- Improve Dockerfile
+- Remove decimal.js
+- Update third party licenses
+
 # 0.2.0
 
 - Fix tangent precision calculation

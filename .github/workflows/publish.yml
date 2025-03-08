@@ -53,9 +53,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
-          releaseName: 'App v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
+          tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
+          releaseName: 'Kalkki v__VERSION__ Binaries'
+          releaseBody: '<img src="/raikasdev/kalkki/raw/master/public/kalkki.svg" height="96" width="96">\n\nYou will find the native binaries for the Kalkki application below.\n**For Apple computers with Apple Silicon (eg. M1) you need the aarch64 binary.** Mac\'s with Intel processors need the x86 one.'
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
