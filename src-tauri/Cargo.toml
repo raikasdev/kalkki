@@ -1,10 +1,10 @@
 [package]
 name = "kalkki"
-version = "0.1.0"
+version = "0.2.0"
 description = "A easy-to-use and fast scientific calculator"
 authors = ["Roni Äikäs"]
-license = ""
-repository = ""
+license = "AGPLv3"
+repository = "https://github.com/raikasdev/kalkki"
 edition = "2021"
 rust-version = "1.77.2"
 

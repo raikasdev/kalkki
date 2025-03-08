@@ -27,6 +27,12 @@ export default function AboutPage({
 				</p>
 				<div class="main-content">
 					<p>{translate("aboutFromStudents", language)}</p>
+					<p
+						/* biome-ignore lint/security/noDangerouslySetInnerHtml: Locale */
+						dangerouslySetInnerHTML={{
+							__html: translate("aboutOpenSource", language),
+						}}
+					/>
 					<h2>{translate("aboutThanks", language)}</h2>
 					<p>{translate("aboutThanksTsry", language)}</p>
 					<p>{translate("aboutThanksYTL", language)}</p>

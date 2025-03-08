@@ -47,6 +47,8 @@ export const sv: Partial<typeof fi> = {
 	aboutVersion: "Version",
 	aboutFromStudents:
 		"En kalkylatorapp skapad av studenter för studenter. Kalkki skapades av Roni Äikäs under gymnasiet.",
+	aboutOpenSource:
+		'Kalkki är öppen källkod, vilket betyder att du fritt kan utforska dess källkod på <a href="https://github.com/raikasdev/kalkki" rel="noreferrer" target="_blank">https://github.com/raikasdev/kalkki</a>.',
 	aboutThanks: "Särskilt tack",
 	aboutThanksTsry: "Testausserveri ry och andra programvarutestare",
 	aboutThanksYTL:

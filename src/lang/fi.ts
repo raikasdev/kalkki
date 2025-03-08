@@ -46,6 +46,8 @@ export const fi = {
 	aboutVersion: "Versio",
 	aboutFromStudents:
 		"Laskinohjelma opiskelijoilta opiskelijoille. Kalkin on kehittänyt Roni Äikäs opiskellessaan Jämsän lukiossa.",
+	aboutOpenSource:
+		'Kalkki on avointa lähdekoodia ja voit tutkia sen lähdekoodia vapaasti osoitteessa <a href="https://github.com/raikasdev/kalkki" rel="noreferrer" target="_blank">https://github.com/raikasdev/kalkki</a>.',
 	aboutThanks: "Kiitokset",
 	aboutThanksTsry: "Testausserveri ry ja muut testaajat",
 	aboutThanksYTL:

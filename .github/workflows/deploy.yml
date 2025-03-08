@@ -36,6 +36,8 @@ jobs:
 
       - run: bun install
       - run: bun run build
+        env:
+          VITE_ANALYTICS_SCRIPT: <script defer data-domain="kalkki.raikas.dev" src="https://plausible.mikroni.fi/js/script.js"></script>
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

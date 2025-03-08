@@ -46,6 +46,8 @@ export const en: typeof fi = {
 	aboutVersion: "Version",
 	aboutFromStudents:
 		"Calculator app created by students for students. Kalkki was created by Roni Äikäs while attending high school.",
+	aboutOpenSource:
+		'Kalkki is open source meaning you can freely explore its source code at <a href="https://github.com/raikasdev/kalkki" rel="noreferrer" target="_blank">https://github.com/raikasdev/kalkki</a>.',
 	aboutThanks: "Special thanks",
 	aboutThanksTsry: "Testausserveri ry and other software testers",
 	aboutThanksYTL:
