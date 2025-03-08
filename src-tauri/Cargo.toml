@@ -1,7 +1,7 @@
 [package]
 name = "kalkki"
 version = "0.2.0"
-description = "A easy-to-use and fast scientific calculator"
+description = "An easy-to-use and fast scientific calculator"
 authors = ["Roni Äikäs"]
 license = "AGPLv3"
 repository = "https://github.com/raikasdev/kalkki"
