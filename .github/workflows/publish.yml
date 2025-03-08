@@ -57,7 +57,9 @@ jobs:
           releaseName: 'Kalkki v__VERSION__ Binaries'
           releaseBody: '<img src="https://raw.githubusercontent.com/raikasdev/kalkki/refs/heads/master/public/kalkki.svg" height="96" width="96">
           
-          You will find the native binaries for the Kalkki application below.\n**For Apple computers with Apple Silicon (eg. M1) you need the aarch64 binary.** Apple computers with Intel processors need the x86 one.'
+          You will find the native binaries for the Kalkki application below.
+          
+          **For Apple computers with Apple Silicon (eg. M1) you need the aarch64 binary.** Apple computers with Intel processors need the x86 one.'
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
