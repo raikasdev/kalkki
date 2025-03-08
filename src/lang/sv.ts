@@ -1,6 +1,6 @@
 import type { fi } from "./fi";
 
-export const sv: typeof fi = {
+export const sv: Partial<typeof fi> = {
 	localeName: "svenska",
 
 	/** Welcome message */

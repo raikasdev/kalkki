@@ -1,6 +1,6 @@
 import type { fi } from "./fi";
 
-export const nl: typeof fi = {
+export const nl: Partial<typeof fi> = {
 	localeName: "Nederlands",
 
 	/** Welcome message */

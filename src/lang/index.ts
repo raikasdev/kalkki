@@ -10,13 +10,13 @@ const languages = {
 	sv,
 	nl,
 	de,
-};
+} as const;
 
 type TranslationKey = keyof typeof fi;
 export type Language = keyof typeof languages;
 
 export function translate(key: TranslationKey, lang: Language = "fi") {
-	return languages[lang][key] ?? languages.fi[key];
+	return languages[lang][key] ?? languages.en[key];
 }
 
 export function getDefaultLanguage(): Language {
