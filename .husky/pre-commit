@@ -1,2 +1,2 @@
-bun run check --staged
+bun run check --staged --no-errors-on-unmatched
 git update-index --again
