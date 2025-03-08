@@ -5,7 +5,7 @@ export const sv: typeof fi = {
 
 	/** Welcome message */
 	welcome:
-		'Välkommen! Kalkki är <a href="https://github.com/raikasdev/kalkki">öppen källkod</a>.',
+		"Välkommen till Kalkki – den enkla och snabba vetenskapliga miniräknaren!",
 	welcomeStart: "Påbörja genom att skriva in ett uttryck i fältet nedan.",
 	welcomePwaPrompt:
 		'<span id="pwa-install-prompt" hidden>För bästa upplevelse på datorn, <a href="#" onclick="installPWA()">installera Kalkki som en PWA-applikation</a>.',

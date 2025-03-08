@@ -153,12 +153,7 @@ export function App() {
 				>
 					<Logo height="128" width="128" />
 					<h1>Kalkki</h1>
-					<p
-						// biome-ignore lint/security/noDangerouslySetInnerHtml: Localisation
-						dangerouslySetInnerHTML={{
-							__html: translate("welcome", options.language),
-						}}
-					/>
+					<p>{translate("welcome", options.language)}</p>
 					<p>{translate("welcomeStart", options.language)}</p>
 					{import.meta.env.VITE_ABITTI_BUILD !== "true" && (
 						<p

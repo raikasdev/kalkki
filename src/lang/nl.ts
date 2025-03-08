@@ -5,7 +5,7 @@ export const nl: typeof fi = {
 
 	/** Welcome message */
 	welcome:
-		'Welkom! Kalkki is <a href="https://github.com/raikasdev/kalkki">open source</a>.',
+		"Welkom bij Kalkki – de eenvoudige en snelle wetenschappelijke rekenmachine!",
 	welcomeStart:
 		"Begin met het schrijven van een uitdrukking in het veld hieronder.",
 	welcomePwaPrompt:

@@ -3,7 +3,7 @@ export const fi = {
 
 	/** Welcome message */
 	welcome:
-		'Tervetuloa! Kalkki on <a href="https://github.com/raikasdev/kalkki">avointa lähdekoodia</a>.',
+		"Tervetuloa käyttämään Kalkkia — helppokäyttöistä ja nopeaa tieteislaskinta!",
 	welcomeStart: "Aloita kirjoittamalla lauseke alla olevaan kenttään.",
 	welcomePwaPrompt:
 		'<span id="pwa-install-prompt" hidden>Tietokoneella parhaan kokemuksen saat <a href="#" onclick="installPWA()">asentamalla sen sovelluksena tästä</a>.',
