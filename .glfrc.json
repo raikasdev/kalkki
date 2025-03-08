@@ -1,0 +1,5 @@
+{
+  "replace": {
+    "@tauri-apps/api": "./node_modules/@tauri-apps/api/LICENSE_MIT"
+  }
+}

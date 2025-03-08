@@ -1,9 +1,9 @@
 [
 	{
-		"name": "decimal.js",
-		"author": "Michael Mclaughlin M8ch88l@gmail.com",
-		"licenseType": "MIT",
-		"link": "git+https://github.com/MikeMcl/decimal.js.git"
+		"name": "@tauri-apps/plugin-opener",
+		"author": "n/a",
+		"licenseType": "MIT OR Apache-2.0",
+		"link": "git+https://github.com/tauri-apps/plugins-workspace.git"
 	},
 	{
 		"name": "gmp-wasm",
@@ -52,6 +52,12 @@
 		"author": "The Preact Team (https://preactjs.com)",
 		"licenseType": "MIT",
 		"link": "git+https://github.com/preactjs/preset-vite.git"
+	},
+	{
+		"name": "@tauri-apps/cli",
+		"author": "n/a",
+		"licenseType": "Apache-2.0 OR MIT",
+		"link": "git+https://github.com/tauri-apps/tauri.git"
 	},
 	{
 		"name": "@types/bun",
