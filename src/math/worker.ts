@@ -1,6 +1,7 @@
 import { calculate } from "@/math/index";
 import { LargeNumber } from "@/math/internal/large-number";
 import { deserializeUserspace, serializeUserspace } from "@/util";
+import { formatNumber } from "@/util/number-formatting";
 import { ok } from "neverthrow";
 
 type Request = {
@@ -33,7 +34,17 @@ self.onmessage = async (e) => {
 			}),
 		);
 	} else {
-		const val: Record<string, unknown> = { value: res.value.value?.toString() };
+		// Round the number to 100 digits for transport and storage to save memory
+		const val: Record<string, unknown> = {};
+		if (res.value.value) {
+			console.log(res.value.value, "lol");
+			val.value = formatNumber(
+				res.value.value?.toString() ?? "",
+				100,
+				false,
+				"normal",
+			);
+		}
 		if (res.value.userSpace) {
 			val.userSpace = JSON.stringify(serializeUserspace(res.value.userSpace));
 		}

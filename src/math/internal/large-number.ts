@@ -1,4 +1,4 @@
-import { toSignificantDigits } from "@/util/number-formatting";
+import { formatNumber } from "@/util/number-formatting";
 import { type GMPLib, init } from "gmp-wasm";
 
 // Allows us to chain operations and run them in one go
@@ -436,7 +436,7 @@ export class LargeNumber {
 	}
 
 	toSignificantDigits(digits: number) {
-		const significant = toSignificantDigits(this.value, digits);
+		const significant = formatNumber(this.value, digits, false, "normal");
 
 		// If the number has a scientific notation of exactly the bit precision (256 = 77), we should count it as zero (for example sin(pi) != 0)
 		if (significant.toString().endsWith("-77")) {
