@@ -13,34 +13,36 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
 </head>
 
-<body class="theme-dracula">
+<body style="background-color: var(--theme-background, #1d2d35)">
   <div id="app"></div>
   <script type="module" src="/src/main.tsx"></script>
   <script>
-    window.addEventListener("appinstalled", () => {
-      localStorage.setItem('pwa', 'true');
-      window.resizeTo(500, 640);
-      window.moveTo(
-        Math.round((screen.width - 500) / 2),
-        Math.round((screen.height - 640) / 2)
-      )
-    });
+    if (!window.__TAURI__) {
+      window.addEventListener("appinstalled", () => {
+        localStorage.setItem('pwa', 'true');
+        window.resizeTo(500, 640);
+        window.moveTo(
+          Math.round((screen.width - 500) / 2),
+          Math.round((screen.height - 640) / 2)
+        )
+      });
 
-    let install = null;
-    window.addEventListener('beforeinstallprompt', (ev) => {
-      ev.preventDefault();
-      install = ev;
-      const prompt = document.querySelector('#pwa-install-prompt');
-      if (prompt) {
-        prompt.hidden = false;
-      }
-    });
+      let install = null;
+      window.addEventListener('beforeinstallprompt', (ev) => {
+        ev.preventDefault();
+        install = ev;
+        const prompt = document.querySelector('#pwa-install-prompt');
+        if (prompt) {
+          prompt.hidden = false;
+        }
+      });
 
-    async function installPWA() {
-      if (install !== null) {
-        const res = await install.prompt();
+      async function installPWA() {
+        if (install !== null) {
+          const res = await install.prompt();
+        }
+        document.querySelector('#pwa-install-prompt').hidden = true;
       }
-      document.querySelector('#pwa-install-prompt').hidden = true;
     }
   </script>
   <script defer data-domain="kalkki.raikas.dev" src="https://plausible.mikroni.fi/js/script.js"></script>

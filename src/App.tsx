@@ -31,7 +31,7 @@ const DEFAULT_OPTIONS = {
 	resultAccuracy: 8,
 	language: getDefaultLanguage(),
 	preserveSessions: true,
-	fullScreen: import.meta.env.VITE_ABITTI_BUILD === "true",
+	fullScreen: import.meta.env.VITE_DESKTOP_BUILD === "true",
 	theme: "default",
 };
 
@@ -109,7 +109,7 @@ export function App() {
 	// Set full-screen body class
 	useEffect(() => {
 		if (
-			import.meta.env.VITE_ABITTI_BUILD === "true" ||
+			import.meta.env.VITE_DESKTOP_BUILD === "true" ||
 			window.matchMedia("(display-mode: standalone)").matches
 		)
 			return;
@@ -155,7 +155,7 @@ export function App() {
 					<h1>Kalkki</h1>
 					<p>{translate("welcome", options.language)}</p>
 					<p>{translate("welcomeStart", options.language)}</p>
-					{import.meta.env.VITE_ABITTI_BUILD !== "true" && (
+					{import.meta.env.VITE_DESKTOP_BUILD !== "true" && (
 						<p
 							class="hide-pwa-prompt"
 							// biome-ignore lint/security/noDangerouslySetInnerHtml: Localisation
@@ -181,7 +181,7 @@ export function App() {
 				setState={setAppState}
 				options={options}
 			/>
-			{import.meta.env.VITE_ABITTI_BUILD !== "true" && (
+			{import.meta.env.VITE_DESKTOP_BUILD !== "true" && (
 				<AutoUpdate language={options.language} />
 			)}
 		</>

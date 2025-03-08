@@ -172,7 +172,7 @@ export function TopBar({
 								))}
 							</ul>
 						</li>
-						{import.meta.env.VITE_ABITTI_BUILD !== "true" &&
+						{import.meta.env.VITE_DESKTOP_BUILD !== "true" &&
 							!window.matchMedia("(display-mode: standalone)").matches && (
 								<li className="has-submenu fullscreen-option">
 									<span>
@@ -209,7 +209,11 @@ export function TopBar({
 					<span>{translate("help", options.language)}</span>
 					<ul className="dropdown">
 						<li>
-							<a href={translate("feedbackLink", options.language)}>
+							<a
+								href={translate("feedbackLink", options.language)}
+								target="_blank"
+								rel="noreferrer"
+							>
 								<Smile size={"1.25rem"} />{" "}
 								{translate("helpSendFeedback", options.language)}
 							</a>

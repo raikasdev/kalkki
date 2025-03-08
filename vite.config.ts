@@ -15,6 +15,14 @@ process.env.VITE_APP_VERSION = packageJson.version;
 
 // https://vite.dev/config/
 export default defineConfig({
+	server: {
+		strictPort: true,
+
+		watch: {
+      // tell vite to ignore watching `src-tauri`
+      ignored: ['**/src-tauri/**'],
+    },
+	},
 	plugins: [
 		preact(),
 		VitePWA({
