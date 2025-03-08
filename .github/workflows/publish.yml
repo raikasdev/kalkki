@@ -2,13 +2,13 @@ name: 'publish'
 
 on:
   push:
-    branches:
-      - release
+    tags: ['v0.*']
 
 # This workflow will trigger on each push to the `release` branch to create or update a GitHub release, build your app, and upload the artifacts to the release.
 
 jobs:
   publish-tauri:
+    if: ${{ github.ref == 'refs/heads/master' }}
     permissions:
       contents: write
     strategy:
