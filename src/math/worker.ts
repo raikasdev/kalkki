@@ -37,7 +37,6 @@ self.onmessage = async (e) => {
 		// Round the number to 100 digits for transport and storage to save memory
 		const val: Record<string, unknown> = {};
 		if (res.value.value) {
-			console.log(res.value.value, "lol");
 			val.value = formatNumber(
 				res.value.value?.toString() ?? "",
 				100,

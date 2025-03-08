@@ -28,7 +28,10 @@ export function calculate(
 	const tokens = tokenise(expression);
 	if (tokens.isErr()) return err(tokens.error);
 	try {
-		const cacheKey = `${angleUnit}:${ans}:${JSON.stringify(userSpace)}:${expression}`;
+		let cacheKey = `${angleUnit}:${JSON.stringify(userSpace)}:${expression}`;
+		if (expression.toLowerCase().includes("ans")) {
+			cacheKey += `:${ans}`;
+		}
 		if (resultCache.has(cacheKey)) {
 			return resultCache.get(cacheKey);
 		}
@@ -89,9 +92,14 @@ export function calculateAsync(
 	angleUnit: AngleUnit,
 ): Promise<ReturnType<typeof calculate>> {
 	return new Promise((resolve) => {
-		const cacheKey = `${angleUnit}:${ans}:${JSON.stringify(userSpace)}:${expression}`;
+		let cacheKey = `${angleUnit}:${JSON.stringify(userSpace)}:${expression}`;
+		if (expression.toLowerCase().includes("ans")) {
+			cacheKey += `:${ans}`;
+		}
+
 		if (resultCache.has(cacheKey)) {
 			resolve(resultCache.get(cacheKey));
+			return;
 		}
 
 		const randomId = Math.random().toString(16).substring(2);
@@ -130,6 +138,7 @@ export function calculateAsync(
 							const response = data.value;
 							const res: Record<string, unknown> = {};
 							if (response.value) {
+								console.log("Received number", response.value);
 								res.value = new LargeNumber(response.value);
 							}
 							if (response.userSpace) {
