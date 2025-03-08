@@ -64,7 +64,7 @@ export const nl: Partial<typeof fi> = {
 	copyrightAuthor: "Auteur:",
 	copyrightAuthorDefault: "Ontwikkelaars van '%s'",
 	copyrightFullLicense:
-		'Je kunt de volledige licenties van de vermelde pakketten vinden <a href="/third-party-licenses.txt">hier</a>.',
+		'Je kunt de volledige licenties van de vermelde pakketten vinden <a href="/third-party-licenses.txt" target="_blank" rel="noreferrer">hier</a>.',
 
 	/** Errors */
 	errorUnknownSymbol: "onbekend symbool bij %s",

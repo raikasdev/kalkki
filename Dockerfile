@@ -12,7 +12,7 @@ ENV VITE_DESKTOP_BUILD=true
 RUN apk add git && bun run build
 
 
-FROM nginx:1.26.1
+FROM nginx:1.27.4-alpine
 WORKDIR /usr/share/nginx/html/
 COPY --from=build /app/dist /usr/share/nginx/html/
 EXPOSE 80

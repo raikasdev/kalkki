@@ -65,7 +65,7 @@ export const en: typeof fi = {
 	copyrightAuthor: "Author:",
 	copyrightAuthorDefault: "Developers of '%s'",
 	copyrightFullLicense:
-		'You can find the full licenses of packages mentioned <a href="/third-party-licenses.txt">here</a>.',
+		'You can find the full licenses of packages mentioned <a href="/third-party-licenses.txt" target="_blank" rel="noreferrer">here</a>.',
 
 	/** Errors */
 	errorUnknownSymbol: "unknown symbol at %s",

@@ -64,7 +64,7 @@ export const de: Partial<typeof fi> = {
 	copyrightAuthor: "Autor:",
 	copyrightAuthorDefault: "Entwickler von '%s'",
 	copyrightFullLicense:
-		'Die vollständigen Lizenzen der genannten Pakete finden Sie <a href="/third-party-licenses.txt">hier</a>.',
+		'Die vollständigen Lizenzen der genannten Pakete finden Sie <a href="/third-party-licenses.txt" target="_blank" rel="noreferrer">hier</a>.',
 
 	/** Errors */
 	errorUnknownSymbol: "unbekannter Symbol bei %s",

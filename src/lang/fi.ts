@@ -66,7 +66,7 @@ export const fi = {
 	copyrightAuthor: "Tekijä:",
 	copyrightAuthorDefault: "Paketin '%s' kehittäjät",
 	copyrightFullLicense:
-		'Löydät täydet lisenssit <a href="/third-party-licenses.txt">täältä</a>.',
+		'Löydät täydet lisenssit <a href="/third-party-licenses.txt" target="_blank" rel="noreferrer">täältä</a>.',
 
 	/** Errors */
 	errorUnknownSymbol: "tuntematon symboli kohdassa %s",

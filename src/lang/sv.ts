@@ -66,7 +66,7 @@ export const sv: Partial<typeof fi> = {
 	copyrightAuthor: "Författare:",
 	copyrightAuthorDefault: "Utvecklarna av '%s'",
 	copyrightFullLicense:
-		'Du hittar de fullständiga licenserna för de nämnda paketen <a href="/third-party-licenses.txt">här</a>.',
+		'Du hittar de fullständiga licenserna för de nämnda paketen <a href="/third-party-licenses.txt" target="_blank" rel="noreferrer">här</a>.',
 
 	/** Errors */
 	errorUnknownSymbol: "okänt symbol vid %s",
