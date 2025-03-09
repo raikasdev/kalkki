@@ -1,7 +1,7 @@
 import { calculate } from "@/math/index";
 import { LargeNumber } from "@/math/internal/large-number";
 import { deserializeUserspace, serializeUserspace } from "@/util";
-import { formatNumber } from "@/util/number-formatting";
+import { toSignificantDigits } from "@/util/number-formatting";
 import { ok } from "neverthrow";
 
 type Request = {
@@ -37,12 +37,7 @@ self.onmessage = async (e) => {
 		// Round the number to 100 digits for transport and storage to save memory
 		const val: Record<string, unknown> = {};
 		if (res.value.value) {
-			val.value = formatNumber(
-				res.value.value?.toString() ?? "",
-				100,
-				false,
-				"normal",
-			);
+			val.value = toSignificantDigits(res.value.value?.toString() ?? "", 100);
 		}
 		if (res.value.userSpace) {
 			val.userSpace = JSON.stringify(serializeUserspace(res.value.userSpace));

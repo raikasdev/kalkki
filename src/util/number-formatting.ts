@@ -1,221 +1,200 @@
 /**
- * Write me a JavaScript function that has four parameters:
- * 	1) a float as a string. It may be have e-notation. It may be millions of characters long, so this needs to be optimized.
- *  2) Number of significant characters to round to
- *  3) Boolean (showAll) to include zeroes up to the rounding (5 significant numbers, 2 => 2, 0,5 => 0,50000). This should NOT remove zeroes from numbers, just the redundant zeroes after the decimal! Like 0,500000000 -> 0,5
- *  4) Normal or engineering e-notation (normal = any exponent, engineering = multiple of 3) ('normal' | 'engineering')
- * You should then format the number to an presentable string to the user. If the value is an integer or 0, it should not have any decimals.
- * If the number is extremely large or small, you should use e-notation.
- * And input in e-notation in lower precision (like 10e3 in 50 digit precision should be just 10000) should be parsed like they were full numbers
- * DO NOT USE NATIVE FLOAT TYPE or Number.parseFloat! The number may have millions of digits but it still needs to give a precise e-notation!!
+ * This is an experimental number formatter designed to replace decimal.js
  */
-
-type ENotationType = "normal" | "engineering";
 
 /**
- * Formats a number string according to specified parameters
- * @param valueStr - The number as a string (can be in e-notation)
- * @param significantDigits - Number of significant digits to round to
- * @param showAll - Whether to include trailing zeros up to significant digits
- * @param eType - Type of e-notation to use ('normal' or 'engineering')
- * @returns Formatted number as a string
+ * Format a number string to a specified number of significant digits
+ * @param {string} numStr - The number as a string (can be very long)
+ * @param {number} significantDigits - Number of significant digits to retain
+ * @return {string} Formatted number as a string
  */
-export function formatNumber(
-	valueStr: string,
+export function toSignificantDigits(
+	numStr: string,
 	significantDigits: number,
-	showAll: boolean,
-	eType: ENotationType,
-): string {
-	// Normalize input: replace comma with dot for decimal separator
-	valueStr = valueStr.replace(",", ".");
+	allZeroes = false,
+) {
+	// Clean up the input
+	numStr = numStr.trim();
 
-	// Split the number into coefficient and exponent if it's in e-notation
-	let coefficient = "";
+	// Handle sign separately
+	let sign = "";
+	if (numStr[0] === "-" || numStr[0] === "+") {
+		sign = numStr[0] === "-" ? "-" : "";
+		numStr = numStr.substring(1);
+	}
+
+	// Split into integer and fractional parts
+	let intPart = numStr;
+	let fracPart = "";
+
+	const dotIndex = numStr.indexOf(".");
+	if (dotIndex >= 0) {
+		intPart = numStr.substring(0, dotIndex);
+		fracPart = numStr.substring(dotIndex + 1);
+	}
+
+	// Handle scientific notation in the input
 	let exponent = 0;
+	const eIndex = numStr.toLowerCase().indexOf("e");
+	if (eIndex >= 0) {
+		const expStr = numStr.substring(eIndex + 1);
+		exponent = Number.parseInt(expStr, 10) || 0;
 
-	if (valueStr.toLowerCase().includes("e")) {
-		const parts = valueStr.toLowerCase().split("e");
-		coefficient = parts[0];
-		exponent = Number.parseInt(parts[1], 10);
-	} else {
-		coefficient = valueStr;
-	}
+		numStr = numStr.substring(0, eIndex);
 
-	// Remove leading/trailing whitespace from coefficient
-	coefficient = coefficient.trim();
-
-	// If coefficient is empty or just a decimal point, treat as zero
-	if (!coefficient || coefficient === ".") {
-		return "0";
-	}
-
-	// Split coefficient into integer and decimal parts
-	let intPart = "0";
-	let decPart = "";
-
-	if (coefficient.includes(".")) {
-		const parts = coefficient.split(".");
-		intPart = parts[0] === "" ? "0" : parts[0];
-		decPart = parts[1];
-	} else {
-		intPart = coefficient;
-	}
-
-	// Combine integer and decimal parts into a normalized form without decimal point
-	let normalizedNum = intPart.replace(/^0+/, "") + decPart;
-	if (normalizedNum === "") normalizedNum = "0";
-
-	// Calculate the actual decimal point position considering the exponent
-	let decimalPos = intPart.replace(/^0+/, "").length + exponent;
-	if (intPart === "0" || intPart === "-0") {
-		// Find the first non-zero digit in decimal part
-		const firstNonZero = decPart.search(/[1-9]/);
-		if (firstNonZero !== -1) {
-			decimalPos = -(firstNonZero + 1) + exponent;
+		// Recalculate int and frac parts
+		const newDotIndex = numStr.indexOf(".");
+		if (newDotIndex >= 0) {
+			intPart = numStr.substring(0, newDotIndex);
+			fracPart = numStr.substring(newDotIndex + 1);
 		} else {
-			decimalPos = 0; // All zeros
+			intPart = numStr;
+			fracPart = "";
+		}
+
+		// Adjust for exponent
+		if (exponent > 0) {
+			// Move decimal point right
+			const digitsToMove = Math.min(exponent, fracPart.length);
+			intPart += fracPart.substring(0, digitsToMove);
+			fracPart = fracPart.substring(digitsToMove);
+			exponent -= digitsToMove;
+
+			// Add zeros if needed
+			if (exponent > 0) {
+				intPart += "0".repeat(exponent);
+				exponent = 0;
+			}
+		} else if (exponent < 0) {
+			// Move decimal point left
+			exponent = -exponent;
+			const digitsToMove = Math.min(exponent, intPart.length);
+			fracPart = intPart.substring(intPart.length - digitsToMove) + fracPart;
+			intPart = intPart.substring(0, intPart.length - digitsToMove);
+			exponent -= digitsToMove;
+
+			// Add zeros if needed
+			if (exponent > 0) {
+				fracPart = "0".repeat(exponent) + fracPart;
+				exponent = 0;
+			}
 		}
 	}
 
-	// Handle negative numbers
-	const isNegative = coefficient.startsWith("-");
-	if (isNegative) {
-		normalizedNum = normalizedNum.substring(1);
+	// Strip leading zeros from integer part
+	intPart = intPart.replace(/^0+/, "") || "0";
+
+	// Find the first non-zero digit
+	let firstNonZeroPos = 0;
+	if (intPart === "0") {
+		firstNonZeroPos = 0;
+
+		// Find first non-zero in fractional part
+		for (let i = 0; i < fracPart.length; i++) {
+			if (fracPart[i] !== "0") {
+				firstNonZeroPos = -(i + 1);
+				break;
+			}
+		}
+
+		// All zeros
+		if (firstNonZeroPos === 0 && fracPart.replace(/0+/, "") === "") {
+			return "0";
+		}
+	} else {
+		firstNonZeroPos = intPart.length - 1;
 	}
 
-	// Round to specified significant digits
-	if (normalizedNum.length > significantDigits) {
-		const roundPos = significantDigits;
-		const roundDigit = Number.parseInt(normalizedNum.charAt(roundPos), 10);
+	// Combine all digits without the decimal point
+	let allDigits = intPart === "0" ? "" : intPart;
+	allDigits += fracPart;
 
-		if (roundDigit >= 5) {
-			// Perform rounding up
+	// Remove leading zeros
+	allDigits = allDigits.replace(/^0+/, "");
+
+	// Handle all zeros
+	if (allDigits === "") {
+		return "0";
+	}
+
+	// Calculate the exponent for scientific notation
+	let eValue = 0;
+	if (intPart !== "0") {
+		eValue = intPart.length - 1;
+	} else {
+		// Find position of first non-zero digit in fraction
+		for (let i = 0; i < fracPart.length; i++) {
+			if (fracPart[i] !== "0") {
+				eValue = -(i + 1);
+				break;
+			}
+		}
+	}
+
+	// Round to significant digits
+	let rounded = "";
+	if (allDigits.length > significantDigits) {
+		const digit = Number.parseInt(allDigits[significantDigits], 10);
+		if (digit >= 5) {
+			// Handle rounding up
 			let carry = 1;
-			let roundedNum = "";
-
-			for (let i = roundPos - 1; i >= 0; i--) {
-				let digit = Number.parseInt(normalizedNum.charAt(i), 10) + carry;
-				if (digit === 10) {
-					digit = 0;
+			for (let i = significantDigits - 1; i >= 0; i--) {
+				let d = Number.parseInt(allDigits[i], 10) + carry;
+				if (d === 10) {
+					d = 0;
 					carry = 1;
 				} else {
 					carry = 0;
 				}
-				roundedNum = `${digit}${roundedNum}`;
+				rounded = d.toString() + rounded;
 			}
 
 			if (carry === 1) {
-				roundedNum = `1${roundedNum}`;
-				decimalPos++; // Adjust decimal position due to carry
+				rounded = `1${rounded}`;
+				eValue++; // Adjust exponent when we get an extra digit from carry
 			}
-
-			normalizedNum = roundedNum;
 		} else {
-			normalizedNum = normalizedNum.substring(0, roundPos);
-		}
-	}
-
-	// Format the result based on magnitude
-	let formattedResult = "";
-
-	// Determine if e-notation should be used
-	const useENotation = decimalPos > normalizedNum.length + 4 || decimalPos < -4;
-
-	if (useENotation) {
-		// Use e-notation
-		let adjustedExponent = decimalPos - 1;
-
-		// For engineering notation, adjust exponent to be a multiple of 3
-		if (eType === "engineering" && normalizedNum !== "0") {
-			const remainder = ((adjustedExponent % 3) + 3) % 3;
-			adjustedExponent -= remainder;
-			decimalPos = 1 + remainder;
-		} else {
-			decimalPos = 1;
-		}
-
-		// Format coefficient part
-		if (decimalPos <= 0) {
-			formattedResult = `0.${"0".repeat(-decimalPos)}${normalizedNum}`;
-		} else if (decimalPos >= normalizedNum.length) {
-			formattedResult = `${normalizedNum}${"0".repeat(decimalPos - normalizedNum.length)}`;
-		} else {
-			formattedResult = `${normalizedNum.substring(0, decimalPos)}${
-				decimalPos < normalizedNum.length
-					? `.${normalizedNum.substring(decimalPos)}`
-					: ""
-			}`;
-		}
-
-		// Handle trailing zeros for e-notation based on showAll parameter
-		if (formattedResult.includes(".")) {
-			if (!showAll) {
-				formattedResult = formattedResult.replace(/\.?0+$/, "");
-			} else {
-				// Keep trailing zeros up to significant digits for e-notation
-				const parts = formattedResult.split(".");
-				const intDigits =
-					parts[0].replace(/^0+/, "").length ||
-					(parts[0] === "0" ? 0 : parts[0].length);
-				const desiredDecimalDigits = Math.max(0, significantDigits - intDigits);
-
-				if (parts[1].length < desiredDecimalDigits) {
-					formattedResult = `${parts[0]}.${parts[1]}${"0".repeat(desiredDecimalDigits - parts[1].length)}`;
-				} else if (parts[1].length > desiredDecimalDigits) {
-					formattedResult = `${parts[0]}${desiredDecimalDigits > 0 ? `.${parts[1].substring(0, desiredDecimalDigits)}` : ""}`;
-				}
-			}
-		}
-
-		// Add exponent part - always show e-notation for large/small numbers regardless of showAll
-		if (adjustedExponent !== 0) {
-			formattedResult = `${formattedResult}e${adjustedExponent}`;
+			rounded = allDigits.substring(0, significantDigits);
 		}
 	} else {
-		// Regular notation
-		if (decimalPos <= 0) {
-			formattedResult = `0.${"0".repeat(-decimalPos)}${normalizedNum}`;
-		} else if (decimalPos >= normalizedNum.length) {
-			formattedResult = `${normalizedNum}${"0".repeat(decimalPos - normalizedNum.length)}`;
-		} else {
-			formattedResult = `${normalizedNum.substring(0, decimalPos)}${
-				decimalPos < normalizedNum.length
-					? `.${normalizedNum.substring(decimalPos)}`
-					: ""
-			}`;
+		rounded =
+			allDigits +
+			(allZeroes ? "0".repeat(significantDigits - allDigits.length) : "");
+	}
+
+	// Format the result
+	let result = "";
+
+	if (eValue >= 21 || eValue <= -7) {
+		// Scientific notation
+		result = rounded[0];
+		if (significantDigits > 1) {
+			result += `.${rounded.substring(1)}`;
 		}
-
-		// Handle trailing zeros based on showAll parameter (only for regular notation)
-		if (formattedResult.includes(".")) {
-			if (!showAll) {
-				formattedResult = formattedResult.replace(/\.?0+$/, "");
+		result += `e${eValue >= 0 ? "+" : ""}${eValue}`;
+	} else {
+		// Regular notation
+		if (eValue >= 0) {
+			// Number >= 1
+			if (eValue + 1 >= rounded.length) {
+				result = rounded + "0".repeat(eValue + 1 - rounded.length);
 			} else {
-				// Keep trailing zeros up to significant digits
-				const parts = formattedResult.split(".");
-				const intDigits =
-					parts[0].replace(/^0+/, "").length ||
-					(parts[0] === "0" ? 0 : parts[0].length);
-				const desiredDecimalDigits = Math.max(0, significantDigits - intDigits);
-
-				if (parts[1].length < desiredDecimalDigits) {
-					formattedResult = `${parts[0]}.${parts[1]}${"0".repeat(desiredDecimalDigits - parts[1].length)}`;
-				} else if (parts[1].length > desiredDecimalDigits) {
-					formattedResult = `${parts[0]}${desiredDecimalDigits > 0 ? `.${parts[1].substring(0, desiredDecimalDigits)}` : ""}`;
+				result = rounded.substring(0, eValue + 1);
+				if (eValue + 1 < rounded.length) {
+					// Check if all remaining digits are zeros
+					const remainingDigits = rounded.substring(eValue + 1);
+					// If all remaining digits are zeros, don't add decimal part
+					if (!remainingDigits.split("").every((digit) => digit === "0")) {
+						// Otherwise add decimal part
+						result += `.${remainingDigits}`;
+					}
 				}
 			}
+		} else {
+			// Number < 1
+			result = `0.${"0".repeat(-(eValue + 1))}${rounded}`;
 		}
 	}
 
-	// Add negative sign if needed
-	if (isNegative && normalizedNum !== "0") {
-		formattedResult = `-${formattedResult}`;
-	}
-
-	// If result is an integer (no decimal part after cleanup), remove decimal point
-	// But don't apply this to e-notation numbers to preserve trailing zeros
-	if (!formattedResult.includes("e") && formattedResult.includes(".")) {
-		formattedResult = formattedResult.replace(/\.0+$/, "");
-	}
-
-	return formattedResult;
+	return sign + result;
 }

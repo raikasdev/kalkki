@@ -1,3 +1,7 @@
+# 0.2.3
+
+- Remove experimental number formatter
+
 # 0.2.2
 
 - Fix theme switcher on Webkit (Tauri)
