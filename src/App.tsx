@@ -123,7 +123,9 @@ export function App() {
 	// Set theme class
 	useEffect(() => {
 		document.body.classList.remove(
-			...document.body.classList.values().filter((i) => i.startsWith("theme-")),
+			...Array.from(document.body.classList.values()).filter((i) =>
+				i.startsWith("theme-"),
+			),
 		);
 		document.body.classList.add(`theme-${options.theme}`);
 	}, [options]);

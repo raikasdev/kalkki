@@ -1,3 +1,7 @@
+# 0.2.2
+
+- Fix theme switcher on Webkit (Tauri)
+
 # 0.2.1
 
 - Improve Dockerfile

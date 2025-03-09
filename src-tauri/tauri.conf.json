@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "kalkki",
-  "version": "0.2.0",
+  "productName": "Kalkki",
+  "version": "../package.json",
   "identifier": "fi.mikroni.kalkki",
   "build": {
     "frontendDist": "../dist",
