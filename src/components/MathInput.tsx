@@ -1,5 +1,4 @@
 import { translate } from "@/lang";
-import { LargeNumber } from "@/math/internal/large-number";
 import syntaxHighlight from "@/math/syntax-highlighter";
 import type { RefObject } from "preact";
 import { useCallback, useEffect, useRef, useState } from "preact/hooks";
@@ -219,6 +218,7 @@ export default function MathInput({
 
 	const pasteLatex = useCallback(
 		(event: ClipboardEvent) => {
+			if (process.env.VITE_EXPERIMENTAL_LATEX_SUPPORT !== "true") return;
 			if (!event.clipboardData) return;
 			// Get the pasted content
 			const pastedContent = event.clipboardData.getData("text");

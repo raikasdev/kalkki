@@ -1,3 +1,7 @@
+# 0.2.4
+
+- Put LaTeX support behind environmental variable for now
+
 # 0.2.3
 
 - Remove experimental number formatter

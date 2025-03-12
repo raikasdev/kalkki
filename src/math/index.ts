@@ -138,7 +138,6 @@ export function calculateAsync(
 							const response = data.value;
 							const res: Record<string, unknown> = {};
 							if (response.value) {
-								console.log("Received number", response.value);
 								res.value = new LargeNumber(response.value);
 							}
 							if (response.userSpace) {
