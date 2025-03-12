@@ -9,7 +9,7 @@
 </div>
 
 ---
-Little backstory: I like SpeedCrunch a lot! But with the Finnish matriculation exams moving to a browser-based environment, it will no longer be available! I started this project for fun to try creating a replacement for SpeedCrunch suitable for use in [Abitti 2](https://abitti.net/abitti-2-apps.html). I might submit it to YTL/Digabi if they can't find a suitable replacement for SpeedCrunch, as I don't like the calculator selection it currently has.
+Kalkki is a modern web-based scientific calculator designed as an replacement for SpeedCrunch. I started developing this because the Finnish matriculation exams are moving from a Linux based environment to a restricted browser one meaning SpeedCrunch wouldn't be available.
 
 ## Features
 
