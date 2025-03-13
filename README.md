@@ -20,7 +20,7 @@ Kalkki is a modern web-based scientific calculator designed as an replacement fo
 - History (up and down arrow)
 - Progressive Web App for offline usage
 - Super fast math evaluation powered by [GMP and WASM](https://github.com/Daninet/gmp-wasm)
-- Tokeniser based math parser (forked from Abicus)
+- Tokenizer based math parser (forked from Abicus)
 
 ## Usage
 

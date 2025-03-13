@@ -8,10 +8,10 @@ import evaluate, {
 	type EvalValue,
 	type UserObject,
 } from "./internal/evaluator";
-import tokenise, { type LexicalError } from "./internal/tokeniser";
+import tokenize, { type LexicalError } from "./internal/tokenizer";
 
-export type { Token, TokenId } from "./internal/tokeniser";
-export { tokenise, evaluate };
+export type { Token, TokenId } from "./internal/tokenizer";
+export { tokenize, evaluate };
 
 export type AngleUnit = "deg" | "rad";
 
@@ -25,7 +25,7 @@ export function calculate(
 ): Result<EvalValue, EvaluationError | LexicalError> {
 	// This could be a one-liner with neverthrow's `andThen` but we want to
 	// jump out of neverthrow-land for React anyhow soon
-	const tokens = tokenise(expression);
+	const tokens = tokenize(expression);
 	if (tokens.isErr()) return err(tokens.error);
 	try {
 		let cacheKey = `${angleUnit}:${JSON.stringify(userSpace)}:${expression}`;

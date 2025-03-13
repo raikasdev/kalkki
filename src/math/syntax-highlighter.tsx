@@ -1,4 +1,4 @@
-import type { LexicalError } from "@/math/internal/tokeniser";
+import type { LexicalError } from "@/math/internal/tokenizer";
 import { Result, err, ok } from "neverthrow";
 
 type TokenMatcher = (typeof tokenMatchers)[number];

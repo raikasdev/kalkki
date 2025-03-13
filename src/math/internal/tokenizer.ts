@@ -4,7 +4,7 @@ import { match } from "ts-pattern";
 import type { functions } from "./functions";
 
 /**
- * Represents an error where the tokeniser couldn't match the input to any token.
+ * Represents an error where the tokenizer couldn't match the input to any token.
  * The `idx` field points to the start of the unknown part in the input.
  */
 export type LexicalError = { type: "UNKNOWN_TOKEN"; idx: number };
@@ -124,17 +124,17 @@ const tokenMatchers = [
 
 /**
  * Reads an input expression and returns a `Result<Token[], LexicalError>` where
- * - `Token[]` is the tokenised expression, or
+ * - `Token[]` is the tokenized expression, or
  * - `LexicalError.idx` is the starting index of the *first lexical error* (i.e. unrecognised word) in the input expression.
  *
  * @see {@link Token}
  * @example
  * ```typescript
- * tokenise("1 + 2") // => Ok([{ type: "litr", value: Decimal(1) }, { type: "oper", name: "+" }, ...])
- * tokenise("1 ö 2") // => Err({ type: "UNKNOWN_TOKEN", idx: 2 }) // 2 === "1 ö 2".indexOf("ö")
+ * tokenize("1 + 2") // => Ok([{ type: "litr", value: Decimal(1) }, { type: "oper", name: "+" }, ...])
+ * tokenize("1 ö 2") // => Err({ type: "UNKNOWN_TOKEN", idx: 2 }) // 2 === "1 ö 2".indexOf("ö")
  * ```
  */
-export default function tokenise(
+export default function tokenize(
 	expression: string,
 ): Result<Token[], LexicalError> {
 	return Result.combine([...tokens(expression)]);
@@ -149,7 +149,7 @@ export default function tokenise(
  * The generator stops on the first lexical error.
  * I.e. if an error is encountered, it will be the last value output by the generator.
  *
- * @see {@link tokenise}
+ * @see {@link tokenize}
  * @see {@link Token}
  */
 function* tokens(

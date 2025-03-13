@@ -1,5 +1,5 @@
 import { P, match } from "ts-pattern";
-import { type Token, tokenise } from ".";
+import { type Token, tokenize } from ".";
 
 /**
  * Takes in an unformatted expression (e.g. `1+2*(cos(2)/sqrt(pi))`) and gives out a "prettified"
@@ -10,7 +10,7 @@ import { type Token, tokenise } from ".";
 export default function prettify(expression: string | Token[]) {
 	let tokens: Token[];
 	if (typeof expression === "string") {
-		const result = tokenise(expression);
+		const result = tokenize(expression);
 		if (result.isErr()) return expression;
 
 		tokens = result.value;

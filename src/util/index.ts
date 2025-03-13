@@ -1,7 +1,7 @@
 import { type Language, translate } from "@/lang";
 import { LargeNumber } from "@/math/internal/large-number";
 import type { EvaluationError, UserObject } from "../math/internal/evaluator";
-import type { LexicalError } from "../math/internal/tokeniser";
+import type { LexicalError } from "../math/internal/tokenizer";
 
 export type MathError = EvaluationError | LexicalError;
 export function parseError(error: MathError, lang: Language) {

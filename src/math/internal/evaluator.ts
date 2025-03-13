@@ -7,7 +7,7 @@ import { P, type Pattern, isMatching, match } from "ts-pattern";
 
 import type { AngleUnit } from "..";
 import { factorial, functions } from "./functions";
-import type { Token } from "./tokeniser";
+import type { Token } from "./tokenizer";
 
 export type EvalResult = Result<LargeNumber, EvaluationError>;
 export type EvalValue = {
