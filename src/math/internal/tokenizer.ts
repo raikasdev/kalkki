@@ -100,6 +100,7 @@ const tokenMatchers = [
 				.with("log10", () => "log" as const)
 				.with("√", () => "sqrt" as const)
 				.with("arcsin", () => "asin" as const)
+				.with("int", () => "floor" as const)
 				.with("arccos", () => "acos" as const)
 				.with("arctan", () => "atan" as const)
 				.with("arsinh", () => "asinh" as const)

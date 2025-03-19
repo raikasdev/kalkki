@@ -27,7 +27,7 @@ export type AppState = {
 };
 
 const DEFAULT_OPTIONS = {
-	angleUnit: "deg",
+	angleUnit: "rad",
 	resultAccuracy: 8,
 	language: getDefaultLanguage(),
 	preserveSessions: true,

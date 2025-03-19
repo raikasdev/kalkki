@@ -57,7 +57,7 @@ export type UserVariable = {
 
 export type UserObject = UserVariable | UserFunction;
 
-const RESERVED_VARIABLES = [
+export const RESERVED_VARIABLES = [
 	"pi",
 	"e",
 	"ans",
@@ -89,7 +89,7 @@ const RESERVED_VARIABLES = [
 	"nthroot",
 	"arccos",
 	"arctan",
-	"arcos",
+	"arcsin",
 	"lg",
 	"degrees",
 	"radians",
@@ -102,6 +102,20 @@ const RESERVED_VARIABLES = [
 	"ℇ",
 	"𝑒",
 	"ℯ",
+	"abs",
+	"cosh",
+	"sinh",
+	"tanh",
+	"sum",
+	"variance",
+	"min",
+	"max",
+	"round",
+	"int",
+	"lngamma",
+	"frac",
+	"sgn",
+	"median",
 ];
 const SYNTAX_ERRORS = [
 	"UNEXPECTED_EOF",
@@ -254,7 +268,10 @@ export default function evaluate(
 				),
 			)
 			.with(
-				{ type: "func", name: P.union("lg", "degrees", "radians") },
+				{
+					type: "func",
+					name: P.union("lg", "degrees", "radians", "frac", "sgn"),
+				},
 				(token) => {
 					// Custom methods with one argument
 					const funcName = token.name;
@@ -285,17 +302,23 @@ export default function evaluate(
 						.otherwise(() => err({ type: "INVALID_ARG_COUNT" } as const));
 				},
 			)
-			.with({ type: "func", name: P.union("average") }, (token) => {
-				// Custom methods with unlimited params
-				const funcName = token.name;
-				const func = functions[funcName];
+			.with(
+				{
+					type: "func",
+					name: P.union("average", "sum", "variance", "min", "max", "median"),
+				},
+				(token) => {
+					// Custom methods with unlimited params
+					const funcName = token.name;
+					const func = functions[funcName];
 
-				const res = parseFunction();
-				if (res.isErr()) return err(res.error);
-				const args = res.value;
+					const res = parseFunction();
+					if (res.isErr()) return err(res.error);
+					const args = res.value;
 
-				return ok(func(...args));
-			})
+					return ok(func(...args));
+				},
+			)
 			.with(
 				{
 					type: "func",
@@ -321,6 +344,12 @@ export default function evaluate(
 						"csc",
 						"cot",
 						"cbrt",
+						"abs",
+						"sinh",
+						"tanh",
+						"cosh",
+						"round",
+						"lngamma",
 					),
 				},
 				(token) => {

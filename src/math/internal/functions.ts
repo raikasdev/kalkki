@@ -72,6 +72,60 @@ function degrees(rad: LargeNumber): LargeNumber {
 	return rad.mul(LargeNumber.RAD_DEG_RATIO).run();
 }
 
+function sum(...nums: LargeNumber[]) {
+	return nums.reduce((a, b) => a.add(b), new LargeNumber(0).op()).run();
+}
+
+function variance(...nums: LargeNumber[]) {
+	if (nums.length === 0) return new LargeNumber(0);
+	const mean = average(...nums);
+
+	return nums
+		.reduce((acc, num) => {
+			return acc.add(num.sub(mean).pow(new LargeNumber(2)));
+		}, new LargeNumber(0).op())
+		.div(new LargeNumber(nums.length))
+		.run();
+}
+
+function min(...nums: LargeNumber[]) {
+	return nums.reduce((a, b) => (a.gt(b) ? b : a), new LargeNumber(0));
+}
+
+function max(...nums: LargeNumber[]) {
+	return nums.reduce((a, b) => (a.gt(b) ? a : b), new LargeNumber(0));
+}
+
+function frac(num: LargeNumber) {
+	return num.sub(num.floor()).run();
+}
+
+function sgn(num: LargeNumber) {
+	return num.gt(new LargeNumber(0))
+		? new LargeNumber(1)
+		: num.lt(new LargeNumber(0))
+			? new LargeNumber(-1)
+			: new LargeNumber(0);
+}
+
+function median(...nums: LargeNumber[]) {
+	if (nums.length === 0) return new LargeNumber(0);
+	if (nums.length === 1) return nums[0];
+
+	const sorted = nums.sort((a, b) => (a.gt(b) ? 1 : -1));
+
+	if (nums.length % 2 === 0) {
+		return average(
+			...sorted.slice(
+				Math.round(nums.length / 2) - 1,
+				Math.round(nums.length / 2) + 1,
+			),
+		);
+	}
+
+	return nums[Math.floor(nums.length / 2)];
+}
+
 export const functions = {
 	log,
 	lg,
@@ -81,4 +135,11 @@ export const functions = {
 	radians,
 	degrees,
 	nthroot,
+	sum,
+	variance,
+	min,
+	max,
+	frac,
+	sgn,
+	median,
 } as const;

@@ -1,3 +1,5 @@
+import type { Language } from "@/lang";
+
 type Function = {
 	description: Translatable;
 	usage: string | Translatable;
@@ -8,9 +10,8 @@ type ResolvedFunction = {
 	usage: string;
 };
 
-type Translatable = {
+type Translatable = Partial<Record<Language, string>> & {
 	fi: string;
-	sv: string;
 	en: string;
 };
 
@@ -117,14 +118,17 @@ const documentation: Record<string, Function> = {
 
 export function getDocumentation(
 	fn: string,
-	lang = "fi" as "fi" | "en" | "sv",
+	lang = "fi" as Language,
 ): ResolvedFunction | null {
 	const doc = documentation[fn];
 	if (!doc) return null;
-	const usage = typeof doc.usage === "object" ? doc.usage[lang] : doc.usage;
+	const usage =
+		typeof doc.usage === "object"
+			? (doc.usage[lang] ?? doc.usage.en)
+			: doc.usage;
 
 	return {
-		description: doc.description[lang],
-		usage,
+		description: doc.description[lang] ?? doc.description.en,
+		usage: usage,
 	};
 }
