@@ -28,7 +28,7 @@ export function calculate(
 	const tokens = tokenize(expression);
 	if (tokens.isErr()) return err(tokens.error);
 	try {
-		let cacheKey = `${angleUnit}:${JSON.stringify(userSpace)}:${expression}`;
+		let cacheKey = `${angleUnit}:${JSON.stringify(Object.fromEntries(userSpace.entries()))}:${expression}`;
 		if (expression.toLowerCase().includes("ans")) {
 			cacheKey += `:${ans}`;
 		}
@@ -92,7 +92,7 @@ export function calculateAsync(
 	angleUnit: AngleUnit,
 ): Promise<ReturnType<typeof calculate>> {
 	return new Promise((resolve) => {
-		let cacheKey = `${angleUnit}:${JSON.stringify(userSpace)}:${expression}`;
+		let cacheKey = `${angleUnit}:${JSON.stringify(Object.fromEntries(userSpace.entries()))}:${expression}`;
 		if (expression.toLowerCase().includes("ans")) {
 			cacheKey += `:${ans}`;
 		}
